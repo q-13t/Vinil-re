@@ -1,0 +1,170 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+* {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#MainContainer {
+    height: 100vh;
+    width: 100vw;
+    margin: 0%;
+    padding: 0%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: stretch;
+
+}
+
+#SideMenu {
+    width: 320px;
+    height: 100vh;
+    background: #2b2b2b;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#sideMenuBurger {
+    height: 60px;
+    width: 60px;
+    margin: 0%;
+    padding: 0%;
+}
+
+#sideMenuBurger:hover,
+.sideMenuButton:hover,
+#AddPlayList:hover {
+    background-color: #505050;
+}
+
+#sideMenuBurger:active,
+.sideMenuButton:active,
+#AddPlayList:active {
+    animation: el-selection 0.05s linear forwards;
+}
+
+@keyframes el-selection {
+    0% {
+        background-color: #505050;
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(0.95);
+    }
+
+    100% {
+        background-color: #2b2b2b;
+        transform: scale(1);
+    }
+
+}
+
+.sideMenuButton {
+    border-left: 10px solid transparent;
+    color: whitesmoke;
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* .sideMenuButton:active {
+    border-left: 10px solid #1a1a1a;
+} */
+
+.sideMenuButton img {
+    max-width: 40px;
+}
+
+#SearchBar {
+    width: auto;
+    height: 45px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding-left: 10px;
+    padding-right: 10px;
+    outline: none;
+}
+
+#SearchBar input {
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    margin: 0px;
+    padding-left: 5px;
+    border: none;
+    background-color: #1a1a1a;
+}
+
+#SearchBar img {
+    background-color: #1a1a1a;
+    width: 45px;
+    height: 100%;
+    padding: 0px;
+    margin: 0px;
+    border: none;
+}
+
+#PlaylistsButton {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    z-index: 2;
+    width: 100%;
+}
+
+#PlaylistsContainer {
+    width: auto;
+    height: auto;
+    border-top: 1px solid #909090;
+}
+
+#AddPlayList {
+    height: inherit;
+    max-width: none;
+    width: 45px;
+    z-index: 5;
+}
+
+#Playlists {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+#MainScrollable {
+    height: inherit;
+    overflow: auto;
+}
+
+div {
+    scrollbar-width: thin;
+    scrollbar-color: #909090 transparent;
+}
+
+.sideMenuButton p {
+    width: 100%;
+}
+
+#Setting {
+    border-top: 1px solid #909090;
+}

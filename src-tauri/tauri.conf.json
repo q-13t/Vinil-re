@@ -1,0 +1,43 @@
+{
+    "build": {
+        "beforeDevCommand": "npm run dev",
+        "beforeBuildCommand": "npm run build",
+        "devPath": "http://localhost:1420",
+        "distDir": "../dist"
+    },
+    "package": {
+        "productName": "Vinil-re",
+        "version": "0.0.0"
+    },
+    "tauri": {
+        "allowlist": {
+            "all": false,
+            "fs": {
+                "all": true
+            },
+            "shell": {
+                "all": false,
+                "open": true
+            }
+        },
+        "windows": [
+            {
+                "title": "Vinil-re",
+                "width": 800,
+                "height": 600,
+                "transparent": true
+            }
+        ],
+        "security": {
+            "csp": null
+        },
+        "bundle": {
+            "active": true,
+            "targets": "all",
+            "identifier": "Vinil-re",
+            "icon": [
+                "icons/icon.ico"
+            ]
+        }
+    }
+}
