@@ -24,7 +24,7 @@ async fn get_paths() -> Vec<String> {
 }
 
 #[tauri::command]
-async fn get_tag(path: String) -> Vec<(String, String, u32)> {
+fn get_tag(path: String) -> Vec<(String, String, u32)> {
     let tag = match Tag::read_from_path(path) {
         Ok(x) => x,
         Err(_) => return vec![],

@@ -12,7 +12,7 @@ const SideMenu = () => {
             </div>
             <div id="MainScrollable" >
 
-                <div id="MainSongList" className="sideMenuButton">
+                <div id="My Music" className="sideMenuButton">
                     <img src={burgerImg} alt=""></img>
                     <p className="sideMenuText">My Music</p>
                 </div>
