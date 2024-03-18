@@ -1,5 +1,12 @@
+import { useNavigate } from "react-router-dom";
 import burgerImg from "./assets/Burger.png";
 const SideMenu = () => {
+    const navigate = useNavigate();
+
+    const navigateTo = (link) => {
+        navigate(link);
+    }
+
     return (
         <div id="SideMenu">
             <div>
@@ -12,7 +19,7 @@ const SideMenu = () => {
             </div>
             <div id="MainScrollable" >
 
-                <div id="My Music" className="sideMenuButton">
+                <div id="My Music" className="sideMenuButton" onClick={() => navigateTo("/?display=My Music&as=list")}>
                     <img src={burgerImg} alt=""></img>
                     <p className="sideMenuText">My Music</p>
                 </div>
@@ -39,7 +46,7 @@ const SideMenu = () => {
                 </div>
             </div>
 
-            <div id="Setting" className="sideMenuButton">
+            <div id="Setting" className="sideMenuButton" onClick={() => navigateTo("/settings")}>
                 <img src={burgerImg} alt=""></img>
                 <p className="sideMenuText">Settings</p>
             </div>

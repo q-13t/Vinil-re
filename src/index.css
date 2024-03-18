@@ -278,8 +278,8 @@ body,
     padding: 0% 2%;
 }
 
-#MainDisplay h3 {
-
+#MainDisplay h3,
+#Setting h3 {
     margin: 3% 0% 1% 0%;
     font-size: 24px;
 }
@@ -464,4 +464,48 @@ body,
     align-items: center;
     justify-content: center;
     background-color: #00000099;
+}
+
+#Settings {
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0% 2%;
+}
+
+#Settings img {
+    max-width: 40px;
+}
+
+#AddFolderContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--border-color);
+}
+
+#AddFolderContainer:hover {
+    background-color: #00000099;
+}
+
+.Folder {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    margin-top: 1%;
+}
+
+.Folder input {
+    flex: 1;
+    background: transparent;
+    color: var(--font-color);
+    outline: none;
+    border: none;
+}
+
+.Folder input:focus {
+    border-left: 1px solid var(--border-color);
 }
