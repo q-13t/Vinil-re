@@ -1,10 +1,14 @@
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import burgerImg from "./assets/Burger.png";
+import { useEffect, useState } from "react";
+import { invoke } from "@tauri-apps/api";
+import Songs_List from "./Songs-List";
 
 
 const MainDisplay = () => {
     let navigate = useNavigate();
     const [queryParameters] = useSearchParams();
+    let [paths, setPaths] = useState([]);
     let display = queryParameters.get("display");
     let as = queryParameters.get("as");
 
@@ -17,6 +21,14 @@ const MainDisplay = () => {
         navigate(url);
     }
 
+    useEffect(() => {
+        invoke("get_paths", {}).then((res) => {
+            // console.log(res);
+            setPaths(res);
+        })
+    }, []);
+
+
     return (
         <div id="MainDisplay">
             <h3>{display}</h3>
@@ -28,7 +40,6 @@ const MainDisplay = () => {
                 <div id="shuffleButton">
                     <img src={burgerImg} alt={burgerImg}></img>
                     <p>Shuffle</p>
-
                 </div>
                 <select name="sort" id="sort">
                     <option value="Date Added">Date Added</option>
@@ -36,11 +47,10 @@ const MainDisplay = () => {
                     <option value="Artist">Artist</option>
                 </select>
             </div>
-            <div id="MainSongContainer">
+            {paths && <Songs_List paths={paths} />}
 
-            </div>
 
-        </div>
+        </div >
     );
 };
 
