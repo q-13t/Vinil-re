@@ -3,6 +3,7 @@ import burgerImg from "./assets/Burger.png";
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api";
 import Songs_List from "./Songs-List";
+import Songs_Grid from "./Songs-Grid";
 
 
 const MainDisplay = () => {
@@ -47,7 +48,9 @@ const MainDisplay = () => {
                     <option value="Artist">Artist</option>
                 </select>
             </div>
-            {paths && <Songs_List paths={paths} />}
+            <div id="MainSongContainer" {...(as === "grid" ? { className: "mainGrid" } : { className: "mainList" })}>
+                {paths && as === "list" ? <Songs_List paths={paths} /> : <Songs_Grid paths={paths} />}
+            </div>
 
 
         </div >
