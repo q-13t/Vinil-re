@@ -485,7 +485,8 @@ body,
     border: 1px solid var(--border-color);
 }
 
-#AddFolderContainer:hover {
+#AddFolderContainer:hover,
+.Folder img:hover {
     background-color: #00000099;
 }
 

@@ -1,40 +1,45 @@
+import React, { createElement, useState } from "react";
 import FolderEl from "./FolderEl";
 import burgerImg from "./assets/Burger.png";
+import { open } from '@tauri-apps/api/dialog';
+
+
 const Settings = () => {
+    let [paths, setPaths] = useState([]);
 
-    function handleInputChange(event) {
-        const files = event.target.files;
-        let containsFolder = false;
-        for (let i = 0; i < files.length; i++) {
-            if (files[i].type === '') {
-                // If type is empty, it means it's a directory
-                containsFolder = true;
-                break;
-            }
+    const handleInputChange = async (e) => {
+        const selected = await open({
+            multiple: true,
+            directory: true,
+        });
+        if (Array.isArray(selected)) {// user selected multiple files
+            selected.forEach((path) => {
+                setPaths((paths) => [...paths, path]);
+            })
+        } else if (selected === null) {
+
+        } else { // user selected a single file
+            console.log(typeof selected, selected);
+            setPaths((paths) => [...paths, selected]);
         }
-        if (!containsFolder) {
-            alert('Please select a folder.');
-            event.target.value = null; // Reset the input value
-        } else {
-            // Do something with selected folders
-            console.log(files);
-        }
-    };
+    }
 
-    return (<div id="Settings">
-        <input type="file" id="folderInput" style={{ display: 'none' }} webkitdirectory directory multiple onChange={{ handleInputChange }} />
-        <h3>Settings</h3>
-        <div id="AddFolderContainer" onClick={() => { document.getElementById("folderInput").click(); }}>
-            <img src={burgerImg} alt={burgerImg} srcset="" />
-            <p>Where to look for?</p>
-        </div>
-        <div id="FoldersContainer">
+    let removePath = (path) => {
+        setPaths((paths) => paths.filter((p) => p !== path));
+    }
 
-            {/* <FolderEl path="fakepath" /> */}
-
-
-        </div>
-    </div >);
+    return (
+        <div id="Settings">
+            <h3>Settings</h3>
+            <div id="AddFolderContainer" onClick={() => { handleInputChange() }}>
+                <img src={burgerImg} alt={burgerImg} />
+                <p>Where to look for?</p>
+            </div>
+            <div id="FoldersContainer">
+                {paths && paths.map((path) => <FolderEl path={path} removePath={removePath} />)}
+            </div>
+        </div >
+    );
 }
 
 export default Settings;
