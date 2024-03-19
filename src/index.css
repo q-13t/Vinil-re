@@ -1,8 +1,11 @@
 :root {
     /* #000000 */
     --border-color: #909090;
+    --background-base: #000000;
+    --background-el: #2b2b2b;
     --font-color: #cfcfcf;
-
+    --hover-color: #505050;
+    --focus-color: #707070;
 }
 
 
@@ -10,8 +13,7 @@ body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
-    background-color: #252525;
-    /* background-color: #000000; */
+    background-color: #000000;
 }
 
 #root {
@@ -35,7 +37,7 @@ body {
 
 #SideMenu {
     flex: 0 0 15%;
-    background-color: #2b2b2b;
+    background-color: var(--background-el);
     display: flex;
     flex-direction: column;
 }
@@ -51,8 +53,11 @@ body {
 .sideMenuButton:hover,
 #AddPlayList:hover,
 #shuffleButton:hover,
-#displaySort select:hover {
-    background-color: #505050;
+#displaySort select:hover,
+#AddFolderContainer:hover,
+.Folder img:hover,
+#topSubNav *:hover {
+    background-color: var(--hover-color);
 }
 
 #sideMenuBurger:active,
@@ -64,7 +69,7 @@ body {
 
 @keyframes el-selection {
     0% {
-        background-color: #505050;
+        background-color: var(--hover-color);
         transform: scale(1);
     }
 
@@ -73,7 +78,7 @@ body {
     }
 
     100% {
-        background-color: #2b2b2b;
+        background-color: var(--focus-color);
         transform: scale(1);
     }
 
@@ -123,11 +128,11 @@ h3 {
     margin: 0px;
     padding-left: 5px;
     border: none;
-    background-color: #1a1a1a;
+    background-color: var(--background-el);
 }
 
 #SearchBar img {
-    background-color: #1a1a1a;
+    background-color: var(--background-el);
     width: 45px;
     height: 100%;
     padding: 0px;
@@ -299,9 +304,7 @@ body,
     border: 1px solid var(--border-color);
 }
 
-#topSubNav *:hover {
-    background-color: #505050;
-}
+
 
 #displaySort {
     display: flex;
@@ -351,7 +354,7 @@ body,
 
 #displaySort select * {
     color: var(--font-color);
-    background-color: #000000;
+    background-color: var(--background-base);
 }
 
 #displaySort select *:hover {
@@ -369,8 +372,12 @@ body,
 }
 
 .song-el-container-list:hover {
-    background-color: #292929;
+    background-color: var(--hover-color);
     --display: block;
+}
+
+.odd {
+    background-color: var(--background-el);
 }
 
 
@@ -392,24 +399,27 @@ body,
 
 .song-el-container-list .song-el-play:hover,
 .song-el-container-list .song-el-add:hover {
-    background-color: #505050;
+    background-color: var(--hover-color);
     cursor: pointer;
 }
 
 
 .song-el-container-list .song-el-artist,
 .song-el-container-list .song-el-album {
-    flex: 1 0 auto;
+    flex: 1 0 10%;
+    text-overflow: clip;
+    word-break: keep-all;
 }
 
 .song-el-container-list .song-el-title {
     overflow: hidden;
+    text-overflow: clip;
+    word-break: keep-all;
 }
 
 .song-el-container-list .song-el-time {
     margin-right: 1%;
     text-align: end;
-    /* flex: 0 0 10%; */
 }
 
 .mainGrid {
@@ -432,7 +442,7 @@ body,
 }
 
 .mainGrid .song-el-container-grid:hover {
-    background-color: #292929;
+    background-color: var(--hover-color);
     --display: flex;
 }
 
@@ -463,7 +473,7 @@ body,
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: #00000099;
+    background-color: var(--background-base) opacity(0.7);
 }
 
 #Settings {
@@ -485,16 +495,14 @@ body,
     border: 1px solid var(--border-color);
 }
 
-#AddFolderContainer:hover,
-.Folder img:hover {
-    background-color: #00000099;
-}
+
 
 .Folder {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+    background-color: var(--background-el);
     border: 1px solid var(--border-color);
     margin-top: 1%;
 }
@@ -508,5 +516,5 @@ body,
 }
 
 .Folder input:focus {
-    border-left: 1px solid var(--border-color);
+    border-left: 1px solid var(--focus-color);
 }
