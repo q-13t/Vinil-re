@@ -6,7 +6,26 @@ const SideMenu = () => {
     const navigateTo = (link) => {
         navigate(link);
     }
+    // useEffect(() => {//Check dir and get dirs
+    //     async function checkAndOrCreateDir() {
+    //         await exists("Playlists", { dir: BaseDirectory.AppConfig }).then((exists) => {
+    //             if (exists) {
+    //                 readDir('Playlists', { dir: BaseDirectory.AppData, recursive: true }).then((entries) => {
+    //                     for (const entry of entries) {
+    //                         console.log(`Entry: ${entry.path}`);
 
+    //                     }
+    //                 });
+
+    //             } else {
+    //                 createDir('Playlists', { dir: BaseDirectory.AppData, recursive: true });
+    //             }
+    //         }).catch((err) => {
+    //             console.log(err);
+    //         })
+    //     }
+    //     checkAndOrCreateDir();
+    // }, []);
     return (
         <div id="SideMenu">
             <div>

@@ -1,9 +1,11 @@
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import burgerImg from "./assets/Burger.png";
-import { useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api";
+import { useEffect, useMemo, useReducer, useState } from "react";
+import { invoke, path } from "@tauri-apps/api";
 import Songs_List from "./Songs-List";
 import Songs_Grid from "./Songs-Grid";
+import AppData from "./main";
+import getFolders from "./main";
 
 
 const MainDisplay = () => {
@@ -12,26 +14,32 @@ const MainDisplay = () => {
     let [paths, setPaths] = useState([]);
     let display = queryParameters.get("display");
     let as = queryParameters.get("as");
-
+    let odd = false;
     if (!display) { display = "My Music"; }
     if (!as) { as = "list"; }
 
-    console.log(display, as);
+    console.log(display, " : ", as);
 
     let navigateTo = (url) => {// /?display=[]&as=[]
         navigate(url);
     }
 
     useEffect(() => {
-        invoke("get_paths", {}).then((res) => {
-            // console.log(res);
-            setPaths(res);
-        })
+        if (display === "My Music") {
+
+            getFolders().then((folders) => {
+                console.log(folders);
+                invoke("get_paths", { folders: folders }).then((res) => {
+                    setPaths(res);
+                })
+            });
+        }
     }, []);
 
 
     return (
         <div id="MainDisplay">
+
             <h3>{display}</h3>
             <div id="topSubNav">
                 <p onClick={() => navigateTo("?display=My Music&as=list")}>List</p>
@@ -48,11 +56,13 @@ const MainDisplay = () => {
                     <option value="Artist">Artist</option>
                 </select>
             </div>
+
             <div id="MainSongContainer" {...(as === "grid" ? { className: "mainGrid" } : { className: "mainList" })}>
-                {paths && as === "list" ? <Songs_List paths={paths} /> : <Songs_Grid paths={paths} />}
+                {paths.length != 0 && as === "list" ?
+                    paths.map((path) => {
+                        odd = !odd; return <Songs_List path={path} odd={odd} />;
+                    }) : paths.map((path) => (<Songs_Grid path={path} />))}
             </div>
-
-
         </div >
     );
 };
