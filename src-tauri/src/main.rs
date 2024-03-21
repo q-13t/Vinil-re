@@ -4,11 +4,12 @@
 
 use base64::{engine::general_purpose, Engine as _};
 use id3::{Tag, TagLike};
-use std::fs;
+use std::{fs, time::SystemTime};
 
 #[tauri::command]
-async fn get_paths(folders: Vec<String>) -> Vec<String> {
+async fn get_paths(folders: Vec<String>, sort_by: String) -> Vec<String> {
     println!("Folders {:?}", folders);
+    println!("Sort By {:?}", sort_by);
     let mut files: Vec<String> = Vec::new();
     for folder in folders {
         let mut list: Vec<String> = fs::read_dir(folder)
@@ -22,7 +23,55 @@ async fn get_paths(folders: Vec<String>) -> Vec<String> {
             .collect();
         files.append(&mut list);
     }
+    match sort_by.as_str() {
+        "Time Created" => {
+            files.sort_by(|a, b| {
+                fs::metadata(b.to_string())
+                    .unwrap()
+                    .created()
+                    .unwrap()
+                    .cmp(&fs::metadata(a.to_string()).unwrap().created().unwrap())
+            });
+        }
+        "Title" => {
+            files.sort_by(|a, b| {
+                Tag::read_from_path(&a)
+                    .unwrap_or(Tag::new())
+                    .title()
+                    .unwrap_or("")
+                    .cmp(
+                        &Tag::read_from_path(&b)
+                            .unwrap_or(Tag::new())
+                            .title()
+                            .unwrap_or(""),
+                    )
+            });
+        }
+        "Artist" => files.sort_by(|a, b| {
+            Tag::read_from_path(&a)
+                .unwrap_or(Tag::new())
+                .artist()
+                .unwrap_or("")
+                .cmp(
+                    &Tag::read_from_path(&b)
+                        .unwrap_or(Tag::new())
+                        .artist()
+                        .unwrap_or(""),
+                )
+        }),
+        _ => {
+            files.sort_by(|a, b| {
+                fs::metadata(b.to_string())
+                    .unwrap()
+                    .created()
+                    .unwrap()
+                    .cmp(&fs::metadata(a.to_string()).unwrap().created().unwrap())
+            });
+        }
+    }
+
     files.dedup();
+
     files
 }
 
@@ -39,7 +88,7 @@ async fn get_paths(folders: Vec<String>) -> Vec<String> {
 ///
 ///
 #[tauri::command]
-async fn get_tag(path: String) -> (String, String, u32, String, String) {
+async fn get_tag(path: String) -> (String, String, u32, String, String, SystemTime) {
     let tag = match Tag::read_from_path(&path) {
         Ok(x) => x,
         Err(_) => {
@@ -49,6 +98,7 @@ async fn get_tag(path: String) -> (String, String, u32, String, String) {
                 0,
                 String::new(),
                 String::new(),
+                SystemTime::UNIX_EPOCH,
             );
         }
     };
@@ -65,6 +115,10 @@ async fn get_tag(path: String) -> (String, String, u32, String, String) {
             tag.duration().unwrap_or(0) as u32,
             tag.album().unwrap_or("").trim().to_string(),
             general_purpose::STANDARD.encode(picture),
+            fs::metadata(path)
+                .unwrap()
+                .created()
+                .unwrap_or(SystemTime::UNIX_EPOCH),
         );
     } else {
         return (
@@ -73,6 +127,7 @@ async fn get_tag(path: String) -> (String, String, u32, String, String) {
             0,
             String::new(),
             String::new(),
+            SystemTime::UNIX_EPOCH,
         );
     }
 }
@@ -81,7 +136,7 @@ fn main() {
     tauri::Builder::default()
         .any_thread()
         .plugin(tauri_plugin_window_state::Builder::default().build())
-        .invoke_handler(tauri::generate_handler![get_tag, get_paths])
+        .invoke_handler(tauri::generate_handler![get_paths, get_tag])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -2,27 +2,12 @@ import { invoke } from "@tauri-apps/api";
 import burgerImg from "./assets/Burger.png";
 import { useEffect, useRef, useState } from "react";
 
-const Songs_Grid = ({ path }) => {
+const Songs_Grid = ({ path, observer }) => {
     const ref = useRef(null);
     // title artist duration album picture
-    let [data, updateData] = useState([]);
+
 
     useEffect(() => {
-        const observer = new IntersectionObserver(async (entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    const fetchData = async () => {
-                        const res = await invoke("get_tag", { path });
-                        if (res) {
-                            updateData(res);
-                        }
-                    };
-                    fetchData();
-                } else {
-                    updateData([]);
-                }
-            });
-        });
         if (ref.current) {
             observer.observe(ref.current);
         }
@@ -34,13 +19,13 @@ const Songs_Grid = ({ path }) => {
     }, []);
 
     return (
-        <div key={path} ref={ref} className="song-el-container-grid"  >
-            <img id={`img-${path}`} src={data[4] ? "data:image/webp;base64," + data[4] : burgerImg} className="song-el-album"></img>
-
-            <p className="song-el-title">{data[0]}</p>
+        <div id={path} ref={ref} className="song-el-container-grid" >
+            <input id={`created-${path}`} type="hidden" />
+            <img id={`img-${path}`} className="song-el-album" src={burgerImg}></img>
+            <p id={`title-${path}`} className="song-el-title">Title</p>
             <div style={{ width: "90%", display: "flex", justifyContent: "space-between" }}>
-                <p className="song-el-artist">{data[1]}</p>
-                <p className="song-el-time">{data[2]}</p>
+                <p id={`artist-${path}`} className="song-el-artist">Artist</p>
+                <p id={`duration-${path}`} className="song-el-time">0:00</p>
             </div>
 
             <div className="song-el-buttons">
@@ -52,3 +37,5 @@ const Songs_Grid = ({ path }) => {
 }
 
 export default Songs_Grid;
+
+
