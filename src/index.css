@@ -57,14 +57,16 @@ body {
 select:hover,
 #AddFolderContainer:hover,
 .Folder img:hover,
-#topSubNav *:hover {
+#topSubNav *:hover,
+#dialog-container div button:hover {
     background-color: var(--hover-color);
 }
 
 #sideMenuBurger:active,
 .sideMenuButton:active,
 #AddPlayList:active,
-#shuffleButton:active {
+#shuffleButton:active,
+#dialog-container div button:active {
     animation: el-selection 0.05s linear forwards;
 }
 
@@ -579,4 +581,60 @@ select *:hover {
     position: sticky;
     top: 0%;
     background-color: var(--background-base);
+}
+
+#new-playlist-dialog {
+    background-color: #00000075;
+    z-index: 20;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0%;
+    margin: 0%;
+}
+
+#dialog-container {
+    width: 20%;
+    height: 10%;
+    background: var(--background-base);
+    display: flex;
+    border: 1px solid var(--border-color);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+#dialog-container input {
+    height: 25%;
+    background: var(--background-el);
+    color: var(--font-color);
+    outline: none;
+    border: none;
+    margin: 1% 0% 1% 0%;
+    border: 1px solid transparent;
+}
+
+#dialog-container input:focus {
+    border: 1px solid var(--border-color);
+}
+
+#dialog-container div {
+    margin: 1% 0% 1% 0%;
+    height: auto;
+    width: 50%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+#dialog-container div button {
+    width: 50%;
+    background: transparent;
+    color: var(--font-color);
+    border: 1px solid var(--background-el);
+    padding: 3%;
 }

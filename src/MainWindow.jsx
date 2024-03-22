@@ -17,7 +17,7 @@ const MainWindow = () => {
                 < BrowserRouter >
                     <SideMenu openDialog={openDialog} />
                     <Routes>
-                        <Route path="/" element={<MainDisplay />} ></Route>
+                        <Route path="/" element={<MainDisplay openDialog={openDialog} />} ></Route>
                         <Route path="/settings" element={<Settings />} ></Route>
                     </Routes>
                 </BrowserRouter >

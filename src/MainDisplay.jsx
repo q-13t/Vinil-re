@@ -44,7 +44,7 @@ async function isIntersecting(entries) {
     });
 }
 
-const MainDisplay = () => {
+const MainDisplay = ({ openDialog }) => {
     let navigate = useNavigate();
     const [queryParameters] = useSearchParams();
     let [paths, setPaths] = useState([]);
@@ -115,7 +115,7 @@ const MainDisplay = () => {
                 </div>
 
                 <div id="selectedActions" style={{ display: "none" }} >
-                    <p onClick={() => { }}>Save To New Playlist</p>
+                    <p onClick={() => { openDialog(true) }}>Save To New Playlist</p>
                     <div id="main-existing-playlists-container">
                         <label htmlFor="main-existing-playlists">Add To Existing</label>
                         <select id="main-existing-playlists" name="main-existing-playlists">
