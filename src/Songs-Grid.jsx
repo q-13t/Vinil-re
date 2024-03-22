@@ -20,7 +20,6 @@ const Songs_Grid = ({ path, observer }) => {
 
     return (
         <div id={path} ref={ref} className="song-el-container-grid" >
-            <input id={`created-${path}`} type="hidden" />
             <img id={`img-${path}`} className="song-el-album" src={burgerImg}></img>
             <p id={`title-${path}`} className="song-el-title">Title</p>
             <div style={{ width: "90%", display: "flex", justifyContent: "space-between" }}>
