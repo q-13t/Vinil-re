@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { BaseDirectory, exists, readDir, readTextFile, writeFile } from "@tauri-apps/api/fs";
+import { BaseDirectory, createDir, exists, readDir, readTextFile, writeFile } from "@tauri-apps/api/fs";
 import MainWindow from "./MainWindow";
 
 const utils = {
@@ -37,12 +37,32 @@ const utils = {
     },
 
     async savePlaylist(name, entries) {
-        return await writeFile(`Playlists\\${name}.json`, JSON.stringify(entries), { dir: BaseDirectory.AppConfig, recursive: true });
+        return await exists("Playlists", { dir: BaseDirectory.AppConfig }).then(async (exists) => {
+            if (!exists) {
+                return await createDir('Playlists', { dir: BaseDirectory.AppConfig, recursive: true }).then(async () => {
+                    return await writeFile(`Playlists\\${name}.json`, JSON.stringify(entries), { dir: BaseDirectory.AppConfig, recursive: true });
+                });
+            } else {
+                return await writeFile(`Playlists\\${name}.json`, JSON.stringify(entries), { dir: BaseDirectory.AppConfig, recursive: true });
+            }
+        }).catch((err) => {
+            console.log(err);
+            return [];
+        });
+
     },
 
     async appendSong(playlist, selectedSongs) {
-        console.log("appendSong", playlist, selectedSongs);
-        return await writeFile(`Playlists\\${playlist}.json`, JSON.stringify(selectedSongs), { dir: BaseDirectory.AppConfig, recursive: true, append: true });
+        return await utils.getPlaylist(playlist).then(async (entries) => {
+            return await writeFile(`${playlist}`, JSON.stringify([...entries, selectedSongs]), { dir: BaseDirectory.AppConfig, recursive: true });
+        })
+    },
+
+    async getPlaylist(path) {
+        return await readTextFile(`${path}`, { dir: BaseDirectory.AppConfig }).then((data) => {
+            return JSON.parse(data);
+            console.log(data);
+        });
     }
 
 };
