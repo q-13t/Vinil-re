@@ -45,7 +45,7 @@ const SideMenu = ({ openDialog, playlists }) => {
                     </div>
 
                     <div id="PlaylistsList">
-                        {playlists && playlists.map((playlist) => (<PlaylistPreview key={playlist.name} playlist={playlist} />))}
+                        {playlists && playlists.map((playlist) => (<PlaylistPreview key={playlist.name} playlist={playlist} navigateTo={navigateTo} />))}
                     </div>
                 </div>
             </div>

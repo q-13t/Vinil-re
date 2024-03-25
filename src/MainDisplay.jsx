@@ -7,48 +7,12 @@ import Songs_Grid from "./Songs-Grid";
 // import getFolders from "./main";
 import utils from "./main";
 
-async function isIntersecting(entries) {
-    entries.forEach((entry) => {
-        let id = entry.target.id;
-        if (entry.isIntersecting) {
-            async function fetchData() {
-                const res = await invoke("get_tag", { path: id });
-                if (res) {
-                    const title = document.getElementById(`title-${id}`);
-                    if (title) title.innerHTML = res[0];
-                    const artist = document.getElementById(`artist-${id}`);
-                    if (artist) artist.innerHTML = res[1];
-                    const duration = document.getElementById(`duration-${id}`);
-                    if (duration) duration.innerHTML = res[2];
-                    const album = document.getElementById(`album-${id}`);
-                    if (album) album.innerHTML = res[3];
-                    const img = document.getElementById(`img-${id}`);
-                    if (img) img.src = res[4] ? "data:image/webp;base64," + res[4] : burgerImg;
-                }
-            };
-            fetchData();
-        } else {
-            const title = document.getElementById(`title-${id}`);
-            if (title) title.innerHTML = null;
-            const artist = document.getElementById(`artist-${id}`);
-            if (artist) artist.innerHTML = null;
-            const duration = document.getElementById(`duration-${id}`);
-            if (duration) duration.innerHTML = null;
-            const album = document.getElementById(`album-${id}`);
-            if (album) album.innerHTML = null;
-            const img = document.getElementById(`img-${id}`);
-            if (img) img.src = null;
-            const created = document.getElementById(`created-${id}`);
-            if (created) created.value = null;
-        }
-    });
-}
 
-const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs }) => {
+const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, observer }) => {
     let navigate = useNavigate();
     const [queryParameters] = useSearchParams();
     let [paths, setPaths] = useState([]);
-    let [observer, setObserver] = useState(new IntersectionObserver(isIntersecting));
+
     let display = queryParameters.get("display");
     let as = queryParameters.get("as");
     let odd = false;
@@ -70,7 +34,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs })
                 })
             });
         }//Add rest 'display' types
-    }, []);
+    }, [display]);
 
     useEffect(() => {// effect for checked songs
         console.log(selectedSongs);
@@ -92,11 +56,15 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs })
         });
     }
 
-    let saveToPlaylist = (element) => {
-        console.log(element.value);
-        utils.appendSong(element.value, selectedSongs).then(() => {
-            console.log("done"); setSelectedSongs([]);
+    let saveToPlaylist = (event) => {
+        console.log(event.target.value);
+        utils.appendSong(event.target.value, selectedSongs).then(() => {
+            setSelectedSongs([]);
         });
+    }
+
+    let setToMinusOne = () => {
+        document.getElementById("main-existing-playlists").selectedIndex = -1;
     }
 
 
@@ -113,7 +81,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs })
                         <img src={burgerImg} alt={burgerImg}></img>
                         <p>Shuffle</p>
                     </div>
-                    <select name="sort" id="sort" defaultValue={"Time Created"} onChange={(e) => { fetchData(e) }} onFocus="this.selectedIndex = -1;">
+                    <select name="sort" id="sort" defaultValue={"Time Created"} onChange={(e) => { fetchData(e) }}>
                         <option value="Time Created">Time Created</option>
                         <option value="Title">Title</option>
                         <option value="Artist">Artist</option>
@@ -124,7 +92,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs })
                     <p onClick={() => { openDialog(true) }}>Save To New Playlist</p>
                     <div id="main-existing-playlists-container">
                         <label htmlFor="main-existing-playlists">Add To Existing</label>
-                        <select id="main-existing-playlists" name="main-existing-playlists" onChange={(e) => { saveToPlaylist(e) }} >
+                        <select id="main-existing-playlists" name="main-existing-playlists" onChange={(e) => { saveToPlaylist(e) }} onFocus={setToMinusOne}>
                             <option value="-1" style={{ display: "none" }}>--</option>//Supportive value to trigger onchange with 1 element
                             {playlists && playlists.map((playlist) => {
                                 return <option key={playlist.path} value={playlist.path}>{playlist.name.replace(/\..*/mg, "")}</option>

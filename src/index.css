@@ -58,7 +58,9 @@ select:hover,
 #AddFolderContainer:hover,
 .Folder img:hover,
 #topSubNav *:hover,
-#dialog-container div button:hover {
+#dialog-container div button:hover,
+#PlayListControls *:hover,
+#PlayListData p:hover {
     background-color: var(--hover-color);
 }
 
@@ -66,7 +68,9 @@ select:hover,
 .sideMenuButton:active,
 #AddPlayList:active,
 #shuffleButton:active,
-#dialog-container div button:active {
+#dialog-container div button:active,
+#PlayListControls *:active,
+#PlayListData p:active {
     animation: el-selection 0.05s linear forwards;
 }
 
@@ -280,7 +284,8 @@ body,
     overflow: hidden;
 }
 
-#MainDisplay {
+#MainDisplay,
+#Playlist {
     flex: 1;
     overflow-x: hidden;
     overflow-y: auto;
@@ -289,7 +294,8 @@ body,
 
 #MainDisplay h3,
 #Setting h3 {
-    margin: 3% 0% 1% 0%;
+    padding: 3% 0% 1% 0%;
+    margin: 0%;
     font-size: 24px;
 }
 
@@ -577,7 +583,9 @@ select *:hover {
     width: 8vw;
 }
 
-#topNav {
+#topNav,
+#PlayListTopMenu {
+    z-index: 10;
     position: sticky;
     top: 0%;
     background-color: var(--background-base);
@@ -637,4 +645,49 @@ select *:hover {
     color: var(--font-color);
     border: 1px solid var(--background-el);
     padding: 3%;
+}
+
+#PlayListControls {
+    display: flex;
+    padding: 1% 0% 1% 0%;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#PlayListControls * {
+    margin: 0% 1% 0% 0%;
+    padding: 0.5% 1%;
+    border: 1px solid var(--border-color);
+}
+
+
+
+#PlayListData {
+    padding: 1% 0% 1% 0%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+#PlayListDataSave {
+    margin: 0%;
+    padding: 5px;
+    border: 1px solid var(--border-color);
+}
+
+#playlistName {
+    resize: none;
+    background: transparent;
+    border: 0px solid transparent;
+    padding-right: 1%;
+    color: var(--font-color);
+    height: auto;
+    text-align: center;
+    max-width: 100%;
+    font-size: large;
+    overflow: hidden;
+}
+
+#playlistName:focus {
+    background: var(--hover-color);
+    border: 1px solid var(--border-color);
 }

@@ -54,14 +54,14 @@ const utils = {
 
     async appendSong(playlist, selectedSongs) {
         return await utils.getPlaylist(playlist).then(async (entries) => {
-            return await writeFile(`${playlist}`, JSON.stringify([...entries, selectedSongs]), { dir: BaseDirectory.AppConfig, recursive: true });
+
+            return await writeFile(`${playlist}`, JSON.stringify(entries.concat(selectedSongs)), { dir: BaseDirectory.AppConfig, recursive: true });
         })
     },
 
     async getPlaylist(path) {
         return await readTextFile(`${path}`, { dir: BaseDirectory.AppConfig }).then((data) => {
             return JSON.parse(data);
-            console.log(data);
         });
     }
 
