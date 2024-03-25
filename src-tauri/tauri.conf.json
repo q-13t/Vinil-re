@@ -14,7 +14,7 @@
             "all": false,
             "fs": {
                 "all": true,
-                "scope":["$APPCONFIG/*"]
+                "scope":["$APPCONFIG/*","$APPCONFIG/**"]
             },
             "dialog": {
                 "all": true

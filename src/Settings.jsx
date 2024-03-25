@@ -5,6 +5,7 @@ import { open } from '@tauri-apps/api/dialog';
 import { BaseDirectory, createDir, exists, readDir, readTextFile, writeFile, writeTextFile } from "@tauri-apps/api/fs";
 import { path } from "@tauri-apps/api";
 import getFolders from "./main";
+import utils from "./main";
 
 
 const Settings = () => {
@@ -12,7 +13,7 @@ const Settings = () => {
 
 
     useEffect(() => {
-        getFolders().then((folders) => {
+        utils.getFolders().then((folders) => {
             setPaths(folders);
         })
     }, []);

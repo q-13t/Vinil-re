@@ -5,7 +5,7 @@ import { invoke } from "@tauri-apps/api";
 import Songs_List from "./Songs-List";
 import Songs_Grid from "./Songs-Grid";
 // import getFolders from "./main";
-import funcs from "./main";
+import utils from "./main";
 
 async function isIntersecting(entries) {
     entries.forEach((entry) => {
@@ -44,12 +44,11 @@ async function isIntersecting(entries) {
     });
 }
 
-const MainDisplay = ({ openDialog }) => {
+const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs }) => {
     let navigate = useNavigate();
     const [queryParameters] = useSearchParams();
     let [paths, setPaths] = useState([]);
     let [observer, setObserver] = useState(new IntersectionObserver(isIntersecting));
-    let [checked, setChecked] = useState([]);
     let display = queryParameters.get("display");
     let as = queryParameters.get("as");
     let odd = false;
@@ -64,7 +63,7 @@ const MainDisplay = ({ openDialog }) => {
 
     useEffect(() => {
         if (display === "My Music") {
-            funcs.getFolders().then((folders) => {
+            utils.getFolders().then((folders) => {
                 // console.log(folders);
                 invoke("get_paths", { folders: folders, sortBy: "Time Created" }).then((res) => {
                     setPaths(res);
@@ -74,22 +73,29 @@ const MainDisplay = ({ openDialog }) => {
     }, []);
 
     useEffect(() => {// effect for checked songs
-        console.log(checked);
-        if (checked.length != 0) {
+        console.log(selectedSongs);
+        if (selectedSongs.length != 0) {
             document.getElementById("selectedActions").style.display = "flex";
 
         } else {
             document.getElementById("selectedActions").style.display = "none";
         }
-    }, [checked])
+    }, [selectedSongs])
 
     let fetchData = (event) => {
         document.getElementById("sort").disabled = true;
-        funcs.getFolders().then((folders) => {
+        utils.getFolders().then((folders) => {
             invoke("get_paths", { folders: folders, sortBy: event.target.value }).then((res) => {
                 setPaths(res);
                 document.getElementById("sort").disabled = false;
             })
+        });
+    }
+
+    let saveToPlaylist = (element) => {
+        console.log(element.value);
+        utils.appendSong(element.value, selectedSongs).then(() => {
+            console.log("done"); setSelectedSongs([]);
         });
     }
 
@@ -107,7 +113,7 @@ const MainDisplay = ({ openDialog }) => {
                         <img src={burgerImg} alt={burgerImg}></img>
                         <p>Shuffle</p>
                     </div>
-                    <select name="sort" id="sort" defaultValue={"Time Created"} onChange={(e) => { fetchData(e) }}>
+                    <select name="sort" id="sort" defaultValue={"Time Created"} onChange={(e) => { fetchData(e) }} onFocus="this.selectedIndex = -1;">
                         <option value="Time Created">Time Created</option>
                         <option value="Title">Title</option>
                         <option value="Artist">Artist</option>
@@ -118,7 +124,11 @@ const MainDisplay = ({ openDialog }) => {
                     <p onClick={() => { openDialog(true) }}>Save To New Playlist</p>
                     <div id="main-existing-playlists-container">
                         <label htmlFor="main-existing-playlists">Add To Existing</label>
-                        <select id="main-existing-playlists" name="main-existing-playlists">
+                        <select id="main-existing-playlists" name="main-existing-playlists" onChange={(e) => { saveToPlaylist(e) }} >
+                            <option value="-1" style={{ display: "none" }}>--</option>//Supportive value to trigger onchange with 1 element
+                            {playlists && playlists.map((playlist) => {
+                                return <option key={playlist.path} value={playlist.path}>{playlist.name.replace(/\..*/mg, "")}</option>
+                            })}
                         </select>
                     </div>
                 </div>
@@ -127,7 +137,7 @@ const MainDisplay = ({ openDialog }) => {
             <div id="MainSongContainer" {...(as === "grid" ? { className: "mainGrid" } : { className: "mainList" })}>
                 {paths.length != 0 && as === "list" ?
                     paths.map((path) => {
-                        odd = !odd; return <Songs_List key={path} path={path} odd={odd} observer={observer} checked={checked} setChecked={setChecked} />;
+                        odd = !odd; return <Songs_List key={path} path={path} odd={odd} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
                     }) : paths.map((path) => (<Songs_Grid key={path} path={path} observer={observer} />))}
             </div>
         </div >

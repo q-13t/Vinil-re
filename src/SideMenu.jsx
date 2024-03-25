@@ -1,44 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import burgerImg from "./assets/Burger.png";
 import { useEffect, useState } from "react";
-import funcs from "./main";
+import utils from "./main";
+import PlaylistPreview from "./PlaylistPreview";
 
-const SideMenu = ({ openDialog }) => {
-    let [playlists, setPlaylists] = useState([]);
+const SideMenu = ({ openDialog, playlists }) => {
     const navigate = useNavigate();
 
     const navigateTo = (link) => {
         navigate(link);
     }
-    // useEffect(() => {//Check dir and get dirs
-    //     async function checkAndOrCreateDir() {
-    //         await exists("Playlists", { dir: BaseDirectory.AppConfig }).then((exists) => {
-    //             if (exists) {
-    //                 readDir('Playlists', { dir: BaseDirectory.AppData, recursive: true }).then((entries) => {
-    //                     for (const entry of entries) {
-    //                         console.log(`Entry: ${entry.path}`);
 
-    //                     }
-    //                 });
-
-    //             } else {
-    //                 createDir('Playlists', { dir: BaseDirectory.AppData, recursive: true });
-    //             }
-    //         }).catch((err) => {
-    //             console.log(err);
-    //         })
-    //     }
-    //     checkAndOrCreateDir();
-    // }, []);
-
-    useEffect(() => {
-        funcs.getPlaylists().then((playlists) => {
-            if (playlists.length > 0) {
-                setPlaylists(playlists);
-            }
-        })
-
-    }, [])
     return (
         <div id="SideMenu">
             <div>
@@ -73,13 +45,7 @@ const SideMenu = ({ openDialog }) => {
                     </div>
 
                     <div id="PlaylistsList">
-                        {playlists && playlists.map((playlist) => (
-                            <div key="PlayList" className="sideMenuButton">
-                                <img src={burgerImg} alt=""></img>
-                                <p className="sideMenuText">{playlist.name}</p>
-                            </div>
-                        ))}
-
+                        {playlists && playlists.map((playlist) => (<PlaylistPreview key={playlist.name} playlist={playlist} />))}
                     </div>
                 </div>
             </div>
