@@ -72,7 +72,7 @@ const MainWindow = () => {
                     <Routes>
                         <Route path="/" element={<MainDisplay openDialog={openDialog} playlists={playlists} selectedSongs={selectedSongs} setSelectedSongs={setSelectedSongs} observer={observer} />} ></Route>
                         <Route path="/settings" element={<Settings />} ></Route>
-                        <Route path="/playlist" element={<Playlist selectedSongs={selectedSongs} setSelectedSongs={setSelectedSongs} observer={observer} />}></Route>
+                        <Route path="/playlist" element={<Playlist setPlaylists={setPlaylists} selectedSongs={selectedSongs} setSelectedSongs={setSelectedSongs} observer={observer} />}></Route>
                     </Routes>
                 </BrowserRouter >
             </div>

@@ -675,16 +675,14 @@ select *:hover {
 }
 
 #playlistName {
-    resize: none;
     background: transparent;
     border: 0px solid transparent;
     padding-right: 1%;
     color: var(--font-color);
-    height: auto;
-    text-align: center;
-    max-width: 100%;
+    text-align: start;
+    width: auto;
     font-size: large;
-    overflow: hidden;
+    flex: 1;
 }
 
 #playlistName:focus {

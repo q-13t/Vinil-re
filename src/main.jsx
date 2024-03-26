@@ -1,6 +1,6 @@
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { BaseDirectory, createDir, exists, readDir, readTextFile, writeFile } from "@tauri-apps/api/fs";
+import { BaseDirectory, createDir, exists, readDir, readTextFile, renameFile, writeFile } from "@tauri-apps/api/fs";
 import MainWindow from "./MainWindow";
 
 const utils = {
@@ -63,7 +63,13 @@ const utils = {
         return await readTextFile(`${path}`, { dir: BaseDirectory.AppConfig }).then((data) => {
             return JSON.parse(data);
         });
+    },
+
+    async renamePlaylist(path, newName) {
+        return await renameFile(path, `Playlists\\${newName}`, { dir: BaseDirectory.AppConfig });
     }
+
+
 
 };
 
