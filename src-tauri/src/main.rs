@@ -83,7 +83,7 @@ async fn get_paths(folders: Vec<String>, sort_by: String) -> Vec<String> {
 ///
 /// ## Examples
 /// ```
-/// let (title, artist, duration, album, picture) = get_tag("path/to/mp3".to_string());
+///
 /// ```
 ///
 ///

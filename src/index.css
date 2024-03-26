@@ -677,7 +677,7 @@ select *:hover {
 #playlistName {
     background: transparent;
     border: 0px solid transparent;
-    padding-right: 1%;
+    margin: 0% 1%;
     color: var(--font-color);
     text-align: start;
     width: auto;
@@ -688,4 +688,8 @@ select *:hover {
 #playlistName:focus {
     background: var(--hover-color);
     border: 1px solid var(--border-color);
+}
+
+#PlayListImage {
+    max-width: 10%;
 }
