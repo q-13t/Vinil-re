@@ -8,8 +8,8 @@ import Settings from "./Settings";
 import NewPlayListDialog from "./NewPlaylistDialog";
 import utils from "./main";
 import Playlist from "./Playlist";
-import { invoke } from "@tauri-apps/api";
 import burgerImg from "./assets/Burger.png";
+import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
 
 async function isIntersecting(entries) {
     entries.forEach((entry) => {
@@ -23,11 +23,18 @@ async function isIntersecting(entries) {
                     const artist = document.getElementById(`artist-${id}`);
                     if (artist) artist.innerHTML = res[1];
                     const duration = document.getElementById(`duration-${id}`);
-                    if (duration) duration.innerHTML = res[2];
+                    if (duration) {
+                        let audio = new Audio(convertFileSrc(id));
+                        audio.onloadedmetadata = function () {
+                            let minutes = Math.floor(audio.duration / 60);
+                            let seconds = Math.floor(audio.duration - minutes * 60);
+                            duration.innerHTML = minutes + ":" + (seconds > 9 ? seconds : "0" + seconds);
+                        };
+                    }
                     const album = document.getElementById(`album-${id}`);
-                    if (album) album.innerHTML = res[3];
+                    if (album) album.innerHTML = res[2];
                     const img = document.getElementById(`img-${id}`);
-                    if (img) img.src = res[4] ? "data:image/webp;base64," + res[4] : burgerImg;
+                    if (img) img.src = res[3] ? "data:image/webp;base64," + res[3] : burgerImg;
                 }
             };
             fetchData();

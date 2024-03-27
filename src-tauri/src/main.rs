@@ -88,14 +88,13 @@ async fn get_paths(folders: Vec<String>, sort_by: String) -> Vec<String> {
 ///
 ///
 #[tauri::command]
-async fn get_tag(path: String) -> (String, String, u32, String, String, SystemTime) {
+async fn get_tag(path: String) -> (String, String, String, String, SystemTime) {
     let tag = match Tag::read_from_path(&path) {
         Ok(x) => x,
         Err(_) => {
             return (
                 String::new(),
                 String::new(),
-                0,
                 String::new(),
                 String::new(),
                 SystemTime::UNIX_EPOCH,
@@ -112,7 +111,6 @@ async fn get_tag(path: String) -> (String, String, u32, String, String, SystemTi
         return (
             tag.title().unwrap_or("").trim().to_string(),
             tag.artist().unwrap_or("").trim().to_string(),
-            tag.duration().unwrap_or(0) as u32,
             tag.album().unwrap_or("").trim().to_string(),
             general_purpose::STANDARD.encode(picture),
             fs::metadata(path)
@@ -124,7 +122,6 @@ async fn get_tag(path: String) -> (String, String, u32, String, String, SystemTi
         return (
             String::new(),
             String::new(),
-            0,
             String::new(),
             String::new(),
             SystemTime::UNIX_EPOCH,

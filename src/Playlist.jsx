@@ -16,6 +16,7 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer }) =
     let [songs, setSongs] = useState([]);
     let [changed, setChanged] = useState(false);
     let [playlistName, setPlaylistName] = useState(queryParameters.get("name"));
+    let [dragIndex, setDragIndex] = useState("");
 
     useEffect(() => {
         async function populate() {
@@ -23,8 +24,8 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer }) =
             utils.getPlaylist(path).then(async (entries) => {//get songs
                 setSongs(entries);
                 await invoke("get_tag", { path: entries[0] }).then((res) => {//get first song image and set it as album cover
-                    if (res[4]) {
-                        document.getElementById("PlayListImage").src = "data:image/webp;base64," + res[4];
+                    if (res[3]) {
+                        document.getElementById("PlayListImage").src = "data:image/webp;base64," + res[3];
                     }
                 })
             });
@@ -53,6 +54,17 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer }) =
         setChanged(false);
     }
 
+    let dragStart = (e) => {
+
+        setDragIndex(e.target.id);
+
+        console.log("dragStart", dragIndex);
+    }
+    let dragEnd = (e) => {
+
+        console.log(e.target.id, dragIndex);
+    }
+
     return (
         <div id="Playlist">
             <div id="PlayListTopMenu">
@@ -67,12 +79,12 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer }) =
                     <p>Delete From Playlist</p>
                 </div>
             </div>
-            <div id="PlayListContent">
+            <div id="PlayListContent" onDragEnter={(e) => e.preventDefault()} onDragEnd={dragEnd} >
                 {songs.length != 0 && songs.map((song) => {
-                    odd = !odd; return <Songs_List key={song} path={song} odd={odd} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
+                    odd = !odd; return <Songs_List key={song} path={song} odd={odd} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} draggable={true} dragStart={dragStart} dragend={dragEnd} />;
                 })}
             </div>
-        </div>
+        </div >
     );
 }
 

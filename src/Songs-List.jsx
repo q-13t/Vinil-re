@@ -1,11 +1,11 @@
-import { invoke } from "@tauri-apps/api";
+import { fs, invoke } from "@tauri-apps/api";
 import burgerImg from "./assets/Burger.png";
 import { useEffect, useRef, useState } from "react";
-import { logDir } from "@tauri-apps/api/path";
+import utils from "./main";
 
-const Songs_List = ({ path, odd, observer, checked, setChecked }) => {
+
+const Songs_List = ({ path, odd, observer, checked, setChecked, draggable = false, dragStart = null, dragEnd = null }) => {
     const ref = useRef(null);
-
 
     let updateThisCheck = () => {//Setts the check and adds to checked array
 
@@ -19,6 +19,7 @@ const Songs_List = ({ path, odd, observer, checked, setChecked }) => {
     }
 
 
+
     useEffect(() => {// Intersection Observer
         if (ref.current) {
             observer.observe(ref.current);
@@ -30,8 +31,11 @@ const Songs_List = ({ path, odd, observer, checked, setChecked }) => {
         }
     }, []);
 
+
+
+
     return (
-        <div id={path} ref={ref} className={`song-el-container-list ${odd ? "odd" : ""}`}   >
+        <div id={path} ref={ref} className={`song-el-container-list ${odd ? "odd" : ""}`} draggable={draggable} onDragStart={dragStart} onDragEnd={dragEnd} >
             <div id={`check-${path}`} className="song-el-check" style={{ backgroundImage: checked.includes(path) ? `url(${burgerImg})` : "none" }} onClick={() => { updateThisCheck() }}></div>
             <img id={`img-${path}`} className="song-el-album"></img>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", flex: "0 0 20%", maxWidth: "20%" }}>
