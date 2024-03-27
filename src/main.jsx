@@ -76,4 +76,6 @@ const utils = {
 export default utils;
 
 
-ReactDOM.createRoot(document.getElementById("root")).render(<MainWindow />);
+// Get rid of annoying warning
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<MainWindow />);
