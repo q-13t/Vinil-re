@@ -1,13 +1,14 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
-import burgerImg from "./assets/Burger.png";
+import burgerImg from "./assets/Burger.svg";
 import { useEffect, useState } from "react";
 import Songs_List from "./Songs-List";
 import Songs_Grid from "./Songs-Grid";
 import utils from "./main";
 import { invoke } from "@tauri-apps/api/tauri";
+import { path } from "@tauri-apps/api";
+import shuffleImg from "./assets/Shuffle.svg";
 
-
-const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, observer }) => {
+const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, observer, history, currentPlaylist, setCurrentPlaylist, setCurrentSong }) => {
     let navigate = useNavigate();
     const [queryParameters] = useSearchParams();
     let [paths, setPaths] = useState([]);
@@ -32,7 +33,11 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
                     setPaths(res);
                 })
             });
-        }//Add rest 'display' types
+        } else if (display === "Recent Plays") {
+            setPaths(history);
+        } else if (display === "Current Play Queue") {
+            setPaths(currentPlaylist);
+        }
     }, [display]);
 
     useEffect(() => {// effect for checked songs
@@ -66,6 +71,15 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
         document.getElementById("main-existing-playlists").selectedIndex = -1;
     }
 
+    let playlistChange = (path) => {
+        setCurrentPlaylist(paths);
+        setCurrentSong(path);
+    }
+
+    let handleShuffle = () => {
+        setCurrentPlaylist(paths);
+        setCurrentSong(paths[Math.floor(Math.random() * paths.length)]);
+    }
 
     return (
         <div id="MainDisplay">
@@ -76,8 +90,8 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
                     <p onClick={() => navigateTo("?display=My Music&as=grid")}>Grid</p>
                 </div>
                 <div id="displaySort" >
-                    <div id="shuffleButton">
-                        <img src={burgerImg} alt={burgerImg}></img>
+                    <div id="shuffleButton" onClick={handleShuffle}>
+                        <img src={shuffleImg} alt={burgerImg}></img>
                         <p>Shuffle</p>
                     </div>
                     <select name="sort" id="sort" defaultValue={"Time Created"} onChange={(e) => { fetchData(e) }}>
@@ -92,7 +106,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
                     <div id="main-existing-playlists-container">
                         <label htmlFor="main-existing-playlists">Add To Existing</label>
                         <select id="main-existing-playlists" name="main-existing-playlists" onChange={(e) => { saveToPlaylist(e) }} onFocus={setToMinusOne}>
-                            <option value="-1" style={{ display: "none" }}>--</option>//Supportive value to trigger onchange with 1 element
+                            <option value="-1" style={{ display: "none" }}>--</option>
                             {playlists && playlists.map((playlist) => {
                                 return <option key={playlist.path} value={playlist.path}>{playlist.name.replace(/\..*/mg, "")}</option>
                             })}
@@ -104,8 +118,8 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
             <div id="MainSongContainer" {...(as === "grid" ? { className: "mainGrid" } : { className: "mainList" })}>
                 {paths.length != 0 && as === "list" ?
                     paths.map((path) => {
-                        odd = !odd; return <Songs_List key={path} path={path} odd={odd} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
-                    }) : paths.map((path) => (<Songs_Grid key={path} path={path} observer={observer} />))}
+                        odd = !odd; return <Songs_List path={path} odd={odd} setPlay={playlistChange} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
+                    }) : paths.map((path) => (<Songs_Grid path={path} observer={observer} />))}
             </div>
         </div >
     );

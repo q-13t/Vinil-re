@@ -29,6 +29,10 @@ body {
     user-select: none;
 }
 
+img {
+    aspect-ratio: 1 / 1;
+}
+
 #MainContainer {
     display: flex;
     flex: 1;
@@ -60,7 +64,14 @@ select:hover,
 #topSubNav *:hover,
 #dialog-container div button:hover,
 #PlayListControls *:hover,
-#PlayListData p:hover {
+#PlayListData p:hover,
+#controlShuffle:hover,
+#controlPrevious:hover,
+#controlPlay:hover,
+#controlNext:hover,
+#controlRepeat:hover,
+#controlMute:hover,
+#Delete-Playlist-Dialog-Container div button:hover {
     background-color: var(--hover-color);
 }
 
@@ -70,7 +81,14 @@ select:hover,
 #shuffleButton:active,
 #dialog-container div button:active,
 #PlayListControls *:active,
-#PlayListData p:active {
+#PlayListData p:active,
+#controlShuffle:active,
+#controlPrevious:active,
+#controlPlay:active,
+#controlNext:active,
+#controlRepeat:active,
+#controlMute:active,
+#Delete-Playlist-Dialog-Container div button:active {
     animation: el-selection 0.05s linear forwards;
 }
 
@@ -201,15 +219,11 @@ div {
 #PlayerControlsContainer {
     display: flex;
     flex-direction: row;
+    align-items: center;
+    align-content: space-between;
     flex-wrap: wrap;
     justify-content: space-between;
-    align-items: stretch;
-    align-content: space-between;
-    /* height: 10%;
-    width: 100%;
-    background-color: lightcoral; */
 }
-
 
 
 #PlayerControlsButtons img,
@@ -218,18 +232,23 @@ div {
 }
 
 #PlayerControlsSongData {
-    display: grid;
+    flex: 1 1 25%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
     align-content: center;
-    grid-auto-flow: column;
-    align-items: stretch;
-    justify-content: start;
 }
 
 #PlayerControlsSongDataAlbum {
-    width: 80%;
+    max-width: 15%;
+    max-height: 10%;
+    margin: 2%;
 }
 
 #PlayerControlsTime {
+    flex: 1 1 50%;
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -248,7 +267,7 @@ div {
     align-items: center;
 }
 
-input[type="range"] {
+#timeSlider {
     width: 100%;
 }
 
@@ -258,14 +277,16 @@ input[type="range"] {
     flex-wrap: nowrap;
     justify-content: center;
     align-items: center;
-
 }
 
+
+
 #PlayerControlsMisc {
+    flex: 1 1 25%;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
 }
 
@@ -591,7 +612,8 @@ select *:hover {
     background-color: var(--background-base);
 }
 
-#new-playlist-dialog {
+#new-playlist-dialog,
+#Delete-Playlist-Dialog {
     background-color: #00000075;
     z-index: 20;
     height: 100%;
@@ -603,7 +625,8 @@ select *:hover {
     margin: 0%;
 }
 
-#dialog-container {
+#dialog-container,
+#Delete-Playlist-Dialog-Container {
     width: 20%;
     height: 10%;
     background: var(--background-base);
@@ -630,7 +653,8 @@ select *:hover {
     border: 1px solid var(--border-color);
 }
 
-#dialog-container div {
+#dialog-container div,
+#Delete-Playlist-Dialog-Container div {
     margin: 1% 0% 1% 0%;
     height: auto;
     width: 50%;
@@ -639,7 +663,8 @@ select *:hover {
     justify-content: space-around;
 }
 
-#dialog-container div button {
+#dialog-container div button,
+#Delete-Playlist-Dialog-Container div button {
     width: 50%;
     background: transparent;
     color: var(--font-color);
@@ -660,6 +685,14 @@ select *:hover {
 }
 
 
+
+.inactiveBorder {
+    border: 1px solid transparent;
+}
+
+.activeBorder {
+    border: 1px solid var(--border-color);
+}
 
 #PlayListData {
     padding: 1% 0% 1% 0%;

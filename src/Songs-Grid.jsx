@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api";
-import burgerImg from "./assets/Burger.png";
+import burgerImg from "./assets/Burger.svg";
 import { useEffect, useRef, useState } from "react";
 
 const Songs_Grid = ({ path, observer }) => {

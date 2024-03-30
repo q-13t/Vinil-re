@@ -1,6 +1,6 @@
 import React, { createElement, useEffect, useState } from "react";
 import FolderEl from "./FolderEl";
-import burgerImg from "./assets/Burger.png";
+import burgerImg from "./assets/Burger.svg";
 import { open } from '@tauri-apps/api/dialog';
 import { BaseDirectory, createDir, exists, readDir, readTextFile, writeFile, writeTextFile } from "@tauri-apps/api/fs";
 import { path } from "@tauri-apps/api";
