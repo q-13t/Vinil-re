@@ -26,29 +26,38 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
     }
 
     useEffect(() => {
-        if (display === "My Music") {
-            utils.getFolders().then((folders) => {
-                // console.log(folders);
-                invoke("get_paths", { folders: folders, sortBy: "Time Created" }).then((res) => {
-                    setPaths(res);
-                })
-            });
-        } else if (display === "Recent Plays") {
-            setPaths(history);
-        } else if (display === "Current Play Queue") {
-            setPaths(currentPlaylist);
+        switch (display) {
+            case "My Music": {
+                console.log("My Music");
+                utils.getFolders().then((folders) => {
+                    // console.log(folders);
+                    invoke("get_paths", { folders: folders, sortBy: "Time Created" }).then((res) => {
+                        setPaths(res);
+                    })
+                });
+                break;
+            }
+            case "Recent Plays": {
+                console.log("Recent Plays");
+                setPaths(history);
+                break;
+            }
+            case "Current Play Queue": {
+                console.log("Current Play Queue");
+                setPaths(currentPlaylist);
+                break;
+            }
         }
     }, [display]);
 
     useEffect(() => {// effect for checked songs
-        console.log(selectedSongs);
         if (selectedSongs.length != 0) {
             document.getElementById("selectedActions").style.display = "flex";
 
         } else {
             document.getElementById("selectedActions").style.display = "none";
         }
-    }, [selectedSongs])
+    }, [selectedSongs]);
 
     let fetchData = (event) => {
         document.getElementById("sort").disabled = true;
@@ -118,8 +127,8 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
             <div id="MainSongContainer" {...(as === "grid" ? { className: "mainGrid" } : { className: "mainList" })}>
                 {paths.length != 0 && as === "list" ?
                     paths.map((path) => {
-                        odd = !odd; return <Songs_List path={path} odd={odd} setPlay={playlistChange} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
-                    }) : paths.map((path) => (<Songs_Grid path={path} observer={observer} />))}
+                        odd = !odd; return <Songs_List key={path} path={path} odd={odd} setPlay={playlistChange} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
+                    }) : paths.map((path) => (<Songs_Grid key={path} path={path} observer={observer} />))}
             </div>
         </div >
     );
