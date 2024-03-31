@@ -6,8 +6,6 @@ import Songs_List from "./Songs-List";
 import { invoke } from "@tauri-apps/api";
 import playlistImg from "./assets/Playlist.svg";
 
-// TODO: Implement song altering
-
 
 const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, setCurrentPlaylist, setCurrentSong, navigateTo }) => {
     const [queryParameters] = useSearchParams();
@@ -96,6 +94,7 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
     let playlistChange = (path) => {
         setCurrentPlaylist(songs);
         setCurrentSong(path);
+        localStorage.setItem("currentPlaylist", JSON.stringify(songs));
     }
     let deletePlaylist = (path) => {
         utils.deletePlaylist(path).then(() => {

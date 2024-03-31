@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import burgerImg from "./assets/Burger.svg";
 import { convertFileSrc } from "@tauri-apps/api/tauri";
-import { fs, invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api";
 import utils from "./main";
 import repeatImg from "./assets/Repeat.svg";
 import shuffleImg from "./assets/Shuffle.svg";
@@ -10,16 +10,14 @@ import nextImg from "./assets/Next.svg";
 import playImg from "./assets/Play.svg";
 import pauseImg from "./assets/Pause.svg";
 import soundImg from "./assets/Sound.svg";
-
 import noSoundImg from "./assets/No Sound.svg";
-import { BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
+
 
 const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history, setHistory }) => {
 
     let [player, setPlayer] = useState(new Audio());
-    let shuffle = false;
-    console.log(player);
-
+    let shuffle = localStorage.getItem("shuffle") === "true";
+    let load = false;
     useEffect(() => {
         async function fetchData() {
             const duration = document.getElementById(`timeTotal`);
@@ -29,7 +27,10 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                     let minutes = Math.floor(player.duration / 60);
                     let seconds = Math.floor(player.duration - minutes * 60);
                     duration.innerHTML = minutes + ":" + (seconds > 9 ? seconds : "0" + seconds);
-                    player.play();
+                    if (load) {
+                        player.play();
+                        load = true;
+                    }
                 };
             }
             const res = await invoke("get_tag", { path: currentSong });
@@ -47,16 +48,24 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                 }
             }
             setHistory([...history, currentSong]);
-            // console.log("Playing");
-            // console.log(currentSong, currentPlaylist);
+            localStorage.setItem("currentSong", currentSong);
         };
         if (currentSong !== "" && currentSong !== null && currentSong !== undefined)
             fetchData();
-
     }, [currentSong])
 
     useEffect(() => {
-
+        if (localStorage.getItem("loop") === "true") handleLoop();
+        if (localStorage.getItem("shuffle") === "true") handleShuffle();
+        if (localStorage.getItem("volume") !== null) {
+            document.getElementById("volumeSlider").value = localStorage.getItem("volume")
+            player.volume = localStorage.getItem("volume") / 100;
+        };
+        if (localStorage.getItem("muted") === "true") handleMute();
+        if (localStorage.getItem("currentTime") !== null) {
+            document.getElementById("timeSlider").value = localStorage.getItem("currentTime")
+            player.currentTime = localStorage.getItem("currentTime")
+        };
         if (player !== null) {
             player.onended = function () {
                 if (shuffle) {
@@ -73,6 +82,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                 let timeSlider = document.getElementById(`timeSlider`);
                 if (timeSlider) timeSlider.value = Math.floor((player.currentTime / player.duration) * 100);
                 if (!player.paused) document.getElementById("controlPlay").src = pauseImg;
+                localStorage.setItem("currentTime", player.currentTime);
             }
         }
 
@@ -126,18 +136,14 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
 
     let handleMute = (event) => {
         toggleBorder(event);
-        if (player.muted) {
-            player.muted = false;
-            event.target.src = soundImg;
-        } else {
-            player.muted = true;
-            event.target.src = noSoundImg;
-        }
+        player.muted = !player.muted, event.target.src = (player.muted ? noSoundImg : soundImg);
+        localStorage.setItem("muted", player.muted);
     }
 
     let handleLoop = (event) => {
         toggleBorder(event);
         player.loop = !player.loop;
+        localStorage.setItem("loop", player.loop);
         // console.log(shuffle, player.loop);
 
     }
@@ -145,7 +151,13 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
     let handleShuffle = (event) => {
         toggleBorder(event);
         shuffle = !shuffle;
+        localStorage.setItem("shuffle", shuffle);
         // console.log(shuffle, player.loop);
+    }
+
+    let handleVolume = (event) => {
+        player.volume = event.target.value / 100;
+        localStorage.setItem("volume", event.target.value);
     }
 
     return (
@@ -173,9 +185,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             </div>
             <div id="PlayerControlsMisc">
                 <img src={soundImg} alt="" id="controlMute" onClick={handleMute} />
-                <input type="range" id="volumeSlider" defaultValue={100} onInput={(e) => {
-                    player.volume = (e.target.value / 100)
-                }} />
+                <input type="range" id="volumeSlider" defaultValue={100} onInput={(e) => { handleVolume(e); }} />
             </div>
         </div>
     );

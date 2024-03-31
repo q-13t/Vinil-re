@@ -83,11 +83,13 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
     let playlistChange = (path) => {
         setCurrentPlaylist(paths);
         setCurrentSong(path);
+        localStorage.setItem("currentPlaylist", JSON.stringify(paths));
     }
 
     let handleShuffle = () => {
         setCurrentPlaylist(paths);
         setCurrentSong(paths[Math.floor(Math.random() * paths.length)]);
+        localStorage.setItem("currentPlaylist", JSON.stringify(paths));
     }
 
     return (
