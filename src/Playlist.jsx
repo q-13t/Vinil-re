@@ -16,8 +16,7 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
     let [songs, setSongs] = useState([]);
     let [changed, setChanged] = useState(false);
     let [playlistName, setPlaylistName] = useState("");
-    let [dragIndex, setDragIndex] = useState("");
-
+    let [draggedItemId, setDraggedItemId] = useState(null);
 
     useEffect(() => {
         async function populate() {
@@ -30,7 +29,6 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
                             let img = document.getElementById("PlayListImage");
                             if (img) img.src = "data:image/webp;base64," + res[3];
                         }
-
                     })
                 } else {
                     document.getElementById("PlayListImage").src = playlistImg;
@@ -63,15 +61,37 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
     }
 
     let dragStart = (e) => {
-
-        setDragIndex(e.target.id);
-
-        console.log("dragStart", dragIndex);
+        setDraggedItemId(e);
     }
-    let dragEnd = (e) => {
 
-        console.log(e.target.id, dragIndex);
+    let dragOver = (id) => {
+        const draggedItem = document.getElementById(draggedItemId);
+        const dropTarget = document.getElementById(id);
+
+        if (draggedItem && dropTarget !== draggedItem) {
+            // Determine the index of the drop target relative to its siblings
+            const dropTargetIndex = Array.from(dropTarget.parentNode.children).indexOf(dropTarget);
+            const draggedItemIndex = Array.from(draggedItem.parentNode.children).indexOf(draggedItem);
+
+            // Rearrange the children
+            if (dropTargetIndex > draggedItemIndex) {
+                dropTarget.parentNode.insertBefore(draggedItem, dropTarget.nextSibling);
+            } else {
+                dropTarget.parentNode.insertBefore(draggedItem, dropTarget);
+            }
+        }
     }
+
+    let dragEnd = (id) => {
+        const songIds = Array.from(document.getElementById("PlayListContent").children).map(item => item.id);
+        setSongs(songIds);
+        async function SavePlaylistOrder() {
+            utils.savePlaylist(playlistName, songIds);
+        }
+        setDraggedItemId(null);
+        SavePlaylistOrder();
+    }
+
 
     let playlistChange = (path) => {
         setCurrentPlaylist(songs);
@@ -102,7 +122,7 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
                     <p>Are you sure you want to delete this playlist?</p>
                     <div>
                         <button onClick={() => { deletePlaylist(path) }}>Delete</button>
-                        <button onClick={() => { document.getElementById("Delete-Playlist-Dialog").close() }}>Cancel</button>
+                        <button onClick={() => { document.getElementById("Delete-Playlist-Dialog").style.display = "none" }}>Cancel</button>
                     </div>
                 </div>
             </dialog>
@@ -118,9 +138,10 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
                     <p onClick={handleDeleteFromPlaylist}>Delete From Playlist</p>
                 </div>
             </div>
-            <div id="PlayListContent" onDragEnter={(e) => e.preventDefault()} onDragEnd={dragEnd} >
-                {songs.length != 0 && songs.map((song) => {
-                    odd = !odd; return <Songs_List key={song} path={song} odd={odd} observer={observer} setPlay={playlistChange} checked={selectedSongs} setChecked={setSelectedSongs} draggable={true} dragStart={dragStart} dragend={dragEnd} />;
+            <div id="PlayListContent" >
+                {songs.length != 0 && songs.map((path) => {
+                    odd = !odd;
+                    return (<Songs_List key={path} path={path} odd={odd} observer={observer} setPlay={playlistChange} checked={selectedSongs} setChecked={setSelectedSongs} draggable={true} dragStart={dragStart} dragOver={dragOver} dragEnd={dragEnd} />);
                 })}
             </div>
         </div >

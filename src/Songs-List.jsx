@@ -5,7 +5,7 @@ import checkImg from "./assets/Check.svg";
 import playImg from "./assets/Play.svg";
 import plusImg from "./assets/Plus.svg";
 
-const Songs_List = ({ path, odd, observer, checked, setChecked, setPlay, draggable = false, dragStart = null, dragEnd = null }) => {
+const Songs_List = ({ path, odd, observer, checked, setChecked, setPlay, draggable = false, dragStart = null, dragOver = null, dragEnd = null }) => {
     const ref = useRef(null);
 
     let updateThisCheck = () => {//Setts the check and adds to checked array
@@ -33,12 +33,33 @@ const Songs_List = ({ path, odd, observer, checked, setChecked, setPlay, draggab
     }, []);
 
 
+    const handleDragStart = (e) => {
+        dragStart(path);
+    };
 
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        dragOver(path);
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        dragEnd(path);
+    };
 
     return (
-        <div id={path} ref={ref} className={`song-el-container-list ${odd ? "odd" : ""}`} draggable={draggable} onDragStart={dragStart} onDragEnd={dragEnd} >
+        <div
+            id={path}
+            ref={ref}
+            className={`song-el-container-list ${odd ? "odd" : ""}`}
+            draggable={draggable}
+            onDragStart={(e) => { handleDragStart(e) }}
+            onDragOver={(e) => { handleDragOver(e) }}
+            onDrop={(e) => { handleDrop(e) }}
+        >
             <div id={`check-${path}`} className="song-el-check" style={{ backgroundImage: checked.includes(path) ? `url(${checkImg})` : "none" }} onClick={() => { updateThisCheck() }}></div>
-            <img id={`img-${path}`} className="song-el-album"></img>
+            <img id={`img-${path}`} className="song-el-album"
+            ></img>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", flex: "0 0 20%", maxWidth: "20%" }}>
                 <p id={`title-${path}`} className="song-el-title" ></p>
                 <img src={playImg} alt={burgerImg} className="song-el-play" onClick={() => { setPlay(path) }}></img>
