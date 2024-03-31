@@ -57,25 +57,26 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
 
     useEffect(() => {
 
-        player.onended = function () {
-            if (shuffle) {
-                let index = Math.floor(Math.random() * currentPlaylist.length);
-                setCurrentSong(currentPlaylist[index]);
-            } else document.getElementById("controlNext").click();
-        }
+        if (player !== null) {
+            player.onended = function () {
+                if (shuffle) {
+                    let index = Math.floor(Math.random() * currentPlaylist.length);
+                    setCurrentSong(currentPlaylist[index]);
+                } else document.getElementById("controlNext").click();
+            }
 
-        player.ontimeupdate = function () {
-            let minutes = Math.floor(player.currentTime / 60);
-            let seconds = Math.floor(player.currentTime - minutes * 60);
-            let timeCurrent = document.getElementById(`timeCurrent`);
-            if (timeCurrent) timeCurrent.innerHTML = minutes + ":" + (seconds > 9 ? seconds : "0" + seconds);
-            let timeSlider = document.getElementById(`timeSlider`);
-            if (timeSlider) timeSlider.value = Math.floor((player.currentTime / player.duration) * 100);
-            if (!player.paused) document.getElementById("controlPlay").src = pauseImg;
+            player.ontimeupdate = function () {
+                let minutes = Math.floor(player.currentTime / 60);
+                let seconds = Math.floor(player.currentTime - minutes * 60);
+                let timeCurrent = document.getElementById(`timeCurrent`);
+                if (timeCurrent) timeCurrent.innerHTML = minutes + ":" + (seconds > 9 ? seconds : "0" + seconds);
+                let timeSlider = document.getElementById(`timeSlider`);
+                if (timeSlider) timeSlider.value = Math.floor((player.currentTime / player.duration) * 100);
+                if (!player.paused) document.getElementById("controlPlay").src = pauseImg;
+            }
         }
 
         return () => {
-            player.pause();
             player.src = null;
             setPlayer(null);
         }
