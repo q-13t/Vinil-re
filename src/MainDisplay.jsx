@@ -130,7 +130,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
                 {paths.length != 0 && as === "list" ?
                     paths.map((path) => {
                         odd = !odd; return <Songs_List key={path} path={path} odd={odd} openDialog={openDialog} currentSong={currentSong} setPlay={playlistChange} playlists={playlists} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
-                    }) : paths.map((path) => (<Songs_Grid key={path} path={path} observer={observer} />))}
+                    }) : paths.map((path) => (<Songs_Grid key={path} path={path} observer={observer} openDialog={openDialog} playlists={playlists} setPlay={playlistChange} currentSong={currentSong} setChecked={setSelectedSongs} />))}
             </div>
         </div >
     );

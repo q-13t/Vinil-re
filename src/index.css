@@ -484,6 +484,17 @@ select *:hover {
     --display: none;
 }
 
+.song-el-container-grid .song-el-buttons .dropdown {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.song-el-container-grid .song-el-buttons .dropdown img {
+    height: inherit;
+}
+
 .mainGrid .song-el-container-grid:hover {
     background-color: var(--hover-color);
     --display: flex;
