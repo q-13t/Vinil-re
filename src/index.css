@@ -6,8 +6,12 @@
     --font-color: #cfcfcf;
     --hover-color: #505050;
     --focus-color: #707070;
+    --accent-color: #cfcfcf00;
 }
 
+.max-height {
+    height: 100%;
+}
 
 body {
     margin: 0;
@@ -71,7 +75,8 @@ select:hover,
 #controlNext:hover,
 #controlRepeat:hover,
 #controlMute:hover,
-#Delete-Playlist-Dialog-Container div button:hover {
+#Delete-Playlist-Dialog-Container div button:hover,
+.dropdown-el:hover {
     background-color: var(--hover-color);
 }
 
@@ -88,7 +93,8 @@ select:hover,
 #controlNext:active,
 #controlRepeat:active,
 #controlMute:active,
-#Delete-Playlist-Dialog-Container div button:active {
+#Delete-Playlist-Dialog-Container div button:active,
+.dropdown-el:active {
     animation: el-selection 0.05s linear forwards;
 }
 
@@ -393,7 +399,6 @@ select *:hover {
 }
 
 .song-el-container-list {
-    /* background-color: #000000; */
     height: 100%;
     max-height: 100%;
     display: flex;
@@ -725,4 +730,35 @@ select *:hover {
 
 #PlayListImage {
     max-width: 10%;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown:hover .song-el-add-control {
+    display: flex;
+}
+
+.song-el-add-control {
+    width: 10vw;
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+    background: var(--background-el);
+}
+
+
+.dropdown-playlist {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.dropdown-el {
+    background: var(--background-el);
+    color: var(--font-color);
 }

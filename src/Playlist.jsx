@@ -7,7 +7,7 @@ import { invoke } from "@tauri-apps/api";
 import playlistImg from "./assets/Playlist.svg";
 
 
-const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, setCurrentPlaylist, setCurrentSong, navigateTo }) => {
+const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, setCurrentPlaylist, setCurrentSong, currentSong, playlists, navigateTo }) => {
     const [queryParameters] = useSearchParams();
     let odd = false;
     let path = queryParameters.get("path");
@@ -140,7 +140,7 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
             <div id="PlayListContent" >
                 {songs.length != 0 && songs.map((path) => {
                     odd = !odd;
-                    return (<Songs_List key={path} path={path} odd={odd} observer={observer} setPlay={playlistChange} checked={selectedSongs} setChecked={setSelectedSongs} draggable={true} dragStart={dragStart} dragOver={dragOver} dragEnd={dragEnd} />);
+                    return (<Songs_List key={path} path={path} odd={odd} observer={observer} setPlay={playlistChange} currentSong={currentSong} playlists={playlists} checked={selectedSongs} setChecked={setSelectedSongs} draggable={true} dragStart={dragStart} dragOver={dragOver} dragEnd={dragEnd} />);
                 })}
             </div>
         </div >

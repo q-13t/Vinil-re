@@ -87,9 +87,9 @@ const MainWindow = () => {
 
                 <SideMenu openDialog={openDialog} playlists={playlists} navigateTo={navigateTo} />
                 <Routes>
-                    <Route path="/" element={<MainDisplay openDialog={openDialog} playlists={playlists} history={history} selectedSongs={selectedSongs} setSelectedSongs={setSelectedSongs} observer={observer} currentPlaylist={currentPlaylist} setCurrentPlaylist={setCurrentPlaylist} setCurrentSong={setCurrentSong} />} ></Route>
+                    <Route path="/" element={<MainDisplay openDialog={openDialog} playlists={playlists} history={history} selectedSongs={selectedSongs} setSelectedSongs={setSelectedSongs} observer={observer} currentPlaylist={currentPlaylist} setCurrentPlaylist={setCurrentPlaylist} setCurrentSong={setCurrentSong} currentSong={currentSong} />} ></Route>
                     <Route path="/settings" element={<Settings />} ></Route>
-                    <Route path="/playlist" element={<Playlist setPlaylists={setPlaylists} selectedSongs={selectedSongs} setSelectedSongs={setSelectedSongs} observer={observer} setCurrentPlaylist={setCurrentPlaylist} setCurrentSong={setCurrentSong} navigateTo={navigateTo} />}></Route>
+                    <Route path="/playlist" element={<Playlist setPlaylists={setPlaylists} selectedSongs={selectedSongs} setSelectedSongs={setSelectedSongs} observer={observer} setCurrentPlaylist={setCurrentPlaylist} setCurrentSong={setCurrentSong} currentSong={currentSong} playlists={playlists} navigateTo={navigateTo} />}></Route>
                 </Routes>
 
             </div>

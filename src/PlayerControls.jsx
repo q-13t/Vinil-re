@@ -27,7 +27,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                     let minutes = Math.floor(player.duration / 60);
                     let seconds = Math.floor(player.duration - minutes * 60);
                     duration.innerHTML = minutes + ":" + (seconds > 9 ? seconds : "0" + seconds);
-                    if (load) {
+                    if (!load) {
                         player.play();
                         load = true;
                     }
@@ -45,6 +45,8 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                 if (container) {
                     const rgb = utils.getAverageRGB(img);
                     container.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`;
+                    // document.documentElement.style.cssText = `--accent-color: rgb(${rgb.r}, ${rgb.g}, ${rgb.b});`;
+                    document.body.style.cssText = `--accent-color: rgb(${rgb.r}, ${rgb.g}, ${rgb.b});`; 1
                 }
             }
             setHistory([...history, currentSong]);
@@ -55,8 +57,16 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
     }, [currentSong])
 
     useEffect(() => {
-        if (localStorage.getItem("loop") === "true") handleLoop();
-        if (localStorage.getItem("shuffle") === "true") handleShuffle();
+        if (localStorage.getItem("loop") === "true") {
+
+            document.getElementById("controlRepeat").click();
+            // handleLoop()
+        };
+        ;
+        if (localStorage.getItem("shuffle") === "true") {
+            document.getElementById("controlShuffle").click()
+            // handleShuffle()
+        };
         if (localStorage.getItem("volume") !== null) {
             document.getElementById("volumeSlider").value = localStorage.getItem("volume")
             player.volume = localStorage.getItem("volume") / 100;

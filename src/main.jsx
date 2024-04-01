@@ -53,10 +53,9 @@ const utils = {
 
     },
 
-    async appendSong(playlist, selectedSongs) {
-        return await utils.getPlaylist(playlist).then(async (entries) => {
-
-            return await writeFile(`${playlist}`, JSON.stringify(entries.concat(selectedSongs)), { dir: BaseDirectory.AppConfig, recursive: true });
+    async appendSong(PlaylistPath, songsToAdd) {
+        return await utils.getPlaylist(PlaylistPath).then(async (entries) => {
+            return await writeFile(`${PlaylistPath}`, JSON.stringify(entries.concat(songsToAdd)), { dir: BaseDirectory.AppConfig, recursive: true });
         })
     },
 
@@ -115,7 +114,6 @@ const utils = {
         rgb.r = ~~(rgb.r / count);
         rgb.g = ~~(rgb.g / count);
         rgb.b = ~~(rgb.b / count);
-
         return rgb;
 
     }

@@ -8,7 +8,7 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { path } from "@tauri-apps/api";
 import shuffleImg from "./assets/Shuffle.svg";
 
-const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, observer, history, currentPlaylist, setCurrentPlaylist, setCurrentSong }) => {
+const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, observer, history, currentPlaylist, setCurrentPlaylist, setCurrentSong, currentSong }) => {
     let navigate = useNavigate();
     const [queryParameters] = useSearchParams();
     let [paths, setPaths] = useState([]);
@@ -129,7 +129,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
             <div id="MainSongContainer" {...(as === "grid" ? { className: "mainGrid" } : { className: "mainList" })}>
                 {paths.length != 0 && as === "list" ?
                     paths.map((path) => {
-                        odd = !odd; return <Songs_List key={path} path={path} odd={odd} setPlay={playlistChange} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
+                        odd = !odd; return <Songs_List key={path} path={path} odd={odd} openDialog={openDialog} currentSong={currentSong} setPlay={playlistChange} playlists={playlists} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
                     }) : paths.map((path) => (<Songs_Grid key={path} path={path} observer={observer} />))}
             </div>
         </div >
