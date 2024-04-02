@@ -38,6 +38,7 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
     }, [path]);
 
 
+
     let textAreaChange = (e) => {
         setChanged(true);
         console.log(e.target.value);

@@ -17,7 +17,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
 
     let [player, setPlayer] = useState(new Audio());
     let shuffle = localStorage.getItem("shuffle") === "true";
-    let load = false;
+    let [load, setLoad] = useState(false);
     useEffect(() => {
         async function fetchData() {
             const duration = document.getElementById(`timeTotal`);
@@ -27,10 +27,10 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                     let minutes = Math.floor(player.duration / 60);
                     let seconds = Math.floor(player.duration - minutes * 60);
                     duration.innerHTML = minutes + ":" + (seconds > 9 ? seconds : "0" + seconds);
-                    if (!load) {
+                    if (load) {
                         player.play();
-                        load = true;
                     }
+                    setLoad(true);
                 };
             }
             const res = await invoke("get_tag", { path: currentSong });

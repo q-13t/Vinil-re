@@ -2,7 +2,13 @@ import burgerImg from "./assets/Burger.svg";
 import PlaylistPreview from "./PlaylistPreview";
 import gearImg from "./assets/Gear.svg";
 import plusImg from "./assets/Plus.svg";
+import clockImg from "./assets/Clock.svg";
+import arrowsImg from "./assets/Arrows.svg";
+import XImg from "./assets/X.svg";
+import searchImg from "./assets/Search.svg";
+import { useState } from "react";
 const SideMenu = ({ openDialog, playlists, navigateTo }) => {
+    let [search, setSearch] = useState("");
 
 
     return (
@@ -10,9 +16,9 @@ const SideMenu = ({ openDialog, playlists, navigateTo }) => {
             <div>
                 <img id="sideMenuBurger" src={burgerImg} alt="" />
                 <div id="SearchBar">
-                    <input type="text" placeholder="Search" />
-                    <img src={burgerImg} alt=""></img>
-                    <img src={burgerImg} alt=""></img>
+                    <input type="text" placeholder="Search" value={search} onChange={(e) => { setSearch(e.target.value); }} />
+                    <img id="search-Search" style={{ display: search === "" ? "none" : "block" }} src={searchImg} alt={burgerImg} onClick={() => navigateTo(`/?display=Search Results&as=list&search-for=${search}`)}></img>
+                    <img id="search-Clear" style={{ display: search === "" ? "none" : "block" }} src={XImg} alt={burgerImg} onClick={() => { setSearch(""); }} ></img>
                 </div>
             </div>
             <div id="MainScrollable" >
@@ -22,11 +28,11 @@ const SideMenu = ({ openDialog, playlists, navigateTo }) => {
                     <p className="sideMenuText">My Music</p>
                 </div>
                 <div id="RecentList" className="sideMenuButton" onClick={() => navigateTo("/?display=Recent Plays&as=list")}>
-                    <img src={burgerImg} alt=""></img>
+                    <img src={clockImg} alt={burgerImg}></img>
                     <p className="sideMenuText">Recent plays</p>
                 </div>
                 <div id="CurrentList" className="sideMenuButton" onClick={() => navigateTo("/?display=Current Play Queue&as=list")}>
-                    <img src={burgerImg} alt=""></img>
+                    <img src={arrowsImg} alt={burgerImg}></img>
                     <p className="sideMenuText">Now playing</p>
                 </div>
                 <div id="PlaylistsContainer">

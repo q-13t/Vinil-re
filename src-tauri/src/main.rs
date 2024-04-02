@@ -7,7 +7,7 @@ use id3::{Tag, TagLike};
 use std::{fs, time::SystemTime};
 
 #[tauri::command]
-async fn get_paths(folders: Vec<String>, sort_by: String) -> Vec<String> {
+async fn get_paths(folders: Vec<String>, sort_by: String, search_text: String) -> Vec<String> {
     println!("Folders {:?}", folders);
     println!("Sort By {:?}", sort_by);
     let mut files: Vec<String> = Vec::new();
@@ -59,6 +59,33 @@ async fn get_paths(folders: Vec<String>, sort_by: String) -> Vec<String> {
                         .unwrap_or(""),
                 )
         }),
+        "Search" => {
+            if !search_text.is_empty() {
+                let tmp = &files
+                    .into_iter()
+                    .filter(|x| {
+                        let tag = Tag::read_from_path(x).unwrap_or(Tag::new());
+                        return tag
+                            .title()
+                            .unwrap_or("")
+                            .to_lowercase()
+                            .contains(&search_text)
+                            || tag
+                                .artist()
+                                .unwrap_or("")
+                                .to_lowercase()
+                                .contains(&search_text)
+                            || tag
+                                .album()
+                                .unwrap_or("")
+                                .to_lowercase()
+                                .contains(&search_text);
+                    })
+                    .collect::<Vec<String>>();
+                files = tmp.to_vec();
+            }
+        }
+
         _ => {
             files.sort_by(|a, b| {
                 fs::metadata(b.to_string())
@@ -109,7 +136,7 @@ async fn get_tag(path: String) -> (String, String, String, String, SystemTime) {
         }
 
         return (
-            tag.title().unwrap_or("").trim().to_string(),
+            tag.title().unwrap_or(&path).trim().to_string(),
             tag.artist().unwrap_or("").trim().to_string(),
             tag.album().unwrap_or("").trim().to_string(),
             general_purpose::STANDARD.encode(picture),

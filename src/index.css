@@ -57,6 +57,10 @@ img {
     padding: 0%;
 }
 
+.block {
+    display: block;
+}
+
 #sideMenuBurger:hover,
 .sideMenuButton:hover,
 #AddPlayList:hover,
@@ -76,7 +80,9 @@ select:hover,
 #controlRepeat:hover,
 #controlMute:hover,
 #Delete-Playlist-Dialog-Container div button:hover,
-.dropdown-el:hover {
+.dropdown-el:hover,
+#search-Search:hover,
+#search-Clear:hover {
     background-color: var(--hover-color);
 }
 
@@ -94,7 +100,9 @@ select:hover,
 #controlRepeat:active,
 #controlMute:active,
 #Delete-Playlist-Dialog-Container div button:active,
-.dropdown-el:active {
+.dropdown-el:active,
+#search-Search:active,
+#search-Clear:active {
     animation: el-selection 0.05s linear forwards;
 }
 
@@ -156,11 +164,17 @@ label {
 #SearchBar input {
     width: 100%;
     height: 100%;
-    padding: 0px;
-    margin: 0px;
-    padding-left: 5px;
+    margin: 1%;
     border: none;
-    background-color: var(--background-el);
+    outline: none;
+    color: var(--font-color);
+    flex: 1;
+    background-color: var(--hover-color);
+
+}
+
+#SearchBar input:focus-visible {
+    background-color: var(--hover-color);
 }
 
 #SearchBar img {
@@ -170,6 +184,7 @@ label {
     padding: 0px;
     margin: 0px;
     border: none;
+    display: none;
 }
 
 #PlaylistsButton {
