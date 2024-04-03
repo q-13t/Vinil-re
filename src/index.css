@@ -108,7 +108,9 @@ select:hover,
 #Delete-Playlist-Dialog-Container div button:active,
 .dropdown-el:active,
 #search-Search:active,
-#search-Clear:active {
+#search-Clear:active,
+.song-el-container-list .song-el-play:active,
+.song-el-container-list .song-el-add:active {
     animation: el-selection 0.05s linear forwards;
 }
 
@@ -146,9 +148,14 @@ label {
     justify-content: flex-start;
 }
 
-/* .sideMenuButton:active {
-    border-left: 10px solid #1a1a1a;
-} */
+
+.sideMenuButton * {
+    pointer-events: none;
+}
+
+.activeBorder-right {
+    border-left: 10px solid var(--accent-color);
+}
 
 .sideMenuButton img {
     max-width: 40px;
@@ -466,6 +473,7 @@ select *:hover {
 }
 
 
+
 .song-el-container-list .song-el-artist,
 .song-el-container-list .song-el-album {
     flex: 1 0 10%;
@@ -644,6 +652,7 @@ select *:hover {
     position: sticky;
     top: 0%;
     background-color: var(--background-base);
+    border-bottom: 1px solid var(--border-color);
 }
 
 #new-playlist-dialog,
@@ -708,8 +717,8 @@ select *:hover {
 
 #PlayListControls {
     display: flex;
+    flex-direction: row;
     padding: 1% 0% 1% 0%;
-    border-bottom: 1px solid var(--border-color);
 }
 
 #PlayListControls * {
@@ -729,7 +738,7 @@ select *:hover {
 }
 
 #PlayListData {
-    padding: 1% 0% 1% 0%;
+    padding: 1%;
     display: flex;
     align-items: center;
     justify-content: flex-start;

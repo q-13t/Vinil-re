@@ -7,7 +7,7 @@ import { invoke } from "@tauri-apps/api";
 import playlistImg from "./assets/Playlist.svg";
 
 
-const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, setCurrentPlaylist, setCurrentSong, currentSong, playlists, navigateTo }) => {
+const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, setCurrentPlaylist, setCurrentSong, currentSong, playlists, navigateTo, setForcePlay, forcePlay }) => {
     const [queryParameters] = useSearchParams();
     let odd = false;
     let path = queryParameters.get("path");
@@ -26,6 +26,11 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
                         if (res[3]) {
                             let img = document.getElementById("PlayListImage");
                             if (img) img.src = "data:image/webp;base64," + res[3];
+                            img.addEventListener('load', function () {
+                                const rgb = utils.getAverageRGB(img);
+                                document.getElementById("PlayListTopMenu").style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+                                img.removeEventListener('load');
+                            })
                         }
                     })
                 } else {
@@ -87,12 +92,24 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
         async function SavePlaylistOrder() {
             utils.savePlaylist(playlistName, songIds);
         }
+        async function updateImg() {
+            await invoke("get_tag", { path: songIds[0] }).then((res) => {//get first song image and set it as album cover
+                if (res[3]) {
+                    let img = document.getElementById("PlayListImage");
+                    if (img) img.src = "data:image/webp;base64," + res[3];
+                    const rgb = utils.getAverageRGB(img);
+                    document.getElementById("PlayListTopMenu").style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+                }
+            });
+        }
+        updateImg();
         setDraggedItemId(null);
         SavePlaylistOrder();
     }
 
 
     let playlistChange = (path) => {
+        setForcePlay(!forcePlay);
         setCurrentPlaylist(songs);
         setCurrentSong(path);
         localStorage.setItem("currentPlaylist", JSON.stringify(songs));
@@ -129,14 +146,18 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
             <div id="PlayListTopMenu">
                 <div id="PlayListData">
                     <img id="PlayListImage" src={burgerImg} alt="" />
-                    <input type="text" onChange={(e) => textAreaChange(e)} value={playlistName} id="playlistName" />
-                    <p id="PlayListDataSave" onClick={() => { saveData() }} style={{ display: changed ? "block" : "none" }}>Save</p>
+                    <div style={{ flex: 1 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                            <input type="text" onChange={(e) => textAreaChange(e)} value={playlistName} id="playlistName" />
+                            <p id="PlayListDataSave" onClick={() => { saveData() }} style={{ display: changed ? "block" : "none" }}>Save</p>
+                        </div>
+                        <div id="PlayListControls">
+                            <p onClick={() => { document.getElementById("Delete-Playlist-Dialog").style.display = "flex" }}>Delete Playlist</p>
+                            <p onClick={handleDeleteFromPlaylist}>Delete From Playlist</p>
+                        </div>
+                    </div>
+                </div>
 
-                </div>
-                <div id="PlayListControls">
-                    <p onClick={() => { document.getElementById("Delete-Playlist-Dialog").style.display = "flex" }}>Delete Playlist</p>
-                    <p onClick={handleDeleteFromPlaylist}>Delete From Playlist</p>
-                </div>
             </div>
             <div id="PlayListContent" >
                 {songs.length != 0 && songs.map((path) => {

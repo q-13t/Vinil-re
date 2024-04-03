@@ -8,7 +8,7 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { path } from "@tauri-apps/api";
 import shuffleImg from "./assets/Shuffle.svg";
 
-const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, observer, history, currentPlaylist, setCurrentPlaylist, setCurrentSong, currentSong }) => {
+const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, observer, history, currentPlaylist, setCurrentPlaylist, setCurrentSong, currentSong, setForcePlay, forcePlay }) => {
     let navigate = useNavigate();
     const [queryParameters] = useSearchParams();
     let [paths, setPaths] = useState([]);
@@ -97,6 +97,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
     }
 
     let playlistChange = (path) => {
+        setForcePlay(!forcePlay)
         setCurrentPlaylist(paths);
         setCurrentSong(path);
         localStorage.setItem("currentPlaylist", JSON.stringify(paths));

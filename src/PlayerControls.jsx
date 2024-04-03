@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import burgerImg from "./assets/Burger.svg";
 import { convertFileSrc } from "@tauri-apps/api/tauri";
 import { invoke } from "@tauri-apps/api";
@@ -12,12 +12,15 @@ import pauseImg from "./assets/Pause.svg";
 import soundImg from "./assets/Sound.svg";
 import noSoundImg from "./assets/No Sound.svg";
 
+let historyIndex = 0;
+let addToHistory = true;
 
-const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history, setHistory }) => {
+const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history, setHistory, forcePlay }) => {
 
     let [player, setPlayer] = useState(new Audio());
     let shuffle = localStorage.getItem("shuffle") === "true";
     let [load, setLoad] = useState(false);
+
     useEffect(() => {
         async function fetchData() {
             const duration = document.getElementById(`timeTotal`);
@@ -29,6 +32,9 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                     duration.innerHTML = minutes + ":" + (seconds > 9 ? seconds : "0" + seconds);
                     if (load) {
                         player.play();
+                        if (addToHistory)
+                            historyIndex = history.length;
+                        console.log(historyIndex);
                     }
                     setLoad(true);
                 };
@@ -41,32 +47,39 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                 if (artist) artist.innerHTML = res[1];
                 const img = document.getElementById(`PlayerControlsSongDataAlbum`);
                 if (img) img.src = res[3] ? "data:image/webp;base64," + res[3] : burgerImg;
-                const container = document.getElementById(`PlayerControlsContainer`);
-                if (container) {
-                    const rgb = utils.getAverageRGB(img);
-                    container.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`;
-                    // document.documentElement.style.cssText = `--accent-color: rgb(${rgb.r}, ${rgb.g}, ${rgb.b});`;
-                    document.body.style.cssText = `--accent-color: rgb(${rgb.r}, ${rgb.g}, ${rgb.b});`; 1
-                }
+                img.addEventListener('load', function () {
+                    const container = document.getElementById(`PlayerControlsContainer`);
+                    if (container) {
+                        const rgb = utils.getAverageRGB(img);
+                        container.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`;
+                        document.body.style.cssText = `--accent-color: rgb(${rgb.r}, ${rgb.g}, ${rgb.b});`;
+                    }
+                    img.removeEventListener('load', function () {
+                        const container = document.getElementById(`PlayerControlsContainer`);
+                        if (container) {
+                            const rgb = utils.getAverageRGB(img);
+                            container.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`;
+                            document.body.style.cssText = `--accent-color: rgb(${rgb.r}, ${rgb.g}, ${rgb.b});`;
+                        }
+                    });
+                })
+
             }
-            setHistory([...history, currentSong]);
+            if (addToHistory) {
+                setHistory([...history, currentSong]);
+            }
             localStorage.setItem("currentSong", currentSong);
         };
-        if (currentSong !== "" && currentSong !== null && currentSong !== undefined)
+        if (currentSong !== "" && currentSong !== null && currentSong !== undefined) {
             fetchData();
-    }, [currentSong])
+        }
+
+    }, [currentSong, forcePlay])
 
     useEffect(() => {
-        if (localStorage.getItem("loop") === "true") {
-
-            document.getElementById("controlRepeat").click();
-            // handleLoop()
-        };
+        if (localStorage.getItem("loop") === "true") { document.getElementById("controlRepeat").click(); };
         ;
-        if (localStorage.getItem("shuffle") === "true") {
-            document.getElementById("controlShuffle").click()
-            // handleShuffle()
-        };
+        if (localStorage.getItem("shuffle") === "true") { document.getElementById("controlShuffle").click() };
         if (localStorage.getItem("volume") !== null) {
             document.getElementById("volumeSlider").value = localStorage.getItem("volume")
             player.volume = localStorage.getItem("volume") / 100;
@@ -111,27 +124,35 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
     }
 
     let handlePrevious = () => {
-        if (player.currentTime >= 10) {
-            // player.pause();
+        console.log("current:", historyIndex, " history:", history.length, " playlist:", currentPlaylist.length);
+        if (player.currentTime >= 10 || historyIndex < 0) {
             player.currentTime = 0;
-            // player.play();
         } else {
-            let index = history.indexOf(currentSong) - 1;
-            if (index > 0) setCurrentSong(history[index]);
+            addToHistory = false;
+            historyIndex = historyIndex - 1;
+            setCurrentSong(history[historyIndex]);
         }
     }
 
     let handleNext = () => {
-        // console.log("next", shuffle);
-        if (shuffle) {
-            let index = Math.floor(Math.random() * currentPlaylist.length);
-            setCurrentSong(currentPlaylist[index]);
+        console.log(historyIndex);
+        if (historyIndex < history.length - 1) {
+            addToHistory = false;
+            historyIndex = historyIndex + 1
+            setCurrentSong(history[historyIndex]);
+        } else if (shuffle) {
+            historyIndex = Math.floor(Math.random() * currentPlaylist.length);
+            addToHistory = true;
+            setCurrentSong(currentPlaylist[historyIndex]);
         } else {
-            // console.log(currentSong, currentPlaylist.includes(currentSong), currentPlaylist.indexOf(currentSong) + 1);
-            let index = currentPlaylist.indexOf(currentSong) + 1;
-            if (index === currentPlaylist.length) index = 0;
-            setCurrentSong(currentPlaylist[index]);
+            addToHistory = true;
+            historyIndex = history.length;
+            setCurrentSong(currentPlaylist[currentPlaylist.indexOf(currentSong) + 1]);
         }
+        // let index = currentPlaylist.indexOf(currentSong) + 1;
+        // if (index === currentPlaylist.length) index = 0;
+        // setCurrentSong(currentPlaylist[index]);
+
     }
 
     let handlePause = (event) => {

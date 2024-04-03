@@ -19,7 +19,7 @@ async function isIntersecting(entries) {
             if (entry.isIntersecting) {
                 async function fetchData() {
                     const duration = document.getElementById(`duration-${id}`);
-                    if (duration) {
+                    if (duration && duration.innerHTML === "") {
                         let audio = new Audio(convertFileSrc(id));
                         audio.onloadedmetadata = function () {// I wish not to do it this way, but can't make Rust read the duration :[
                             let minutes = Math.floor(audio.duration / 60);
@@ -41,23 +41,12 @@ async function isIntersecting(entries) {
                 };
                 fetchData();
             } else {
-                const title = document.getElementById(`title-${id}`);
-                if (title) title.innerHTML = null;
-                const artist = document.getElementById(`artist-${id}`);
-                if (artist) artist.innerHTML = null;
-                const duration = document.getElementById(`duration-${id}`);
-                if (duration) duration.innerHTML = null;
-                const album = document.getElementById(`album-${id}`);
-                if (album) album.innerHTML = null;
                 const img = document.getElementById(`img-${id}`);
                 if (img) img.src = null;
-                const created = document.getElementById(`created-${id}`);
-                if (created) created.value = null;
             }
         });
     }
     intersect();
-
 }
 
 
@@ -70,6 +59,7 @@ const MainWindow = () => {
     let [history, setHistory] = useState([]);
     let [currentSong, setCurrentSong] = useState(localStorage.getItem("currentSong"));
     let navigateTo = useNavigate();
+    let [forcePlay, setForcePlay] = useState(false);
 
     useEffect(() => {
         utils.getPlaylists().then((playlists) => {
@@ -87,13 +77,13 @@ const MainWindow = () => {
 
                 <SideMenu openDialog={openDialog} playlists={playlists} navigateTo={navigateTo} />
                 <Routes>
-                    <Route path="/" element={<MainDisplay openDialog={openDialog} playlists={playlists} history={history} selectedSongs={selectedSongs} setSelectedSongs={setSelectedSongs} observer={observer} currentPlaylist={currentPlaylist} setCurrentPlaylist={setCurrentPlaylist} setCurrentSong={setCurrentSong} currentSong={currentSong} />} ></Route>
+                    <Route path="/" element={<MainDisplay openDialog={openDialog} playlists={playlists} history={history} selectedSongs={selectedSongs} setSelectedSongs={setSelectedSongs} observer={observer} currentPlaylist={currentPlaylist} setCurrentPlaylist={setCurrentPlaylist} setCurrentSong={setCurrentSong} currentSong={currentSong} forcePlay={forcePlay} setForcePlay={setForcePlay} />} ></Route>
                     <Route path="/settings" element={<Settings />} ></Route>
-                    <Route path="/playlist" element={<Playlist setPlaylists={setPlaylists} selectedSongs={selectedSongs} setSelectedSongs={setSelectedSongs} observer={observer} setCurrentPlaylist={setCurrentPlaylist} setCurrentSong={setCurrentSong} currentSong={currentSong} playlists={playlists} navigateTo={navigateTo} />}></Route>
+                    <Route path="/playlist" element={<Playlist setPlaylists={setPlaylists} selectedSongs={selectedSongs} setSelectedSongs={setSelectedSongs} observer={observer} setCurrentPlaylist={setCurrentPlaylist} setCurrentSong={setCurrentSong} currentSong={currentSong} playlists={playlists} navigateTo={navigateTo} forcePlay={forcePlay} setForcePlay={setForcePlay} />}></Route>
                 </Routes>
 
             </div>
-            <PlayerControls currentSong={currentSong} setCurrentSong={setCurrentSong} currentPlaylist={currentPlaylist} history={history} setHistory={setHistory} />
+            <PlayerControls currentSong={currentSong} setCurrentSong={setCurrentSong} currentPlaylist={currentPlaylist} history={history} setHistory={setHistory} forcePlay={forcePlay} />
         </div>
     );
 }
