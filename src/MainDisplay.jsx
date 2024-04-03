@@ -52,7 +52,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
                 setPaths([]);
                 setLoading(true);
                 utils.getFolders().then((folders) => {
-                    invoke("get_paths", { folders: folders, sortBy: "Search", searchText: queryParameters.get("search-for").toLowerCase() }).then((res) => {
+                    invoke("get_paths", { folders: folders, sortBy: "Time Created", searchText: queryParameters.get("search-for").toLowerCase() }).then((res) => {
                         setPaths(res);
                         setLoading(false);
                     })
@@ -77,7 +77,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
         setPaths([]);
         setLoading(true);
         utils.getFolders().then((folders) => {
-            invoke("get_paths", { folders: folders, sortBy: event.target.value, searchText: "" }).then((res) => {
+            invoke("get_paths", { folders: folders, sortBy: event.target.value, searchText: queryParameters.get("search-for").toLowerCase() }).then((res) => {
                 setPaths(res);
                 document.getElementById("sort").disabled = false;
                 setLoading(false);

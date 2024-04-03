@@ -23,6 +23,30 @@ async fn get_paths(folders: Vec<String>, sort_by: String, search_text: String) -
             .collect();
         files.append(&mut list);
     }
+    if !search_text.is_empty() {
+        let tmp = &files
+            .into_iter()
+            .filter(|x| {
+                let tag = Tag::read_from_path(x).unwrap_or(Tag::new());
+                return tag
+                    .title()
+                    .unwrap_or("")
+                    .to_lowercase()
+                    .contains(&search_text)
+                    || tag
+                        .artist()
+                        .unwrap_or("")
+                        .to_lowercase()
+                        .contains(&search_text)
+                    || tag
+                        .album()
+                        .unwrap_or("")
+                        .to_lowercase()
+                        .contains(&search_text);
+            })
+            .collect::<Vec<String>>();
+        files = tmp.to_vec();
+    }
     match sort_by.as_str() {
         "Time Created" => {
             files.sort_by(|a, b| {
@@ -59,33 +83,6 @@ async fn get_paths(folders: Vec<String>, sort_by: String, search_text: String) -
                         .unwrap_or(""),
                 )
         }),
-        "Search" => {
-            if !search_text.is_empty() {
-                let tmp = &files
-                    .into_iter()
-                    .filter(|x| {
-                        let tag = Tag::read_from_path(x).unwrap_or(Tag::new());
-                        return tag
-                            .title()
-                            .unwrap_or("")
-                            .to_lowercase()
-                            .contains(&search_text)
-                            || tag
-                                .artist()
-                                .unwrap_or("")
-                                .to_lowercase()
-                                .contains(&search_text)
-                            || tag
-                                .album()
-                                .unwrap_or("")
-                                .to_lowercase()
-                                .contains(&search_text);
-                    })
-                    .collect::<Vec<String>>();
-                files = tmp.to_vec();
-            }
-        }
-
         _ => {
             files.sort_by(|a, b| {
                 fs::metadata(b.to_string())
