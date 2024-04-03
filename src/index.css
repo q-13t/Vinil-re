@@ -50,12 +50,18 @@ img {
     flex-direction: column;
 }
 
+#SideMenu-small {
+    display: flex;
+    flex-direction: column;
+}
+
 #sideMenuBurger {
-    height: 60px;
-    width: 60px;
+    height: 40px;
+    width: 40px;
     margin: 0%;
     padding: 0%;
 }
+
 
 .block {
     display: block;
@@ -483,16 +489,13 @@ select *:hover {
     display: grid;
     grid-auto-flow: dense;
     grid-template-columns: repeat(auto-fill, 180px);
-    grid-auto-rows: 30vh;
+    grid-auto-rows: auto;
     gap: 10px;
 }
 
 .mainGrid .song-el-container-grid {
     display: flex;
     flex-direction: column;
-    flex-wrap: wrap;
-    align-content: center;
-    align-items: center;
     justify-content: space-between;
     border: 1px solid var(--border-color);
     position: relative;
