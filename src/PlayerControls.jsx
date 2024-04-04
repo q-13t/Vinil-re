@@ -21,6 +21,10 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
     let shuffle = localStorage.getItem("shuffle") === "true";
     let [load, setLoad] = useState(false);
 
+
+
+
+
     useEffect(() => {
         async function fetchData() {
             const duration = document.getElementById(`timeTotal`);
@@ -36,6 +40,8 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                             historyIndex = history.length;
                         console.log(historyIndex);
                     }
+
+
                     setLoad(true);
                 };
             }
@@ -63,7 +69,16 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                         }
                     });
                 })
-
+                if ('mediaSession' in navigator) {
+                    navigator.mediaSession.metadata = new MediaMetadata({
+                        title: res[0],
+                        artist: res[1],
+                        album: res[2],
+                        artwork: [
+                            { src: res[3] ? "data:image/webp;base64," + res[3] : burgerImg, type: 'image/webp' },
+                        ]
+                    });
+                }
             }
             if (addToHistory) {
                 setHistory([...history, currentSong]);
@@ -78,7 +93,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
 
     useEffect(() => {
         if (localStorage.getItem("loop") === "true") { document.getElementById("controlRepeat").click(); };
-        ;
+        if (localStorage.getItem("shuffle") === "true") { document.getElementById("controlShuffle").click() };
         if (localStorage.getItem("shuffle") === "true") { document.getElementById("controlShuffle").click() };
         if (localStorage.getItem("volume") !== null) {
             document.getElementById("volumeSlider").value = localStorage.getItem("volume")
@@ -109,6 +124,26 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             }
         }
 
+        if ('mediaSession' in navigator) {
+            console.log("loaded");
+
+            navigator.mediaSession.setActionHandler('play', () => {
+                if (!player.paused) {
+                    player.pause(); document.getElementById("controlPlay").src = playImg;
+                } else { player.play(); document.getElementById("controlPlay").src = pauseImg; }
+            });
+            navigator.mediaSession.setActionHandler('pause', () => {
+                if (!player.paused) {
+                    player.pause(); document.getElementById("controlPlay").src = playImg;
+                } else { player.play(); document.getElementById("controlPlay").src = pauseImg; }
+            });
+            navigator.mediaSession.setActionHandler('seekbackward', () => { document.getElementById("controlPrevious").click(); });
+            navigator.mediaSession.setActionHandler('seekforward', () => { document.getElementById("controlNext").click(); });
+            navigator.mediaSession.setActionHandler('previoustrack', () => { document.getElementById("controlPrevious").click(); });
+            navigator.mediaSession.setActionHandler('nexttrack', () => { document.getElementById("controlNext").click(); });
+        }
+
+
         return () => {
             player.src = null;
             setPlayer(null);
@@ -124,10 +159,9 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
     }
 
     let handlePrevious = () => {
-        console.log("current:", historyIndex, " history:", history.length, " playlist:", currentPlaylist.length);
-        if (player.currentTime >= 10 || historyIndex < 0) {
+        if (player.currentTime >= 10) {
             player.currentTime = 0;
-        } else {
+        } else if (historyIndex > 0) {
             addToHistory = false;
             historyIndex = historyIndex - 1;
             setCurrentSong(history[historyIndex]);
@@ -135,7 +169,6 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
     }
 
     let handleNext = () => {
-        console.log(historyIndex);
         if (historyIndex < history.length - 1) {
             addToHistory = false;
             historyIndex = historyIndex + 1
@@ -145,15 +178,18 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             addToHistory = true;
             setCurrentSong(currentPlaylist[historyIndex]);
         } else {
-            addToHistory = true;
-            historyIndex = history.length;
-            setCurrentSong(currentPlaylist[currentPlaylist.indexOf(currentSong) + 1]);
+            const currentIndexInPlaylist = currentPlaylist.indexOf(currentSong);
+            if (currentIndexInPlaylist < currentPlaylist.length - 1) {
+                addToHistory = true;
+                setCurrentSong(currentPlaylist[currentIndexInPlaylist + 1]);
+            } else {
+                addToHistory = true;
+                currentIndexInPlaylist = 0
+                setCurrentSong(currentPlaylist[currentIndexInPlaylist]);
+            }
         }
-        // let index = currentPlaylist.indexOf(currentSong) + 1;
-        // if (index === currentPlaylist.length) index = 0;
-        // setCurrentSong(currentPlaylist[index]);
-
     }
+
 
     let handlePause = (event) => {
         if (player.paused) {
@@ -190,6 +226,8 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         player.volume = event.target.value / 100;
         localStorage.setItem("volume", event.target.value);
     }
+
+
 
     return (
         <div id="PlayerControlsContainer">

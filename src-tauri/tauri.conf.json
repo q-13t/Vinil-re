@@ -39,7 +39,7 @@
             }
         ],
         "security": {
-            "csp": "default-src 'self'; media-src 'self' asset: https://asset.localhost;"
+            "csp": "default-src 'self'; media-src 'self'; img-src * data:; script-src 'self'; style-src 'self'; media-src *; asset: https://asset.localhost;"
         },
         "bundle": {
             "active": true,
