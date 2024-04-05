@@ -38,7 +38,7 @@ const Songs_Grid = ({ path, observer, openDialog, playlists, setPlay, currentSon
             <p id={`title-${path}`} className="song-el-title" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}>Title</p>
             <div style={{ width: "90%", display: "flex", justifyContent: "space-between" }}>
                 <p id={`artist-${path}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}>Artist</p>
-                <p id={`duration-${path}`} className="song-el-time" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}>0:00</p>
+                <p id={`duration-${path}`} className="song-el-time" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
             </div>
 
             <div className="song-el-buttons">
