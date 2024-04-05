@@ -49,6 +49,8 @@ async function isIntersecting(entries) {
     intersect();
 }
 
+ document.addEventListener('contextmenu', event => event.preventDefault()); //Forbit RightClick actions on whole page
+
 
 const MainWindow = () => {
     let [observer, setObserver] = useState(new IntersectionObserver(isIntersecting));
