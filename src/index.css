@@ -512,7 +512,7 @@ select *:hover {
 
 .song-el-container-grid .song-el-buttons .dropdown {
     display: flex;
-    width: 100%;
+    width: auto;
     flex-direction: row;
     justify-content: center;
 }
@@ -541,7 +541,7 @@ select *:hover {
 
 
 .mainGrid .song-el-container-grid .song-el-buttons img {
-    max-width: 50%;
+    /* max-width: 50%; */
     border: 1px solid var(--border-color);
 }
 
@@ -777,6 +777,10 @@ select *:hover {
 
 .dropdown:hover .song-el-add-control {
     display: flex;
+}
+
+.song-el-add {
+    width: 95%;
 }
 
 .song-el-add-control {
