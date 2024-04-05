@@ -14,6 +14,7 @@ const SideMenu = ({ openDialog, playlists, navigateTo }) => {
     let [maximized, setMaximized] = useState(true);
     let [lastNav, setLastNav] = useState();
     useEffect(() => {
+        console.log(lastNav);
         window.addEventListener("resize", () => {
             if (window.innerWidth < 1200) {
                 setMaximized(false);
@@ -22,8 +23,11 @@ const SideMenu = ({ openDialog, playlists, navigateTo }) => {
             }
         })
         if (lastNav) {
-            if (!lastNav.classList.contains("activeBorder-right"))
-                lastNav.classList.add("activeBorder-right");
+            let el = document.getElementById(lastNav.id);
+            if (!el.classList.contains("activeBorder-right")) {
+                el.classList.add("activeBorder-right");
+                setLastNav(el);
+            }
         } else {
             document.getElementById("My Music").click();
         }
