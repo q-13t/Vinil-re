@@ -74,7 +74,6 @@ img {
 /* #displaySort  */
 select:hover,
 #AddFolderContainer:hover,
-.Folder img:hover,
 #topSubNav *:hover,
 #dialog-container div button:hover,
 #PlayListControls *:hover,
@@ -603,6 +602,11 @@ select *:hover {
 
 .Folder input:focus {
     border-left: 1px solid var(--focus-color);
+}
+
+.Folder img:hover {
+    cursor: pointer;
+    background-color: #c13c3c;
 }
 
 #selectedActions {

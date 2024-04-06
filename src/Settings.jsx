@@ -1,9 +1,10 @@
-import React, { createElement, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import FolderEl from "./FolderEl";
 import burgerImg from "./assets/Burger.svg";
+
+import plusImg from "./assets/Plus.svg";
 import { open } from '@tauri-apps/api/dialog';
-import { BaseDirectory, createDir, exists, readDir, readTextFile, writeFile, writeTextFile } from "@tauri-apps/api/fs";
-import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
+import { BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
 import utils from "./main";
 
 
@@ -42,7 +43,7 @@ const Settings = () => {
 
             <h3>Settings</h3>
             <div id="AddFolderContainer" onClick={() => { handleInputChange() }}>
-                <img src={burgerImg} alt={burgerImg} />
+                <img src={plusImg} alt={burgerImg} />
                 <p>Where to look for?</p>
             </div>
             <div id="FoldersContainer">
