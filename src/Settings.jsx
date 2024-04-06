@@ -3,8 +3,7 @@ import FolderEl from "./FolderEl";
 import burgerImg from "./assets/Burger.svg";
 import { open } from '@tauri-apps/api/dialog';
 import { BaseDirectory, createDir, exists, readDir, readTextFile, writeFile, writeTextFile } from "@tauri-apps/api/fs";
-import { path } from "@tauri-apps/api";
-import getFolders from "./main";
+import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
 import utils from "./main";
 
 
@@ -25,10 +24,11 @@ const Settings = () => {
             directory: true,
         });
         if (Array.isArray(selected)) {
-            let arr = [...paths, ...selected.map((path) => path)];
-            setPaths(arr);
-            writeTextFile('folders.json', JSON.stringify(arr), { dir: BaseDirectory.AppData, encoding: 'utf-8' });
-        }
+            let folders = [...paths, ...selected.map((path) => path)];
+            setPaths(folders);
+            writeTextFile('folders.json', JSON.stringify(folders), { dir: BaseDirectory.AppData, encoding: 'utf-8' });
+            utils.IndexSongs(folders);
+        };
     }
 
     let removePath = (path) => {
@@ -39,16 +39,18 @@ const Settings = () => {
 
     return (
         <div id="Settings">
+
             <h3>Settings</h3>
             <div id="AddFolderContainer" onClick={() => { handleInputChange() }}>
                 <img src={burgerImg} alt={burgerImg} />
                 <p>Where to look for?</p>
             </div>
             <div id="FoldersContainer">
-                {paths && paths.map((path) => <FolderEl path={path} removePath={removePath} />)}
+                {paths && paths.map((path) => <FolderEl key={path} path={path} removePath={removePath} />)}
             </div>
         </div >
     );
 }
+
 
 export default Settings;

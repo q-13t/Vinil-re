@@ -30,60 +30,42 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             const duration = document.getElementById(`timeTotal`);
             if (duration && player) {
                 player.src = convertFileSrc(currentSong);
-                player.onloadedmetadata = function () {// I wish not to do it this way, but can't make Rust read the duration :[
-                    let minutes = Math.floor(player.duration / 60);
-                    let seconds = Math.floor(player.duration - minutes * 60);
-                    duration.innerHTML = minutes + ":" + (seconds > 9 ? seconds : "0" + seconds);
+
+                utils.getTag(currentSong, false).then((res) => {
+                    const title = document.getElementById(`PlayerControlsSongDataTitle`);
+                    const artist = document.getElementById(`PlayerControlsSongDataArtist`);
+                    const img = document.getElementById(`PlayerControlsSongDataAlbum`);
+
+
+                    duration.innerHTML = res.duration;
                     if (load) {
                         player.play();
                         if (addToHistory)
                             historyIndex = history.length;
                         console.log(historyIndex);
                     }
+                    if (!load) setLoad(true);
 
-
-                    setLoad(true);
-                };
-            }
-            const res = await invoke("get_tag", { path: currentSong });
-            if (res) {
-                const title = document.getElementById(`PlayerControlsSongDataTitle`);
-                if (title) title.innerHTML = res[0];
-                const artist = document.getElementById(`PlayerControlsSongDataArtist`);
-                if (artist) artist.innerHTML = res[1];
-                const img = document.getElementById(`PlayerControlsSongDataAlbum`);
-                if (img) img.src = res[3] ? "data:image/webp;base64," + res[3] : burgerImg;
-                img.addEventListener('load', function () {
-                    const container = document.getElementById(`PlayerControlsContainer`);
-                    if (container) {
-                        const rgb = utils.getAverageRGB(img);
-                        container.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`;
-                        document.body.style.cssText = `--accent-color: rgb(${rgb.r}, ${rgb.g}, ${rgb.b});`;
+                    if (title) title.innerHTML = res.title;
+                    if (artist) artist.innerHTML = res.artist;
+                    let image = res.image;
+                    if (img) img.src = image.startsWith("data:image/webp;base64,") ? image : "data:image/webp;base64," + image;
+                    if ('mediaSession' in navigator) {
+                        navigator.mediaSession.metadata = new MediaMetadata({
+                            title: res.title,
+                            artist: res.artist,
+                            album: res.album,
+                            artwork: [
+                                { src: image.startsWith("data:image/webp;base64,") ? image : "data:image/webp;base64," + image, type: 'image/webp' },
+                            ]
+                        });
                     }
-                    img.removeEventListener('load', function () {
-                        const container = document.getElementById(`PlayerControlsContainer`);
-                        if (container) {
-                            const rgb = utils.getAverageRGB(img);
-                            container.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`;
-                            document.body.style.cssText = `--accent-color: rgb(${rgb.r}, ${rgb.g}, ${rgb.b});`;
-                        }
-                    });
                 })
-                if ('mediaSession' in navigator) {
-                    navigator.mediaSession.metadata = new MediaMetadata({
-                        title: res[0],
-                        artist: res[1],
-                        album: res[2],
-                        artwork: [
-                            { src: res[3] ? "data:image/webp;base64," + res[3] : burgerImg, type: 'image/webp' },
-                        ]
-                    });
+                if (addToHistory) {
+                    setHistory([...history.filter((song) => song !== currentSong), currentSong]);
                 }
+                localStorage.setItem("currentSong", currentSong);
             }
-            if (addToHistory) {
-                setHistory([...history, currentSong]);
-            }
-            localStorage.setItem("currentSong", currentSong);
         };
         if (currentSong !== "" && currentSong !== null && currentSong !== undefined) {
             fetchData();
@@ -150,6 +132,12 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         }
     }, [])
 
+    let imgLoad = (event) => {
+        const container = document.getElementById(`PlayerControlsContainer`);
+        const rgb = utils.getAverageRGB(event.target);
+        container.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`;
+        document.body.style.cssText = `--accent-color: rgb(${rgb.r}, ${rgb.g}, ${rgb.b});`;
+    }
     let toggleBorder = (event) => {
         event.target.classList.toggle("activeBorder");
     }
@@ -178,13 +166,13 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             addToHistory = true;
             setCurrentSong(currentPlaylist[historyIndex]);
         } else {
-            const currentIndexInPlaylist = currentPlaylist.indexOf(currentSong);
+            let currentIndexInPlaylist = currentPlaylist.indexOf(currentSong);
             if (currentIndexInPlaylist < currentPlaylist.length - 1) {
                 addToHistory = true;
                 setCurrentSong(currentPlaylist[currentIndexInPlaylist + 1]);
             } else {
                 addToHistory = true;
-                currentIndexInPlaylist = 0
+                currentIndexInPlaylist = 0;
                 setCurrentSong(currentPlaylist[currentIndexInPlaylist]);
             }
         }
@@ -232,7 +220,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
     return (
         <div id="PlayerControlsContainer">
             <div id="PlayerControlsSongData">
-                <img id="PlayerControlsSongDataAlbum" src={burgerImg} alt="" />
+                <img id="PlayerControlsSongDataAlbum" src={burgerImg} alt="" onLoad={imgLoad} />
                 <div id="PlayerControlsSongConfiner">
                     <p id="PlayerControlsSongDataTitle">Title</p>
                     <p id="PlayerControlsSongDataArtist">Artist</p>

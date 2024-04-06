@@ -8,6 +8,7 @@ import XImg from "./assets/X.svg";
 import searchImg from "./assets/Search.svg";
 import { useEffect, useState } from "react";
 import barsImg from "./assets/Bars.svg";
+import utils from "./main";
 
 const SideMenu = ({ openDialog, playlists, navigateTo }) => {
     let [search, setSearch] = useState("");
@@ -22,6 +23,7 @@ const SideMenu = ({ openDialog, playlists, navigateTo }) => {
                 setMaximized(true);
             }
         })
+
         if (lastNav) {
             let el = document.getElementById(lastNav.id);
             if (!el.classList.contains("activeBorder-right")) {
@@ -29,7 +31,12 @@ const SideMenu = ({ openDialog, playlists, navigateTo }) => {
                 setLastNav(el);
             }
         } else {
-            document.getElementById("My Music").click();
+            utils.getFolders().then((folders) => {
+                if (folders.length > 0)
+                    document.getElementById("My Music").click();
+                else
+                    document.getElementById("Setting").click();
+            })
         }
         return () => {
             window.removeEventListener("resize", () => {

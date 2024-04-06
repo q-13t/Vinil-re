@@ -35,9 +35,9 @@ const Songs_Grid = ({ path, observer, openDialog, playlists, setPlay, currentSon
     return (
         <div id={path} ref={ref} className="song-el-container-grid" >
             <img id={`img-${path}`} className="song-el-album" src={burgerImg}></img>
-            <p id={`title-${path}`} className="song-el-title" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}>Title</p>
+            <p id={`title-${path}`} className="song-el-title" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
             <div style={{ width: "90%", display: "flex", justifyContent: "space-between" }}>
-                <p id={`artist-${path}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}>Artist</p>
+                <p id={`artist-${path}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
                 <p id={`duration-${path}`} className="song-el-time" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
             </div>
 

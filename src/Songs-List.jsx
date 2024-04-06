@@ -93,7 +93,7 @@ const Songs_List = ({ path, odd, observer, checked, setChecked, setPlay, playlis
                     </div>
                 </div>
             </div >
-            <p id={`artist-${path}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}>Artist</p>
+            <p id={`artist-${path}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
             <p id={`album-${path}`} className="song-el-album" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
             <p id={`duration-${path}`} className="song-el-time" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
         </div >

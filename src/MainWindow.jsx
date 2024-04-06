@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route, useNavigate, json } from "react-router-dom";
+import { Routes, Route, useNavigate, json } from "react-router-dom";
 import SideMenu from "./SideMenu";
 import PlayerControls from "./PlayerControls";
 import MainDisplay from "./MainDisplay";
@@ -9,47 +9,37 @@ import NewPlayListDialog from "./NewPlaylistDialog";
 import utils from "./main";
 import Playlist from "./Playlist";
 import burgerImg from "./assets/Burger.svg";
-import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
 
 
 async function isIntersecting(entries) {
     async function intersect() {
         entries.forEach((entry) => {
             let id = entry.target.id;
-            if (entry.isIntersecting) {
+            if (entry.isIntersecting && document.getElementById(`title-${id}`).innerHTML === "") {
                 async function fetchData() {
                     const duration = document.getElementById(`duration-${id}`);
-                    if (duration && duration.innerHTML === "") {
-                        let audio = new Audio(convertFileSrc(id));
-                        audio.onloadedmetadata = function () {// I wish not to do it this way, but can't make Rust read the duration :[
-                            let minutes = Math.floor(audio.duration / 60);
-                            let seconds = Math.floor(audio.duration - minutes * 60);
-                            duration.innerHTML = minutes + ":" + (seconds > 9 ? seconds : "0" + seconds);
-                        };
-                    }
-                    const res = await invoke("get_tag", { path: id });
-                    if (res) {
-                        const title = document.getElementById(`title-${id}`);
-                        if (title) title.innerHTML = res[0];
-                        const artist = document.getElementById(`artist-${id}`);
-                        if (artist) artist.innerHTML = res[1];
-                        const album = document.getElementById(`album-${id}`);
-                        if (album) album.innerHTML = res[2];
-                        const img = document.getElementById(`img-${id}`);
-                        if (img) img.src = res[3] ? "data:image/webp;base64," + res[3] : burgerImg;
-                    }
+                    const title = document.getElementById(`title-${id}`);
+                    const artist = document.getElementById(`artist-${id}`);
+                    const album = document.getElementById(`album-${id}`);
+                    const img = document.getElementById(`img-${id}`);
+                    utils.getTag(id, false).then((res) => {
+                        console.log(res);
+                        if (title) title.innerHTML = res.title;
+                        if (artist) artist.innerHTML = res.artist;
+                        if (album) album.innerHTML = res.album;
+                        if (img) img.src = res.image.startsWith("data:image/webp;base64,") ? res.image : "data:image/webp;base64," + res.image;
+                        if (duration) duration.innerHTML = res.duration;
+                    })
+
                 };
                 fetchData();
-            } else {
-                const img = document.getElementById(`img-${id}`);
-                if (img) img.src = null;
             }
         });
     }
     intersect();
 }
 
- document.addEventListener('contextmenu', event => event.preventDefault()); //Forbit RightClick actions on whole page
+//  document.addEventListener('contextmenu', event => event.preventDefault()); //Forbid RightClick actions on whole page
 
 
 const MainWindow = () => {
@@ -69,6 +59,8 @@ const MainWindow = () => {
                 setPlaylists(playlists);
             }
         })
+
+        utils.IndexSongs(null);
 
     }, []);
     return (

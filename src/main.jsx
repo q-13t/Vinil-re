@@ -3,6 +3,10 @@ import "./index.css";
 import { BaseDirectory, createDir, exists, readDir, readTextFile, removeFile, renameFile, writeFile } from "@tauri-apps/api/fs";
 import MainWindow from "./MainWindow";
 import { BrowserRouter } from "react-router-dom";
+import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
+
+let finishedIndexing = true;
+
 
 const utils = {
     async getFolders() {
@@ -22,6 +26,8 @@ const utils = {
         });
     },
 
+
+
     async getPlaylists() {
         return await exists("Playlists", { dir: BaseDirectory.AppConfig }).then(async (exists) => {
             if (exists) {
@@ -29,7 +35,7 @@ const utils = {
                     return entries;
                 });
             } else {
-                return await createDir('Playlists', { dir: BaseDirectory.AppConfig, recursive: true });
+                return await createDir('Playlists', { dir: BaseDirectory.AppConfig, recursive: true }).then(() => { return [] });
             }
         }).catch((err) => {
             console.log(err);
@@ -116,6 +122,90 @@ const utils = {
         rgb.b = ~~(rgb.b / count);
         return rgb;
 
+    },
+    async getAudioDuration(filePath) {
+        return new Promise((resolve, reject) => {
+            const audio = new Audio(convertFileSrc(filePath));
+            audio.onloadedmetadata = () => {
+                const minutes = Math.floor(audio.duration / 60);
+                const seconds = Math.floor(audio.duration - minutes * 60);
+                resolve({ minutes, seconds });
+            };
+            audio.onerror = (error) => {
+                reject(error);
+            };
+        });
+    },
+    async getAudioMetadata(filePath) {
+        const res = await invoke("get_tag", { path: filePath });
+        if (res) {
+            return res; // Return an object with extracted metadata
+        } else {
+            return null; // Or throw an error if preferred
+        }
+    },
+    async getTag(filePath, indexing) {
+        await exists("SongsData", { dir: BaseDirectory.AppConfig }).then(async (exists) => {
+            if (!exists) {
+                await createDir('SongsData', { dir: BaseDirectory.AppConfig, recursive: true });
+            }
+        })
+        let filename = filePath.match(/([^/\\]*)\.[^/\\]+$/)[0];
+        return await exists(`SongsData\\${filename}.json`, { dir: BaseDirectory.AppConfig }).then(async (exists) => {
+            if (exists) {
+                if (!indexing)
+                    return await readTextFile(`SongsData\\${filename}.json`, { dir: BaseDirectory.AppConfig }).then((data) => {
+                        return JSON.parse(data);
+                    })
+            } else {
+                console.log("READING:" + filename);
+                const { minutes, seconds } = await utils.getAudioDuration(filePath);
+                const [title, artist, album, image, created] = await utils.getAudioMetadata(filePath);
+                writeFile(`SongsData\\${filename}.json`, JSON.stringify({ title, artist, album, image, duration: `${minutes}:${seconds}` }), { dir: BaseDirectory.AppConfig, recursive: true });
+                const duration = `${minutes > 9 ? minutes : "0" + minutes}:${seconds > 9 ? seconds : "0" + seconds}`
+                if (!indexing) return { title, artist, album, image, duration }; // Return an object with extracted metadata
+            }
+        })
+    },
+
+    async IndexSongs(folders) {
+        if (!finishedIndexing) return;
+
+        if (folders == null || folders.length == 0) {
+            await utils.getFolders().then((paths) => {
+                if (paths.length == 0) {
+                    return;
+                }
+                folders = paths;
+            })
+        }
+
+        finishedIndexing = false;
+        await exists("SongsData", { dir: BaseDirectory.AppConfig }).then(async (exists) => {
+            if (!exists) {
+                await createDir('SongsData', { dir: BaseDirectory.AppConfig, recursive: true });
+            }
+            await invoke("get_paths", { folders: folders, sortBy: "Time Created", searchText: "" }).then((paths) => {
+                let els = 0;
+                async function INDEX(path) {
+                    console.log("INDEXING:" + path);
+                    await utils.getTag(path, true).then(() => {
+                        els += +1;
+                        if (els < paths.length) {
+                            INDEX(paths[els])
+                        }
+                    }).catch((err) => {
+                        console.log(err);
+                        els += +1;
+                        if (els < paths.length) {
+                            INDEX(paths[els])
+                        }
+                    })
+                }
+                INDEX(paths[0]);
+            })
+            finishedIndexing = true;
+        })
     }
 
 };
