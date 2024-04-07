@@ -88,10 +88,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         };
         if (player !== null) {
             player.onended = function () {
-                if (shuffle) {
-                    let index = Math.floor(Math.random() * currentPlaylist.length);
-                    setCurrentSong(currentPlaylist[index]);
-                } else document.getElementById("controlNext").click();
+                document.getElementById("controlNext").click();
             }
 
             player.ontimeupdate = function () {

@@ -15,15 +15,14 @@ async function isIntersecting(entries) {
     async function intersect() {
         entries.forEach((entry) => {
             let id = entry.target.id;
-            if (entry.isIntersecting && document.getElementById(`title-${id}`).innerHTML === "") {
+            const title = document.getElementById(`title-${id}`);
+            if (entry.isIntersecting && title.innerHTML === "") {// if there is no data in -> populate
+                const img = document.getElementById(`img-${id}`);
+                const album = document.getElementById(`album-${id}`);
+                const artist = document.getElementById(`artist-${id}`);
+                const duration = document.getElementById(`duration-${id}`);
                 async function fetchData() {
-                    const duration = document.getElementById(`duration-${id}`);
-                    const title = document.getElementById(`title-${id}`);
-                    const artist = document.getElementById(`artist-${id}`);
-                    const album = document.getElementById(`album-${id}`);
-                    const img = document.getElementById(`img-${id}`);
                     utils.getTag(id, false).then((res) => {
-                        console.log(res);
                         if (title) title.innerHTML = res.title;
                         if (artist) artist.innerHTML = res.artist;
                         if (album) album.innerHTML = res.album;
