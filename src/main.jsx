@@ -1,10 +1,10 @@
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { BaseDirectory, createDir, exists, readDir, readTextFile, removeFile, renameFile, writeFile } from "@tauri-apps/api/fs";
+import { BaseDirectory, createDir, exists, readDir, readTextFile, removeFile, removeDir, renameFile, writeFile } from "@tauri-apps/api/fs";
 import MainWindow from "./MainWindow";
 import { BrowserRouter } from "react-router-dom";
 import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
-
+import { message } from "@tauri-apps/api/dialog"
 let finishedIndexing = true;
 
 
@@ -127,8 +127,10 @@ const utils = {
         return new Promise((resolve, reject) => {
             const audio = new Audio(convertFileSrc(filePath));
             audio.onloadedmetadata = () => {
-                const minutes = Math.floor(audio.duration / 60);
-                const seconds = Math.floor(audio.duration - minutes * 60);
+                let minutes = Math.floor(audio.duration / 60);
+                let seconds = Math.floor(audio.duration - minutes * 60);
+                minutes = minutes < 10 ? `0${minutes}` : minutes;
+                seconds = seconds < 10 ? `0${seconds}` : seconds;
                 resolve({ minutes, seconds });
             };
             audio.onerror = (error) => {
@@ -162,7 +164,7 @@ const utils = {
                 const { minutes, seconds } = await utils.getAudioDuration(filePath);
                 const [title, artist, album, image, created] = await utils.getAudioMetadata(filePath);
                 writeFile(`SongsData\\${filename}.json`, JSON.stringify({ title, artist, album, image, duration: `${minutes}:${seconds}` }), { dir: BaseDirectory.AppConfig, recursive: true });
-                const duration = `${minutes > 9 ? minutes : "0" + minutes}:${seconds > 9 ? seconds : "0" + seconds}`
+                const duration = `${minutes}:${seconds}`
                 if (!indexing) return { title, artist, album, image, duration }; // Return an object with extracted metadata
             }
         })
@@ -205,6 +207,21 @@ const utils = {
                 INDEX(paths[0]);
             })
             finishedIndexing = true;
+        })
+    },
+    async clearSongsData() {
+        exists("SongsData", { dir: BaseDirectory.AppConfig }).then(async (exists) => {
+            if (exists) {
+                if (!finishedIndexing) {
+                    await message('Songs indexing in progress', { title: 'Vinil-re', type: 'info' });
+                    return;
+                };
+                removeDir("SongsData", { dir: BaseDirectory.AppConfig, recursive: true }).then(async () => {
+                    await message('Cash Cleared!', { title: 'Vinil-re', type: 'info' });
+                }).catch((err) => {
+                    console.log(err);
+                });
+            }
         })
     }
 

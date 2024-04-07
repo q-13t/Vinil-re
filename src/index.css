@@ -85,6 +85,7 @@ select:hover,
 #controlRepeat:hover,
 #controlMute:hover,
 #Delete-Playlist-Dialog-Container div button:hover,
+#ClearCashDialogContainer div button:hover,
 .dropdown-el:hover,
 #search-Search:hover,
 #search-Clear:hover {
@@ -105,11 +106,13 @@ select:hover,
 #controlRepeat:active,
 #controlMute:active,
 #Delete-Playlist-Dialog-Container div button:active,
+#ClearCashDialogContainer div button:active,
 .dropdown-el:active,
 #search-Search:active,
 #search-Clear:active,
 .song-el-container-list .song-el-play:active,
-.song-el-container-list .song-el-add:active {
+.song-el-container-list .song-el-add:active,
+#ClearCash:active {
     animation: el-selection 0.05s linear forwards;
 }
 
@@ -604,7 +607,8 @@ select *:hover {
     border-left: 1px solid var(--focus-color);
 }
 
-.Folder img:hover {
+.Folder img:hover,
+#ClearCash:hover {
     cursor: pointer;
     background-color: #c13c3c;
 }
@@ -660,7 +664,8 @@ select *:hover {
 }
 
 #new-playlist-dialog,
-#Delete-Playlist-Dialog {
+#Delete-Playlist-Dialog,
+#ClearCashDialog {
     background-color: #00000075;
     z-index: 20;
     height: 100%;
@@ -673,7 +678,8 @@ select *:hover {
 }
 
 #dialog-container,
-#Delete-Playlist-Dialog-Container {
+#Delete-Playlist-Dialog-Container,
+#ClearCashDialogContainer {
     width: 20%;
     height: 10%;
     background: var(--background-base);
@@ -701,7 +707,8 @@ select *:hover {
 }
 
 #dialog-container div,
-#Delete-Playlist-Dialog-Container div {
+#Delete-Playlist-Dialog-Container div,
+#ClearCashDialogContainer div {
     margin: 1% 0% 1% 0%;
     height: auto;
     width: 50%;
@@ -711,7 +718,8 @@ select *:hover {
 }
 
 #dialog-container div button,
-#Delete-Playlist-Dialog-Container div button {
+#Delete-Playlist-Dialog-Container div button,
+#ClearCashDialogContainer div button {
     width: 50%;
     background: transparent;
     color: var(--font-color);
@@ -807,4 +815,10 @@ select *:hover {
 .dropdown-el {
     background: var(--background-el);
     color: var(--font-color);
+}
+
+#ClearCash {
+    width: fit-content;
+    border: 1px solid var(--border-color);
+    padding: 0.2%;
 }

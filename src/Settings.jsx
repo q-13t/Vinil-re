@@ -37,18 +37,31 @@ const Settings = () => {
         writeTextFile('folders.json', JSON.stringify(arr), { dir: BaseDirectory.AppData, encoding: 'utf-8' });
         setPaths(arr);
     }
-
+    let handleClearCash = () => {
+        utils.clearSongsData();
+        document.getElementById("ClearCashDialog").style.display = "none";
+    }
     return (
         <div id="Settings">
-
+            <dialog id="ClearCashDialog">
+                <div id="ClearCashDialogContainer">
+                    <p>Are you sure?</p>
+                    <div>
+                        <button onClick={() => { handleClearCash() }}>Yes</button>
+                        <button onClick={() => { document.getElementById("ClearCashDialog").style.display = "none" }}>No</button>
+                    </div>
+                </div>
+            </dialog>
             <h3>Settings</h3>
             <div id="AddFolderContainer" onClick={() => { handleInputChange() }}>
                 <img src={plusImg} alt={burgerImg} />
                 <p>Where to look for?</p>
             </div>
+            <p id="ClearCash" onClick={() => { document.getElementById("ClearCashDialog").style.display = "flex" }}>Clear Cash</p>
             <div id="FoldersContainer">
                 {paths && paths.map((path) => <FolderEl key={path} path={path} removePath={removePath} />)}
             </div>
+
         </div >
     );
 }
