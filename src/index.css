@@ -251,8 +251,9 @@ div {
     flex: 0;
 }
 
-/* PlayerControlsContainer */
+
 #PlayerControlsContainer {
+    position: relative;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -261,6 +262,9 @@ div {
     justify-content: space-between;
 }
 
+#PlayerControlsContainer * {
+    z-index: 2;
+}
 
 #PlayerControlsButtons img,
 #controlMute {
@@ -303,8 +307,25 @@ div {
     align-items: center;
 }
 
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.6);
+    height: 2px;
+}
+
 #timeSlider {
-    width: 100%;
+    width: 80%;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+
+    width: 20px;
+    height: 20px;
+    -webkit-appearance: none;
+    background: var(--background-base);
+    border-radius: 100%;
+    border: 2px solid var(--border-color);
 }
 
 #PlayerControlsButtons {
@@ -821,4 +842,22 @@ select *:hover {
     width: fit-content;
     border: 1px solid var(--border-color);
     padding: 0.2%;
+}
+
+#PlayerControlsCanvas {
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    position: absolute;
+}
+
+
+input[type="range"]::-webkit-slider-thumb,
+input[type="range"]::-moz-range-thumb,
+input[type="range"]::-ms-thumb {
+    -webkit-appearance: none;
+    color: transparent;
+    border: 1px solid var(--border-color);
 }

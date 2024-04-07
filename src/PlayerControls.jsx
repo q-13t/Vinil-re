@@ -42,7 +42,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                         player.play();
                         if (addToHistory)
                             historyIndex = history.length;
-                        console.log(historyIndex);
+                        // //console.log(historyIndex);
                     }
                     if (!load) setLoad(true);
 
@@ -87,9 +87,48 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             player.currentTime = localStorage.getItem("currentTime")
         };
         if (player !== null) {
+            player.crossOrigin = "anonymous";
             player.onended = function () {
                 document.getElementById("controlNext").click();
             }
+
+            //  Audio Visualizer
+
+            const canvas = document.getElementById('PlayerControlsCanvas');
+            const audioContext = new AudioContext();
+            audioContext.resume();
+            const context = canvas.getContext('2d');
+            let audioSource;
+            let analyzer;
+            if (!audioSource) audioSource = audioContext.createMediaElementSource(player);
+            analyzer = audioContext.createAnalyser();
+            audioSource.connect(analyzer);
+            analyzer.connect(audioContext.destination);
+            analyzer.fftSize = 1024;
+            const bufferLength = analyzer.frequencyBinCount; // fftSize / 2
+            const dataArray = new Uint8Array(bufferLength);
+            const barWidth = ((canvas.width / 1.65) / (bufferLength));
+            //console.log(barWidth);
+            let barHeight;
+            let barPosition;
+
+            //console.log("load");
+            const draw = async () => {
+                barPosition = 0;
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                analyzer.getByteFrequencyData(dataArray);
+                let color = getComputedStyle(document.body).getPropertyValue("--accent-color");
+                for (let i = 0; i < bufferLength; i++) {
+                    barHeight = dataArray[i] / 2;
+                    context.fillStyle = color;
+                    context.fillRect(barPosition, canvas.height - barHeight, barWidth, barHeight);
+                    context.fillRect(canvas.width - barPosition, canvas.height - barHeight, barWidth, barHeight);
+                    barPosition += barWidth;
+                }
+
+                requestAnimationFrame(draw);
+            }
+            draw();
 
             player.ontimeupdate = function () {
                 let minutes = Math.floor(player.currentTime / 60);
@@ -104,7 +143,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         }
 
         if ('mediaSession' in navigator) {
-            console.log("loaded");
+            //console.log("loaded");
 
             navigator.mediaSession.setActionHandler('play', () => {
                 if (!player.paused) {
@@ -196,7 +235,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         toggleBorder(event);
         player.loop = !player.loop;
         localStorage.setItem("loop", player.loop);
-        // console.log(shuffle, player.loop);
+        // //console.log(shuffle, player.loop);
 
     }
 
@@ -204,7 +243,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         toggleBorder(event);
         shuffle = !shuffle;
         localStorage.setItem("shuffle", shuffle);
-        // console.log(shuffle, player.loop);
+        // //console.log(shuffle, player.loop);
     }
 
     let handleVolume = (event) => {
@@ -216,6 +255,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
 
     return (
         <div id="PlayerControlsContainer">
+            <canvas id="PlayerControlsCanvas"  ></canvas>
             <div id="PlayerControlsSongData">
                 <img id="PlayerControlsSongDataAlbum" src={burgerImg} alt="" onLoad={imgLoad} />
                 <div id="PlayerControlsSongConfiner">

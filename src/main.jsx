@@ -6,7 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
 import { message } from "@tauri-apps/api/dialog"
 let finishedIndexing = true;
-
+let canaledIndexing = false;
 
 const utils = {
     async getFolders() {
@@ -193,7 +193,7 @@ const utils = {
                     console.log("INDEXING:" + path);
                     await utils.getTag(path, true).then(() => {
                         els += +1;
-                        if (els < paths.length) {
+                        if (els < paths.length && !canaledIndexing) {
                             INDEX(paths[els])
                         }
                     }).catch((err) => {
@@ -204,6 +204,7 @@ const utils = {
                         }
                     })
                 }
+                canaledIndexing = false;
                 INDEX(paths[0]);
             })
             finishedIndexing = true;
@@ -213,8 +214,7 @@ const utils = {
         exists("SongsData", { dir: BaseDirectory.AppConfig }).then(async (exists) => {
             if (exists) {
                 if (!finishedIndexing) {
-                    await message('Songs indexing in progress', { title: 'Vinil-re', type: 'info' });
-                    return;
+                    canaledIndexing = true;
                 };
                 removeDir("SongsData", { dir: BaseDirectory.AppConfig, recursive: true }).then(async () => {
                     await message('Cash Cleared!', { title: 'Vinil-re', type: 'info' });
