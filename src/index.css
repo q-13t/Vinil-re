@@ -138,6 +138,9 @@ h1,
 h2,
 h3,
 label {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     color: var(--font-color);
 }
 
@@ -531,6 +534,20 @@ select *:hover {
     border: 1px solid var(--border-color);
     position: relative;
     --display: none;
+}
+
+.song-el-grid-sub {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    font-size: smaller;
+    box-sizing: border-box;
+    padding: 0% 1%;
+}
+
+.song-el-grid-sub .song-el-artist,
+.song-el-grid-sub .song-el-album {
+    flex: 1 0 10%;
 }
 
 .song-el-container-grid .song-el-buttons .dropdown {
