@@ -285,9 +285,8 @@ div {
 }
 
 #PlayerControlsSongDataAlbum {
-    max-width: 90px;
-    max-height: 90px;
-    margin: 5px;
+    width: 90px;
+    height: 90px;
     max-width: 90px;
     max-height: 90px;
     margin: 5px;

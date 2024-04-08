@@ -26,7 +26,7 @@ async function isIntersecting(entries) {
                         if (title) title.innerHTML = res.title;
                         if (artist) artist.innerHTML = res.artist;
                         if (album) album.innerHTML = res.album;
-                        if (img) img.src = res.image.startsWith("data:image/webp;base64,") ? res.image : "data:image/webp;base64," + res.image;
+                        if (img) img.src = res.image;
                         if (duration) duration.innerHTML = res.duration;
                     })
 

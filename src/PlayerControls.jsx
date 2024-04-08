@@ -42,21 +42,19 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                         player.play();
                         if (addToHistory)
                             historyIndex = history.length;
-                        // //console.log(historyIndex);
                     }
                     if (!load) setLoad(true);
 
                     if (title) title.innerHTML = res.title;
                     if (artist) artist.innerHTML = res.artist;
-                    let image = res.image;
-                    if (img) img.src = image.startsWith("data:image/webp;base64,") ? image : "data:image/webp;base64," + image;
+                    if (img) img.src = res.image;
                     if ('mediaSession' in navigator) {
                         navigator.mediaSession.metadata = new MediaMetadata({
                             title: res.title,
                             artist: res.artist,
                             album: res.album,
                             artwork: [
-                                { src: image.startsWith("data:image/webp;base64,") ? image : "data:image/webp;base64," + image, type: 'image/webp' },
+                                { src: res.image, type: 'image/webp' },
                             ]
                         });
                     }

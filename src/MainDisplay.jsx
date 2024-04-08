@@ -29,12 +29,15 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
         switch (display) {
             case "My Music": {
                 console.log("My Music");
-                utils.getFolders().then((folders) => {
-                    // console.log(folders);
-                    invoke("get_paths", { folders: folders, sortBy: "Time Created", searchText: "" }).then((res) => {
-                        setPaths(res);
-                    })
+                utils.searchAndSort().then((res) => {
+                    setPaths(res);
                 });
+                // utils.getFolders().then((folders) => {
+                //     // console.log(folders);
+                //     invoke("get_paths", { folders: folders, sortBy: "Time Created", searchText: "" }).then((res) => {
+                //         setPaths(res);
+                //     })
+                // });
                 break;
             }
             case "Recent Plays": {
@@ -51,12 +54,25 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
                 console.log("Search Results");
                 setPaths([]);
                 setLoading(true);
-                utils.getFolders().then((folders) => {
-                    invoke("get_paths", { folders: folders, sortBy: "Time Created", searchText: queryParameters.get("search-for").toLowerCase() }).then((res) => {
-                        setPaths(res);
-                        setLoading(false);
-                    })
+                let search = queryParameters.get("search-for");
+                if (!search) {
+                    search = "";
+                } else {
+                    search = search.toLowerCase();
+                }
+                let sortBy = document.getElementById("sort");
+                if (!sortBy) sortBy = "Time Created"; else sortBy = sortBy.value;
+                utils.searchAndSort(sortBy, search).then((res) => {
+                    setPaths(res);
+                    setLoading(false);
                 });
+
+                // utils.getFolders().then((folders) => {
+                //     invoke("get_paths", { folders: folders, sortBy: "Time Created", searchText: queryParameters.get("search-for").toLowerCase() }).then((res) => {
+                //         setPaths(res);
+                //         setLoading(false);
+                //     })
+                // });
                 break;
             }
         }
@@ -76,13 +92,25 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
         document.getElementById("sort").disabled = true;
         setPaths([]);
         setLoading(true);
-        utils.getFolders().then((folders) => {
-            invoke("get_paths", { folders: folders, sortBy: event.target.value, searchText: queryParameters.get("search-for").toLowerCase() }).then((res) => {
-                setPaths(res);
-                document.getElementById("sort").disabled = false;
-                setLoading(false);
-            })
+        let search = queryParameters.get("search-for");
+        if (!search) {
+            search = "";
+        } else {
+            search = search.toLowerCase();
+        }
+        utils.searchAndSort(event.target.value, search).then((res) => {
+            setPaths(res);
+            document.getElementById("sort").disabled = false;
+            setLoading(false);
         });
+        //start of searching/filtering logic
+        // utils.getFolders().then((folders) => {
+        //     invoke("get_paths", { folders: folders, sortBy: event.target.value, searchText: queryParameters.get("search-for").toLowerCase() }).then((res) => {
+        //         setPaths(res);
+        //         document.getElementById("sort").disabled = false;
+        //         setLoading(false);
+        //     })
+        // });
     }
 
     let saveToPlaylist = (event) => {
