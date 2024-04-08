@@ -57,6 +57,15 @@ const SideMenu = ({ openDialog, playlists, navigateTo }) => {
         navigateTo(path);
     }
 
+    let handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            document.getElementById("search-Search").click();
+        }
+    }
+    let handleChange = (event) => {
+        setSearch(event.target.value);
+    }
+
     return (
         <>
             {maximized
@@ -65,9 +74,9 @@ const SideMenu = ({ openDialog, playlists, navigateTo }) => {
                     < div >
                         <img id="sideMenuBurger" src={burgerImg} alt="" onClick={() => { setMaximized(false); }} />
                         <div id="SearchBar">
-                            <input id="search-Input" type="text" placeholder="Search" value={search} onChange={(e) => { setSearch(e.target.value); }} />
+                            <input id="search-Input" type="text" placeholder="Search" value={search} onKeyDown={(e) => { handleKeyDown(e); }} onChange={(e) => { handleChange(e); }} />
                             <img id="search-Search" style={{ display: search === "" ? "none" : "block" }} src={searchImg} alt={burgerImg} onClick={(e) => navigateTo(`/?display=Search Results&as=list&search-for=${search}`)}></img>
-                            <img id="search-Clear" style={{ display: search === "" ? "none" : "block" }} src={XImg} alt={burgerImg} onClick={() => { setSearch(""); }} ></img>
+                            <img id="search-Clear" style={{ display: search === "" ? "none" : "block" }} src={XImg} alt={burgerImg} onClick={() => { setSearch(""); navigateTo(`/`) }} ></img>
                         </div>
                     </div >
                     <div id="MainScrollable" >
