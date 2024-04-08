@@ -288,6 +288,9 @@ div {
     max-width: 90px;
     max-height: 90px;
     margin: 5px;
+    max-width: 90px;
+    max-height: 90px;
+    margin: 5px;
 }
 
 #PlayerControlsTime {
@@ -376,6 +379,7 @@ body,
 #MainDisplay h3,
 #Setting h3 {
     padding: 30px 0% 10px 0%;
+    padding: 30px 0% 10px 0%;
     margin: 0%;
     font-size: 24px;
 }
@@ -392,6 +396,8 @@ body,
 #topSubNav * {
     margin: 0% 10px 0% 0%;
     padding: 5px 10px;
+    margin: 0% 10px 0% 0%;
+    padding: 5px 10px;
     border: 1px solid var(--border-color);
 }
 
@@ -404,6 +410,7 @@ body,
     justify-content: flex-start;
     align-items: center;
     padding: 5px 0px;
+    padding: 5px 0px;
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -413,6 +420,7 @@ body,
     flex-wrap: nowrap;
     justify-content: flex-start;
     align-items: center;
+    margin-right: 5px;
     margin-right: 5px;
     border-left: 1px solid var(--border-color);
     border-right: 1px solid var(--border-color);
@@ -658,7 +666,10 @@ select *:hover {
 #selectedActions p {
     box-sizing: border-box;
     border-right: 1px solid var(--border-color);
+    box-sizing: border-box;
+    border-right: 1px solid var(--border-color);
     margin: 0%;
+    padding: 5px;
     padding: 5px;
 
 }
@@ -675,8 +686,11 @@ select *:hover {
 #selectedActions #main-existing-playlists-container {
     border-right: 1px solid var(--border-color);
     padding: 5px;
+    border-right: 1px solid var(--border-color);
+    padding: 5px;
     display: flex;
     align-items: center;
+    gap: 10px;
     gap: 10px;
 }
 
