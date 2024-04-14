@@ -4,6 +4,8 @@
 
 use base64::{engine::general_purpose, Engine as _};
 use id3::{Tag, TagLike};
+use image::codecs::png::PngEncoder;
+use image::ImageEncoder;
 use std::{fs, time::SystemTime};
 
 #[tauri::command]
@@ -99,22 +101,10 @@ async fn get_paths(folders: Vec<String>, sort_by: String, search_text: String) -
     files
 }
 
-/// ##    get tag
-/// Returns title, artist, duration, album, picture of given path
-///
-/// ## Arguments
-/// * `path` - path to mp3
-///
-/// ## Examples
-/// ```
-///
-/// ```
-///
-///
 #[tauri::command]
 async fn get_tag(path: String) -> (String, String, String, String, SystemTime) {
     let tag = match Tag::read_from_path(&path) {
-        Ok(x) => x,
+        Ok(tag) => tag,
         Err(_) => {
             return (
                 String::new(),
@@ -122,35 +112,44 @@ async fn get_tag(path: String) -> (String, String, String, String, SystemTime) {
                 String::new(),
                 String::new(),
                 SystemTime::UNIX_EPOCH,
-            );
+            )
         }
     };
-    if (tag.title().is_some() && tag.artist().is_some()) || tag.duration().is_some() {
-        let mut picture: Vec<u8> = vec![];
 
-        for ele in tag.pictures() {
-            picture = ele.data.to_vec().to_owned();
-        }
+    let picture = tag.pictures().next();
 
-        return (
-            tag.title().unwrap_or(&path).trim().to_string(),
-            tag.artist().unwrap_or("").trim().to_string(),
-            tag.album().unwrap_or("").trim().to_string(),
-            general_purpose::STANDARD.encode(picture),
-            fs::metadata(path)
-                .unwrap()
-                .created()
-                .unwrap_or(SystemTime::UNIX_EPOCH),
-        );
+    let title = tag.title().unwrap_or(&path).trim().to_string();
+    let artist = tag.artist().unwrap_or("").trim().to_string();
+    let album = tag.album().unwrap_or("").trim().to_string();
+
+    let data = if let Some(picture) = picture {
+        let image = image::load_from_memory(&picture.data).unwrap();
+        let resized_image = image.resize_exact(200, 200, image::imageops::FilterType::Triangle);
+        let mut data = vec![];
+        let encoder = PngEncoder::new(&mut data);
+        encoder
+            .write_image(
+                &resized_image.into_bytes(),
+                200,
+                200,
+                image::ExtendedColorType::Rgb8,
+            )
+            .unwrap();
+        general_purpose::STANDARD.encode(data)
     } else {
-        return (
-            String::new(),
-            String::new(),
-            String::new(),
-            String::new(),
-            SystemTime::UNIX_EPOCH,
-        );
-    }
+        String::new()
+    };
+
+    (
+        title,
+        artist,
+        album,
+        data,
+        fs::metadata(&path)
+            .unwrap()
+            .created()
+            .unwrap_or(SystemTime::UNIX_EPOCH),
+    )
 }
 
 fn main() {
