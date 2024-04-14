@@ -11,9 +11,11 @@ import playImg from "./assets/Play.svg";
 import pauseImg from "./assets/Pause.svg";
 import soundImg from "./assets/Sound.svg";
 import noSoundImg from "./assets/No Sound.svg";
+import vinilImg from "../public/Vinil.svg";
 
 let historyIndex = 0;
 let addToHistory = true;
+let paused = true;
 
 const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history, setHistory, forcePlay }) => {
 
@@ -35,19 +37,25 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                     const title = document.getElementById(`PlayerControlsSongDataTitle`);
                     const artist = document.getElementById(`PlayerControlsSongDataArtist`);
                     const img = document.getElementById(`PlayerControlsSongDataAlbum`);
+                    const progress = document.getElementById(`timeSlider`);
 
 
-                    duration.innerHTML = res.duration;
-                    if (load) {
-                        player.play();
-                        if (addToHistory)
-                            historyIndex = history.length;
-                    }
+                    console.log(load, !paused);
+                    if (load && !paused) { player.play(); }
+
+
+                    if (addToHistory) historyIndex = history.length;
+                    if (progress) progress.value = 0;
+                    if (duration) duration.innerHTML = res.duration;
                     if (!load) setLoad(true);
-
                     if (title) title.innerHTML = res.title;
                     if (artist) artist.innerHTML = res.artist;
-                    if (img) img.src = res.image;
+                    if (img) {
+                        if (res.image !== "")
+                            img.src = res.image;
+                        else
+                            img.src = vinilImg;
+                    }
                     if ('mediaSession' in navigator) {
                         navigator.mediaSession.metadata = new MediaMetadata({
                             title: res.title,
@@ -61,6 +69,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                 })
                 if (addToHistory) {
                     setHistory([...history.filter((song) => song !== currentSong), currentSong]);
+                    // console.log(history);
                 }
                 localStorage.setItem("currentSong", currentSong);
             }
@@ -69,13 +78,20 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             fetchData();
         }
 
-    }, [currentSong, forcePlay])
+    }, [currentSong]);
 
     useEffect(() => {
+        if (load) player.play();
+        paused = false;
+    }, [forcePlay])
+
+    useEffect(() => {
+        console.log("player", player);
+        if (player === null) { setPlayer(new Audio()) }
         if (localStorage.getItem("loop") === "true") { document.getElementById("controlRepeat").click(); };
         if (localStorage.getItem("shuffle") === "true") { document.getElementById("controlShuffle").click() };
         if (localStorage.getItem("shuffle") === "true") { document.getElementById("controlShuffle").click() };
-        if (localStorage.getItem("volume") !== null) {
+        if (localStorage.getItem("volume") !== null && document.getElementById("volumeSlider")) {
             document.getElementById("volumeSlider").value = localStorage.getItem("volume")
             player.volume = localStorage.getItem("volume") / 100;
         };
@@ -84,61 +100,63 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             document.getElementById("timeSlider").value = localStorage.getItem("currentTime")
             player.currentTime = localStorage.getItem("currentTime")
         };
-        if (player !== null) {
-            player.crossOrigin = "anonymous";
-            player.onended = function () {
-                document.getElementById("controlNext").click();
-            }
 
-            //  Audio Visualizer
-
-            const canvas = document.getElementById('PlayerControlsCanvas');
-            const audioContext = new AudioContext();
-            audioContext.resume();
-            const context = canvas.getContext('2d');
-            let audioSource;
-            let analyzer;
-            if (!audioSource) audioSource = audioContext.createMediaElementSource(player);
-            analyzer = audioContext.createAnalyser();
-            audioSource.connect(analyzer);
-            analyzer.connect(audioContext.destination);
-            analyzer.fftSize = 1024;
-            const bufferLength = analyzer.frequencyBinCount; // fftSize / 2
-            const dataArray = new Uint8Array(bufferLength);
-            const barWidth = ((canvas.width / 1.65) / (bufferLength));
-            //console.log(barWidth);
-            let barHeight;
-            let barPosition;
-
-            //console.log("load");
-            const draw = async () => {
-                barPosition = 0;
-                context.clearRect(0, 0, canvas.width, canvas.height);
-                analyzer.getByteFrequencyData(dataArray);
-                let color = getComputedStyle(document.body).getPropertyValue("--accent-color");
-                for (let i = 0; i < bufferLength; i++) {
-                    barHeight = dataArray[i] / 2;
-                    context.fillStyle = color;
-                    context.fillRect(barPosition, canvas.height - barHeight, barWidth, barHeight);
-                    context.fillRect(canvas.width - barPosition, canvas.height - barHeight, barWidth, barHeight);
-                    barPosition += barWidth;
-                }
-
-                requestAnimationFrame(draw);
-            }
-            draw();
-
-            player.ontimeupdate = function () {
-                let minutes = Math.floor(player.currentTime / 60);
-                let seconds = Math.floor(player.currentTime - minutes * 60);
-                let timeCurrent = document.getElementById(`timeCurrent`);
-                if (timeCurrent) timeCurrent.innerHTML = minutes + ":" + (seconds > 9 ? seconds : "0" + seconds);
-                let timeSlider = document.getElementById(`timeSlider`);
-                if (timeSlider) timeSlider.value = Math.floor((player.currentTime / player.duration) * 100);
-                if (!player.paused) document.getElementById("controlPlay").src = pauseImg;
-                localStorage.setItem("currentTime", player.currentTime);
-            }
+        player.crossOrigin = "anonymous";
+        player.onended = function () {
+            document.getElementById("controlNext").click();
         }
+
+        //  Audio Visualizer
+
+        const canvas = document.getElementById('PlayerControlsCanvas');
+        const audioContext = new AudioContext();
+        audioContext.resume();
+        const context = canvas.getContext('2d');
+        let audioSource;
+        let analyzer;
+        if (!audioSource) audioSource = audioContext.createMediaElementSource(player);
+        analyzer = audioContext.createAnalyser();
+        audioSource.connect(analyzer);
+        analyzer.connect(audioContext.destination);
+        analyzer.fftSize = 1024;
+        const bufferLength = analyzer.frequencyBinCount; // fftSize / 2
+        const dataArray = new Uint8Array(bufferLength);
+        const barWidth = ((canvas.width / 1.65) / (bufferLength));
+        //console.log(barWidth);
+        let barHeight;
+        let barPosition;
+
+        //console.log("load");
+        const draw = async () => {
+            barPosition = 0;
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            analyzer.getByteFrequencyData(dataArray);
+            let color = getComputedStyle(document.body).getPropertyValue("--accent-color");
+            for (let i = 0; i < bufferLength; i++) {
+                barHeight = dataArray[i] / 2;
+                context.fillStyle = color;
+                context.fillRect(barPosition, canvas.height - barHeight, barWidth, barHeight);
+                context.fillRect(canvas.width - barPosition, canvas.height - barHeight, barWidth, barHeight);
+                barPosition += barWidth;
+            }
+
+            requestAnimationFrame(draw);
+        }
+        draw();
+
+        player.ontimeupdate = function () {
+            let minutes = Math.floor(player.currentTime / 60);
+            let seconds = Math.floor(player.currentTime - minutes * 60);
+            let timeCurrent = document.getElementById(`timeCurrent`);
+            if (timeCurrent) timeCurrent.innerHTML = minutes + ":" + (seconds > 9 ? seconds : "0" + seconds);
+            let timeSlider = document.getElementById(`timeSlider`);
+            if (timeSlider) timeSlider.value = Math.floor((player.currentTime / player.duration) * 100);
+            if (!player.paused) document.getElementById("controlPlay").src = pauseImg;
+            localStorage.setItem("currentTime", player.currentTime);
+        }
+
+
+
 
         if ('mediaSession' in navigator) {
             //console.log("loaded");
@@ -161,16 +179,18 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
 
 
         return () => {
-            player.src = null;
-            setPlayer(null);
+            // player.src = null;
+            // setPlayer(null);
         }
     }, [])
 
     let imgLoad = (event) => {
         const container = document.getElementById(`PlayerControlsContainer`);
-        const rgb = utils.getAverageRGB(event.target);
-        container.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`;
-        document.body.style.cssText = `--accent-color: rgb(${rgb.r}, ${rgb.g}, ${rgb.b});`;
+        if (container) {
+            const rgb = utils.getAverageRGB(event.target);
+            container.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`;
+            document.body.style.cssText = `--accent-color: rgb(${rgb.r}, ${rgb.g}, ${rgb.b});`;
+        }
     }
     let toggleBorder = (event) => {
         event.target.classList.toggle("activeBorder");
@@ -191,6 +211,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
     }
 
     let handleNext = () => {
+        let currentPlaylist = JSON.parse(localStorage.getItem("currentPlaylist"));
         if (historyIndex < history.length - 1) {
             addToHistory = false;
             historyIndex = historyIndex + 1
@@ -214,11 +235,14 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
 
 
     let handlePause = (event) => {
+        console.log("HandlePause", player.paused);
         if (player.paused) {
-            player.play()
+            player.play();
+            paused = false;
             event.target.src = pauseImg;
         } else {
-            player.pause()
+            player.pause();
+            paused = true;
             event.target.src = playImg;
         }
     }
@@ -255,7 +279,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         <div id="PlayerControlsContainer">
             <canvas id="PlayerControlsCanvas"  ></canvas>
             <div id="PlayerControlsSongData">
-                <img id="PlayerControlsSongDataAlbum" src={burgerImg} alt="" onLoad={imgLoad} />
+                <img id="PlayerControlsSongDataAlbum" src={vinilImg} alt={burgerImg} onLoad={imgLoad} />
                 <div id="PlayerControlsSongConfiner">
                     <p id="PlayerControlsSongDataTitle">Title</p>
                     <p id="PlayerControlsSongDataArtist">Artist</p>
