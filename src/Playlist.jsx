@@ -25,12 +25,11 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
                     await invoke("get_tag", { path: entries[0] }).then((res) => {//get first song image and set it as album cover
                         if (res[3]) {
                             let img = document.getElementById("PlayListImage");
-                            if (img) img.src = "data:image/webp;base64," + res[3];
-                            img.addEventListener('load', function () {
+                            if (img) {
+                                img.src = "data:image/webp;base64," + res[3];
                                 const rgb = utils.getAverageRGB(img);
                                 document.getElementById("PlayListTopMenu").style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
-                                img.removeEventListener('load');
-                            })
+                            }
                         }
                     })
                 } else {
@@ -132,6 +131,14 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
         setSelectedSongs([]);
     }
 
+    let handlePlayNext = (path) => {
+        let currentPlaylist = JSON.parse(localStorage.getItem("currentPlaylist"));
+        let currentIndexInPlaylist = currentPlaylist.indexOf(path);
+        let index = currentPlaylist.indexOf(currentSong) + 1;
+        let temp = [...currentPlaylist.slice(0, index), path, ...currentPlaylist.slice(index, currentIndexInPlaylist), ...currentPlaylist.slice(currentIndexInPlaylist + 1)];
+        localStorage.setItem("currentPlaylist", JSON.stringify(temp));
+    }
+
     return (
         <div id="Playlist">
             <dialog id="Delete-Playlist-Dialog" style={{ display: "none" }}>
@@ -144,7 +151,7 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
                 </div>
             </dialog>
             <div id="PlayListTopMenu">
-                <div id="PlayListData">
+                <div id="PlayListData" className="elem-fade-in-top">
                     <img id="PlayListImage" src={burgerImg} alt="" />
                     <div style={{ flex: 1 }}>
                         <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -162,7 +169,7 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
             <div id="PlayListContent" >
                 {songs.length != 0 && songs.map((path) => {
                     odd = !odd;
-                    return (<Songs_List key={path} path={path} odd={odd} observer={observer} setPlay={playlistChange} currentSong={currentSong} playlists={playlists} checked={selectedSongs} setChecked={setSelectedSongs} draggable={true} dragStart={dragStart} dragOver={dragOver} dragEnd={dragEnd} />);
+                    return (<Songs_List key={path} path={path} handlePlayNext={handlePlayNext} odd={odd} observer={observer} setPlay={playlistChange} currentSong={currentSong} playlists={playlists} checked={selectedSongs} setChecked={setSelectedSongs} draggable={true} dragStart={dragStart} dragOver={dragOver} dragEnd={dragEnd} />);
                 })}
             </div>
         </div >

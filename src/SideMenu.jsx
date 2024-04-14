@@ -10,19 +10,13 @@ import { useEffect, useState } from "react";
 import barsImg from "./assets/Bars.svg";
 import utils from "./main";
 
-const SideMenu = ({ openDialog, playlists, navigateTo }) => {
+const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
     let [search, setSearch] = useState("");
     let [maximized, setMaximized] = useState(true);
     let [lastNav, setLastNav] = useState();
     useEffect(() => {
-        console.log(lastNav);
-        window.addEventListener("resize", () => {
-            if (window.innerWidth < 1200) {
-                setMaximized(false);
-            } else {
-                setMaximized(true);
-            }
-        })
+        // console.log(lastNav);
+
 
         if (lastNav) {
             let el = document.getElementById(lastNav.id);
@@ -38,19 +32,9 @@ const SideMenu = ({ openDialog, playlists, navigateTo }) => {
                     document.getElementById("Setting").click();
             })
         }
-        return () => {
-            window.removeEventListener("resize", () => {
-                if (window.innerWidth < 1200) {
-                    setMaximized(false);
-                } else {
-                    setMaximized(true);
-                }
-            })
-        }
     }, [maximized]);
 
     let handleNavigate = (event, path) => {
-        console.log(event.target, path);
         if (lastNav) lastNav.classList.toggle("activeBorder-right");//turn off border highlight
         setLastNav(event.target);
         event.target.classList.toggle("activeBorder-right");//turn on border highlight
@@ -65,41 +49,43 @@ const SideMenu = ({ openDialog, playlists, navigateTo }) => {
     let handleChange = (event) => {
         setSearch(event.target.value);
     }
-
+    // handleNavigate(e, "/?display=Recent Plays&as=list")}
     return (
         <>
+
             {maximized
                 ?
                 <div id="SideMenu">
+                    <progress style={{ width: "100%", }} id="indexing-progress" type="range" min="0" max="100" />
                     < div >
                         <img id="sideMenuBurger" src={burgerImg} alt="" onClick={() => { setMaximized(false); }} />
                         <div id="SearchBar">
                             <input id="search-Input" type="text" placeholder="Search" value={search} onKeyDown={(e) => { handleKeyDown(e); }} onChange={(e) => { handleChange(e); }} />
-                            <img id="search-Search" style={{ display: search === "" ? "none" : "block" }} src={searchImg} alt={burgerImg} onClick={(e) => navigateTo(`/?display=Search Results&as=list&search-for=${search}`)}></img>
+                            <img id="search-Search" style={{ display: search === "" ? "none" : "block" }} src={searchImg} alt={burgerImg} onClick={(e) => { setDisplay("Search Results"); navigateTo(`/?as=list&search-for=${search}`) }}></img>
                             <img id="search-Clear" style={{ display: search === "" ? "none" : "block" }} src={XImg} alt={burgerImg} onClick={() => { setSearch(""); navigateTo(`/`) }} ></img>
                         </div>
                     </div >
                     <div id="MainScrollable" >
 
-                        <div id="My Music" className="sideMenuButton" onClick={(e) => handleNavigate(e, "/?display=My Music&as=list")}>
-                            <img src={barsImg} alt={burgerImg} aria-hidden="true" tabIndex={-1}></img>
+                        <div id="My Music" title="My Music" className="sideMenuButton" onClick={(e) => { setDisplay("My Music"); handleNavigate(e, "/") }}>
+                            <img src={barsImg} alt={burgerImg} aria-hidden="true" tabIndex={-1} className="small-img"></img>
                             <p className="sideMenuText" aria-hidden="true" tabIndex={-1}>My Music</p>
                         </div>
-                        <div id="RecentList" className="sideMenuButton" onClick={(e) => handleNavigate(e, "/?display=Recent Plays&as=list")}>
-                            <img src={clockImg} alt={burgerImg} aria-hidden="true" tabIndex={-1}></img>
+                        <div id="RecentList" title="Recent Plays" className="sideMenuButton" onClick={(e) => { setDisplay("Recent Plays"); handleNavigate(e, "/") }}>
+                            <img src={clockImg} alt={burgerImg} aria-hidden="true" tabIndex={-1} className="small-img"></img>
                             <p className="sideMenuText" aria-hidden="true" tabIndex={-1}>Recent plays</p>
                         </div>
-                        <div id="CurrentList" className="sideMenuButton" onClick={(e) => handleNavigate(e, "/?display=Current Play Queue&as=list")}>
-                            <img src={arrowsImg} alt={burgerImg} aria-hidden="true" tabIndex={-1}></img>
+                        <div id="CurrentList" title="Current Play Queue" className="sideMenuButton" onClick={(e) => { setDisplay("Current Play Queue"); handleNavigate(e, "/") }}>
+                            <img src={arrowsImg} alt={burgerImg} aria-hidden="true" tabIndex={-1} className="small-img"></img>
                             <p className="sideMenuText" aria-hidden="true" tabIndex={-1}>Now playing</p>
                         </div>
                         <div id="PlaylistsContainer">
                             <div id="Playlists">
                                 <div id="PlaylistsButton"  >
-                                    <img src={burgerImg} alt="" aria-hidden="true" tabIndex={-1}></img>
+                                    <img src={burgerImg} alt="" aria-hidden="true" tabIndex={-1} className="small-img"></img>
                                     <p className="sideMenuText" aria-hidden="true" tabIndex={-1}>Playlists</p>
                                 </div>
-                                <img id="AddPlayList" src={plusImg} alt="" onClick={openDialog}></img>
+                                <img id="AddPlayList" src={plusImg} alt="" onClick={openDialog} className="small-img"></img>
                             </div>
 
                             <div id="PlaylistsList">
@@ -115,11 +101,12 @@ const SideMenu = ({ openDialog, playlists, navigateTo }) => {
                 </div >
                 :
                 <div id="SideMenu-small">
+                    <progress style={{ width: "100%", }} id="indexing-progress" type="range" min="0" max="100" />
                     <img id="sideMenuBurger" src={burgerImg} alt="" onClick={() => { setMaximized(true); }} />
                     <div id="MainScrollable">
-                        <img id="My Music" src={barsImg} alt={burgerImg} className="sideMenuButton" onClick={(e) => handleNavigate(e, "/?display=My Music&as=list")} ></img>
-                        <img id="RecentList" src={clockImg} alt={burgerImg} className="sideMenuButton" onClick={(e) => handleNavigate(e, "/?display=Recent Plays&as=list")}></img>
-                        <img id="CurrentList" src={arrowsImg} alt={burgerImg} className="sideMenuButton" onClick={(e) => handleNavigate(e, "/?display=Current Play Queue&as=list")} ></img>
+                        <img id="My Music" title="My Music" src={barsImg} alt={burgerImg} className="sideMenuButton small-img" onClick={(e) => { setDisplay("My Music"); handleNavigate(e, "/") }} ></img>
+                        <img id="RecentList" title="Recent Plays" src={clockImg} alt={burgerImg} className="sideMenuButton small-img" onClick={(e) => { setDisplay("Recent Plays"); handleNavigate(e, "/") }}></img>
+                        <img id="CurrentList" title="Current Play Queue" src={arrowsImg} alt={burgerImg} className="sideMenuButton small-img" onClick={(e) => { setDisplay("Current Play Queue"); handleNavigate(e, "/") }} ></img>
                         <div id="PlaylistsContainer">
                             <div id="Playlists" style={{ justifyContent: "center" }}>
                                 <img id="AddPlayList" src={plusImg} alt="" onClick={openDialog}></img>
@@ -131,7 +118,7 @@ const SideMenu = ({ openDialog, playlists, navigateTo }) => {
                         </div>
                     </div>
                     <div id="Setting" >
-                        <img src={gearImg} alt={burgerImg} className="sideMenuButton" onClick={(e) => handleNavigate(e, "/settings")}></img>
+                        <img src={gearImg} alt={burgerImg} className="sideMenuButton small-img" onClick={(e) => handleNavigate(e, "/settings")}></img>
                     </div>
                 </div>
             }

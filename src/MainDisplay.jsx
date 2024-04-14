@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import burgerImg from "./assets/Burger.svg";
 import { useEffect, useState } from "react";
 import Songs_List from "./Songs-List";
@@ -8,51 +8,46 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { path } from "@tauri-apps/api";
 import shuffleImg from "./assets/Shuffle.svg";
 
-const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, observer, history, currentPlaylist, setCurrentPlaylist, setCurrentSong, currentSong, setForcePlay, forcePlay }) => {
-    let navigate = useNavigate();
+const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, setCurrentPlaylist, display, observer, history, setCurrentSong, currentSong, setForcePlay, forcePlay }) => {
     const [queryParameters] = useSearchParams();
     let [paths, setPaths] = useState([]);
     let [Loading, setLoading] = useState(false);
-    let display = queryParameters.get("display");
-    let as = queryParameters.get("as");
+    let [as, setAs] = useState(queryParameters.get("as"));
     let odd = false;
     if (!display) { display = "My Music"; }
     if (!as) { as = "list"; }
 
     console.log(display, " : ", as);
 
-    let navigateTo = (url) => {// /?display=[]&as=[]
-        navigate(url);
-    }
 
     useEffect(() => {
+        // console.log("Effect MD: ", display, display === "Current Play Queue");
         switch (display) {
             case "My Music": {
-                console.log("My Music");
+                // console.log("My Music");
                 utils.searchAndSort().then((res) => {
-                    setPaths(res);
+                    if (res !== undefined) {
+                        setPaths(res);
+                    } else {
+                        utils.getFolders().then((paths) => {
+                            invoke("get_paths", { folders: paths, sortBy: "Time Created", searchText: "" }).then((paths) => {
+                                setPaths(paths);
+                            }).catch((err) => { });
+                        })
+                    }
                 });
-                // utils.getFolders().then((folders) => {
-                //     // console.log(folders);
-                //     invoke("get_paths", { folders: folders, sortBy: "Time Created", searchText: "" }).then((res) => {
-                //         setPaths(res);
-                //     })
-                // });
                 break;
             }
             case "Recent Plays": {
-                console.log("Recent Plays");
-                setPaths(history);
+                setPaths(history.slice().reverse());
                 break;
             }
             case "Current Play Queue": {
-                console.log("Current Play Queue");
-                setPaths(currentPlaylist);
+                setPaths(localStorage.getItem("currentPlaylist") ? JSON.parse(localStorage.getItem("currentPlaylist")) : []);
                 break;
             }
             case "Search Results": {
                 console.log("Search Results");
-                setPaths([]);
                 setLoading(true);
                 let search = queryParameters.get("search-for");
                 if (!search) {
@@ -67,24 +62,20 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
                     setLoading(false);
                 });
 
-                // utils.getFolders().then((folders) => {
-                //     invoke("get_paths", { folders: folders, sortBy: "Time Created", searchText: queryParameters.get("search-for").toLowerCase() }).then((res) => {
-                //         setPaths(res);
-                //         setLoading(false);
-                //     })
-                // });
                 break;
             }
         }
     }, [display]);
 
-
     useEffect(() => {// effect for checked songs
+        let actions = document.getElementById("selectedActions");
         if (selectedSongs.length != 0) {
-            document.getElementById("selectedActions").style.display = "flex";
+            actions.style.display = "flex";
+            actions.classList.add("elem-fade-in-top");
 
         } else {
-            document.getElementById("selectedActions").style.display = "none";
+            actions.style.display = "none";
+            actions.classList.remove("elem-fade-in-top");
         }
     }, [selectedSongs]);
 
@@ -103,14 +94,6 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
             document.getElementById("sort").disabled = false;
             setLoading(false);
         });
-        //start of searching/filtering logic
-        // utils.getFolders().then((folders) => {
-        //     invoke("get_paths", { folders: folders, sortBy: event.target.value, searchText: queryParameters.get("search-for").toLowerCase() }).then((res) => {
-        //         setPaths(res);
-        //         document.getElementById("sort").disabled = false;
-        //         setLoading(false);
-        //     })
-        // });
     }
 
     let saveToPlaylist = (event) => {
@@ -132,18 +115,30 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
     }
 
     let handleShuffle = () => {
-        setCurrentPlaylist(paths);
+        let shuffleControl = document.getElementById("controlShuffle");
+        if (shuffleControl && !shuffleControl.classList.contains("activeBorder")) {
+            shuffleControl.click();
+        }
         setCurrentSong(paths[Math.floor(Math.random() * paths.length)]);
         localStorage.setItem("currentPlaylist", JSON.stringify(paths));
     }
+
+    let handlePlayNext = (path) => {
+        let currentPlaylist = JSON.parse(localStorage.getItem("currentPlaylist"));
+        let currentIndexInPlaylist = currentPlaylist.indexOf(path);
+        let index = currentPlaylist.indexOf(currentSong) + 1;
+        let temp = [...currentPlaylist.slice(0, index), path, ...currentPlaylist.slice(index, currentIndexInPlaylist), ...currentPlaylist.slice(currentIndexInPlaylist + 1)];
+        localStorage.setItem("currentPlaylist", JSON.stringify(temp));
+    }
+
 
     return (
         <div id="MainDisplay">
             <div id="topNav">
                 <h3>{display}</h3>
-                <div id="topSubNav">
-                    <p onClick={() => navigateTo("?display=My Music&as=list")}>List</p>
-                    <p onClick={() => navigateTo("?display=My Music&as=grid")}>Grid</p>
+                <div id="topSubNav" className="elem-fade-in-top">
+                    <p onClick={() => setAs("list")}>List</p>
+                    <p onClick={() => setAs("grid")}>Grid</p>
                 </div>
                 <div id="displaySort" >
                     <div id="shuffleButton" onClick={handleShuffle}>
@@ -173,10 +168,10 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, o
 
             <div id="MainSongContainer" {...(as === "grid" ? { className: "mainGrid" } : { className: "mainList" })}>
                 {Loading ? <p>Loading...</p> : null}
-                {paths.length != 0 && as === "list" ?
+                {paths && paths.length != 0 && as === "list" ?
                     paths.map((path) => {
-                        odd = !odd; return <Songs_List key={path} path={path} odd={odd} openDialog={openDialog} currentSong={currentSong} setPlay={playlistChange} playlists={playlists} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
-                    }) : paths.map((path) => (<Songs_Grid key={path} path={path} observer={observer} openDialog={openDialog} playlists={playlists} setPlay={playlistChange} currentSong={currentSong} setChecked={setSelectedSongs} />))}
+                        odd = !odd; return <Songs_List key={path} path={path} odd={odd} handlePlayNext={handlePlayNext} openDialog={openDialog} currentSong={currentSong} setPlay={playlistChange} playlists={playlists} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
+                    }) : paths.map((path) => (<Songs_Grid key={path} path={path} observer={observer} handlePlayNext={handlePlayNext} openDialog={openDialog} playlists={playlists} setPlay={playlistChange} currentSong={currentSong} setChecked={setSelectedSongs} />))}
             </div>
         </div >
     );
