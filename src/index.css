@@ -48,11 +48,39 @@ img {
     background-color: var(--background-el);
     display: flex;
     flex-direction: column;
+    animation: scale-in-fw-hor-left 200ms ease-in-out 0s 1 normal;
+}
+
+@keyframes scale-in-fw-hor-left {
+    0% {
+        transform: scaleX(0.9);
+        transform-origin: 0% 0%;
+    }
+
+    100% {
+        transform: scaleX(1);
+        transform-origin: 0% 0%;
+    }
 }
 
 #SideMenu-small {
     display: flex;
     flex-direction: column;
+    animation: scale-in-back-hor-left 200ms ease-in-out 0s 1 normal;
+}
+
+@keyframes scale-in-back-hor-left {
+    0% {
+        transform: scaleX(1.1);
+        transform-origin: 0% 0%;
+    }
+
+    100% {
+        transform: scaleX(1);
+        transform-origin: 0% 0%;
+    }
+
+
 }
 
 #sideMenuBurger {
@@ -162,8 +190,10 @@ label {
     border-left: 10px solid var(--accent-color);
 }
 
-.sideMenuButton img {
+
+.small-img {
     max-width: 40px;
+    max-height: 40px;
 }
 
 #SearchBar {
@@ -208,9 +238,10 @@ label {
 #PlaylistsButton {
     display: flex;
     flex-direction: row;
-    flex-wrap: nowrap;
     z-index: 2;
     width: 100%;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 #PlaylistsContainer {
@@ -469,6 +500,10 @@ select *:hover {
     --display: block;
 }
 
+.song-el-container-list:hover .song-el-check {
+    border: 1px solid var(--border-color);
+}
+
 .odd {
     background-color: var(--background-el);
 }
@@ -481,7 +516,7 @@ select *:hover {
 }
 
 .song-el-check {
-    border: 1px solid var(--border-color);
+    border: 1px solid transparent;
     background-repeat: no-repeat;
     background-size: cover;
 }
@@ -522,6 +557,23 @@ select *:hover {
     text-align: end;
 }
 
+.elem-fade-in-top {
+    animation: fade-in-top 500ms ease-in-out 0s 1 normal;
+}
+
+
+@keyframes fade-in-top {
+    0% {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .mainGrid {
     display: grid;
     grid-auto-flow: dense;
@@ -534,7 +586,6 @@ select *:hover {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    border: 1px solid var(--border-color);
     position: relative;
     --display: none;
 }
@@ -832,6 +883,21 @@ select *:hover {
 
 .dropdown:hover .song-el-add-control {
     display: flex;
+    animation: fade-in-forwards 100ms ease-in-out 0s 1 normal forwards;
+}
+
+@keyframes fade-in-forwards {
+    0% {
+        backdrop-filter: blur(10px);
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    100% {
+        backdrop-filter: blur(0px);
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .song-el-add {
@@ -839,7 +905,7 @@ select *:hover {
 }
 
 .song-el-add-control {
-    width: 10vw;
+    width: auto;
     position: absolute;
     display: none;
     flex-direction: column;
@@ -853,6 +919,13 @@ select *:hover {
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
+}
+
+
+
+.dropdown-control div {
+    border-bottom: 1px solid var(--border-color);
+
 }
 
 .dropdown-el {
