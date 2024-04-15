@@ -1,7 +1,9 @@
-# Tauri + React
+# Vinil-re
+Is a React-based music player with Tauri integration.
 
-This template should help get you started developing with Tauri and React in Vite.
+## Getting Started
+ - Install npm packages `npm install`
+ - Build the app `npm run tauri build`
+ - Run the app from folder  `src-tauri\target\release\Vinil-re.exe`
 
-## Recommended IDE Setup
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
