@@ -4,7 +4,7 @@ import checkImg from "./assets/Check.svg";
 import playImg from "./assets/Play.svg";
 import plusImg from "./assets/Plus.svg";
 import playlistImg from "./assets/Playlist.svg";
-import utils from "./main";
+import { appendSong } from "./utils";
 import arrowImg from "./assets/Arrows.svg";
 
 const Songs_List = ({ path, odd, observer, checked, setChecked, handlePlayNext, setPlay, playlists, openDialog, currentSong, draggable = false, dragStart = null, dragOver = null, dragEnd = null }) => {
@@ -51,7 +51,7 @@ const Songs_List = ({ path, odd, observer, checked, setChecked, handlePlayNext, 
 
     let handleAddToPlaylist = (p_path) => {
         setChecked([path]);
-        utils.appendSong(p_path, [path]).then(() => {
+        appendSong(p_path, [path]).then(() => {
             setChecked([]);
         });
     }

@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import burgerImg from "./assets/Burger.svg";
 import { convertFileSrc } from "@tauri-apps/api/tauri";
-import { invoke } from "@tauri-apps/api";
-import utils from "./main";
+
+import { getTag, getAverageRGB } from "./utils";
 import repeatImg from "./assets/Repeat.svg";
 import shuffleImg from "./assets/Shuffle.svg";
 import previousImg from "./assets/Previous.svg";
@@ -23,17 +23,13 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
     let shuffle = localStorage.getItem("shuffle") === "true";
     let [load, setLoad] = useState(false);
 
-
-
-
-
     useEffect(() => {
         async function fetchData() {
             const duration = document.getElementById(`timeTotal`);
             if (duration && player) {
                 player.src = convertFileSrc(currentSong);
 
-                utils.getTag(currentSong, false).then((res) => {
+                getTag(currentSong, false).then((res) => {
                     const title = document.getElementById(`PlayerControlsSongDataTitle`);
                     const artist = document.getElementById(`PlayerControlsSongDataArtist`);
                     const img = document.getElementById(`PlayerControlsSongDataAlbum`);
@@ -69,7 +65,6 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                 })
                 if (addToHistory) {
                     setHistory([...history.filter((song) => song !== currentSong), currentSong]);
-                    // console.log(history);
                 }
                 localStorage.setItem("currentSong", currentSong);
             }
@@ -122,12 +117,12 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         const bufferLength = analyzer.frequencyBinCount; // fftSize / 2
         const dataArray = new Uint8Array(bufferLength);
         const barWidth = ((canvas.width / 1.65) / (bufferLength));
-        //console.log(barWidth);
+
         let barHeight;
         let barPosition;
 
-        //console.log("load");
-        const draw = async () => {
+
+        const draw = async () => { // audio visualization draw loop
             barPosition = 0;
             context.clearRect(0, 0, canvas.width, canvas.height);
             analyzer.getByteFrequencyData(dataArray);
@@ -159,8 +154,6 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
 
 
         if ('mediaSession' in navigator) {
-            //console.log("loaded");
-
             navigator.mediaSession.setActionHandler('play', () => {
                 if (!player.paused) {
                     player.pause(); document.getElementById("controlPlay").src = playImg;
@@ -179,15 +172,13 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
 
 
         return () => {
-            // player.src = null;
-            // setPlayer(null);
         }
     }, [])
 
     let imgLoad = (event) => {
         const container = document.getElementById(`PlayerControlsContainer`);
         if (container) {
-            const rgb = utils.getAverageRGB(event.target);
+            const rgb = getAverageRGB(event.target);
             container.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`;
             document.body.style.cssText = `--accent-color: rgb(${rgb.r}, ${rgb.g}, ${rgb.b});`;
         }
@@ -257,15 +248,12 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         toggleBorder(event);
         player.loop = !player.loop;
         localStorage.setItem("loop", player.loop);
-        // //console.log(shuffle, player.loop);
-
     }
 
     let handleShuffle = (event) => {
         toggleBorder(event);
         shuffle = !shuffle;
         localStorage.setItem("shuffle", shuffle);
-        // //console.log(shuffle, player.loop);
     }
 
     let handleVolume = (event) => {

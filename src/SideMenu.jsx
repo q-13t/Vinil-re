@@ -8,7 +8,7 @@ import XImg from "./assets/X.svg";
 import searchImg from "./assets/Search.svg";
 import { useEffect, useState } from "react";
 import barsImg from "./assets/Bars.svg";
-import utils from "./main";
+import { getFolders } from "./utils";
 
 const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
     let [search, setSearch] = useState("");
@@ -25,7 +25,7 @@ const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
                 setLastNav(el);
             }
         } else {
-            utils.getFolders().then((folders) => {
+            getFolders().then((folders) => {
                 if (folders.length > 0)
                     document.getElementById("My Music").click();
                 else

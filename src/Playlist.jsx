@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import burgerImg from "./assets/Burger.svg";
-import utils from "./main";
+import { getPlaylist, renamePlaylist, getPlaylists, getAverageRGB, savePlaylist } from "./utils";
 import Songs_List from "./Songs-List";
 import { invoke } from "@tauri-apps/api";
 import playlistImg from "./assets/Playlist.svg";
@@ -19,7 +19,7 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
     useEffect(() => {
         async function populate() {
             // Read playlist from path
-            utils.getPlaylist(path).then(async (entries) => {//get songs
+            getPlaylist(path).then(async (entries) => {//get songs
                 setSongs(entries);
                 if (entries.length != 0) {
                     await invoke("get_tag", { path: entries[0] }).then((res) => {//get first song image and set it as album cover
@@ -27,7 +27,7 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
                             let img = document.getElementById("PlayListImage");
                             if (img) {
                                 img.src = "data:image/webp;base64," + res[3];
-                                const rgb = utils.getAverageRGB(img);
+                                const rgb = getAverageRGB(img);
                                 document.getElementById("PlayListTopMenu").style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
                             }
                         }
@@ -52,8 +52,8 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
     let saveData = () => {
         console.log(playlistName);
         if (changed) {
-            utils.renamePlaylist(path, playlistName).then(() => {
-                utils.getPlaylists().then((playlists) => {
+            renamePlaylist(path, playlistName).then(() => {
+                getPlaylists().then((playlists) => {
                     if (playlists.length > 0) {
                         setPlaylists(playlists);
                     }
@@ -89,14 +89,14 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
         const songIds = Array.from(document.getElementById("PlayListContent").children).map(item => item.id);
         setSongs(songIds);
         async function SavePlaylistOrder() {
-            utils.savePlaylist(playlistName, songIds);
+            savePlaylist(playlistName, songIds);
         }
         async function updateImg() {
             await invoke("get_tag", { path: songIds[0] }).then((res) => {//get first song image and set it as album cover
                 if (res[3]) {
                     let img = document.getElementById("PlayListImage");
                     if (img) img.src = "data:image/webp;base64," + res[3];
-                    const rgb = utils.getAverageRGB(img);
+                    const rgb = getAverageRGB(img);
                     document.getElementById("PlayListTopMenu").style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
                 }
             });
@@ -114,8 +114,8 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
         localStorage.setItem("currentPlaylist", JSON.stringify(songs));
     }
     let deletePlaylist = (path) => {
-        utils.deletePlaylist(path).then(() => {
-            utils.getPlaylists().then((playlists) => {
+        deletePlaylist(path).then(() => {
+            getPlaylists().then((playlists) => {
                 if (playlists.length > 0) {
                     setPlaylists(playlists);
                 }
@@ -127,7 +127,7 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
     let handleDeleteFromPlaylist = () => {
         let tmp = songs.filter((item) => !selectedSongs.includes(item));
         setSongs(tmp);
-        utils.savePlaylist(playlistName, tmp);
+        savePlaylist(playlistName, tmp);
         setSelectedSongs([]);
     }
 

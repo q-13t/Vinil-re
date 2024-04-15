@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import playImg from "./assets/Play.svg";
 import plusImg from "./assets/Plus.svg";
 import playlistImg from "./assets/Playlist.svg";
-import utils from "./main";
+import { appendSong } from "./utils";
 import arrowImg from "./assets/Arrows.svg";
 
 const Songs_Grid = ({ path, observer, openDialog, playlists, handlePlayNext, setPlay, currentSong, setChecked }) => {
@@ -28,7 +28,7 @@ const Songs_Grid = ({ path, observer, openDialog, playlists, handlePlayNext, set
 
     let handleAddToPlaylist = (p_path) => {
         setChecked([path]);
-        utils.appendSong(p_path, [path]).then(() => {
+        appendSong(p_path, [path]).then(() => {
             setChecked([]);
         });
     }

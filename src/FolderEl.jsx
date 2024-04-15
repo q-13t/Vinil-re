@@ -1,4 +1,3 @@
-import { useState } from "react";
 import burgerImg from "./assets/Burger.svg";
 import trashImg from "./assets/TrashCan.svg";
 const FolderEl = ({ path, removePath }) => {

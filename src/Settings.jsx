@@ -5,7 +5,7 @@ import burgerImg from "./assets/Burger.svg";
 import plusImg from "./assets/Plus.svg";
 import { open } from '@tauri-apps/api/dialog';
 import { BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
-import utils from "./main";
+import { getFolders, IndexSongs, clearSongsData } from "./utils";
 
 
 const Settings = () => {
@@ -13,7 +13,7 @@ const Settings = () => {
 
 
     useEffect(() => {
-        utils.getFolders().then((folders) => {
+        getFolders().then((folders) => {
             setPaths(folders);
         })
     }, []);
@@ -28,7 +28,7 @@ const Settings = () => {
             let folders = [...paths, ...selected.map((path) => path)];
             setPaths(folders);
             writeTextFile('folders.json', JSON.stringify(folders), { dir: BaseDirectory.AppData, encoding: 'utf-8' });
-            utils.IndexSongs(folders);
+            IndexSongs(folders);
         };
     }
 
@@ -38,7 +38,7 @@ const Settings = () => {
         setPaths(arr);
     }
     let handleClearCash = () => {
-        utils.clearSongsData();
+        clearSongsData();
         document.getElementById("ClearCashDialog").style.display = "none";
     }
     return (

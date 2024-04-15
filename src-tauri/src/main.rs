@@ -9,9 +9,23 @@ use image::ImageEncoder;
 use std::{fs, time::SystemTime};
 
 #[tauri::command]
+///
+/// Returns list of paths to mp3 files that are ordered in a certain way.
+///
+/// ### Parameters
+/// - `folders`: List of folders to search in
+/// - `sort_by`: `Time Created` | `Title` | `Artist` | `Album`
+/// - `search_text`: Search text or `""`
+///### Returns
+/// - `Vec<String>`: List of paths
+///### Example
+/// ```js
+/// let paths = await invoke("get_paths", {folders: ["C:\\Music"], sortBy: "Time Created", searchText: ""});
+/// ```
+///
 async fn get_paths(folders: Vec<String>, sort_by: String, search_text: String) -> Vec<String> {
-    println!("Folders {:?}", folders);
-    println!("Sort By {:?}", sort_by);
+    // println!("Folders {:?}", folders);
+    // println!("Sort By {:?}", sort_by);
     let mut files: Vec<String> = Vec::new();
     for folder in folders {
         let mut list: Vec<String> = fs::read_dir(folder)
@@ -96,12 +110,22 @@ async fn get_paths(folders: Vec<String>, sort_by: String, search_text: String) -
         }
     }
 
-    files.dedup();
+    files.dedup(); //remove duplicates
 
-    files
+    return files;
 }
 
 #[tauri::command]
+///
+/// Returns title, artist, album, image and created time
+/// ### Parameters
+/// - `path`: Path to `valid` mp3 file
+/// ### Returns
+/// - `(title, artist, album, image, created)`
+/// ### Example
+/// ```js
+/// let (title, artist, album, image, created) = await invoke("get_tag", {path: "C:\\Music\\test.mp3"});
+/// ```
 async fn get_tag(path: String) -> (String, String, String, String, SystemTime) {
     let tag = match Tag::read_from_path(&path) {
         Ok(tag) => tag,

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import utils from "./main";
+import { getPlaylists, savePlaylist } from "./utils";
 
 const NewPlayListDialog = ({ open, openDialog, selectedSongs, setSelectedSongs, setPlaylists }) => {
 
@@ -11,8 +11,8 @@ const NewPlayListDialog = ({ open, openDialog, selectedSongs, setSelectedSongs, 
             alert("Enter playlist name");
             return;
         }
-        utils.savePlaylist(playlistName, selectedSongs).then(() => {
-            utils.getPlaylists().then((playlists) => {
+        savePlaylist(playlistName, selectedSongs).then(() => {
+            getPlaylists().then((playlists) => {
                 if (playlists.length > 0) {
                     setPlaylists(playlists);
                 }

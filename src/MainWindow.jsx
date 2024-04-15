@@ -6,9 +6,10 @@ import PlayerControls from "./PlayerControls";
 import MainDisplay from "./MainDisplay";
 import Settings from "./Settings";
 import NewPlayListDialog from "./NewPlaylistDialog";
-import utils from "./main";
+import { getTag, getPlaylists, IndexSongs } from "./utils";
 import Playlist from "./Playlist";
 import vinilImg from "../public/Vinil.svg";
+
 
 
 async function isIntersecting(entries) {
@@ -22,7 +23,7 @@ async function isIntersecting(entries) {
             const duration = document.getElementById(`duration-${id}`);
             if (entry.isIntersecting) {
                 async function fetchData() {
-                    utils.getTag(id, false).then((res) => {
+                    getTag(id, false).then((res) => {
                         if (title) title.innerHTML = res.title;
                         if (artist) artist.innerHTML = res.artist;
                         if (album) album.innerHTML = res.album;
@@ -51,7 +52,7 @@ async function isIntersecting(entries) {
     intersect();
 }
 
-document.addEventListener('contextmenu', event => event.preventDefault()); //Forbid RightClick actions on whole page
+// document.addEventListener('contextmenu', event => event.preventDefault()); //Forbid RightClick actions on whole page
 
 
 const MainWindow = () => {
@@ -67,12 +68,12 @@ const MainWindow = () => {
     let [display, setDisplay] = useState("My Music");
 
     useEffect(() => {
-        utils.getPlaylists().then((playlists) => {
+        getPlaylists().then((playlists) => {
             if (playlists.length > 0) {
                 setPlaylists(playlists);
             }
         })
-        utils.IndexSongs();
+        IndexSongs();
     }, []);
     return (
         <div id="AppContainer">

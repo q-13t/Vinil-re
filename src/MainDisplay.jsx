@@ -3,9 +3,8 @@ import burgerImg from "./assets/Burger.svg";
 import { useEffect, useState } from "react";
 import Songs_List from "./Songs-List";
 import Songs_Grid from "./Songs-Grid";
-import utils from "./main";
+import { searchAndSort, getFolders, appendSong } from "./utils";
 import { invoke } from "@tauri-apps/api/tauri";
-import { path } from "@tauri-apps/api";
 import shuffleImg from "./assets/Shuffle.svg";
 
 const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, setCurrentPlaylist, display, observer, history, setCurrentSong, currentSong, setForcePlay, forcePlay }) => {
@@ -25,11 +24,11 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
         switch (display) {
             case "My Music": {
                 // console.log("My Music");
-                utils.searchAndSort().then((res) => {
+                searchAndSort().then((res) => {
                     if (res !== undefined) {
                         setPaths(res);
                     } else {
-                        utils.getFolders().then((paths) => {
+                        getFolders().then((paths) => {
                             invoke("get_paths", { folders: paths, sortBy: "Time Created", searchText: "" }).then((paths) => {
                                 setPaths(paths);
                             }).catch((err) => { });
@@ -57,7 +56,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
                 }
                 let sortBy = document.getElementById("sort");
                 if (!sortBy) sortBy = "Time Created"; else sortBy = sortBy.value;
-                utils.searchAndSort(sortBy, search).then((res) => {
+                searchAndSort(sortBy, search).then((res) => {
                     setPaths(res);
                     setLoading(false);
                 });
@@ -89,7 +88,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
         } else {
             search = search.toLowerCase();
         }
-        utils.searchAndSort(event.target.value, search).then((res) => {
+        searchAndSort(event.target.value, search).then((res) => {
             setPaths(res);
             document.getElementById("sort").disabled = false;
             setLoading(false);
@@ -98,7 +97,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
 
     let saveToPlaylist = (event) => {
         console.log(event.target.value);
-        utils.appendSong(event.target.value, selectedSongs).then(() => {
+        appendSong(event.target.value, selectedSongs).then(() => {
             setSelectedSongs([]);
         });
     }
