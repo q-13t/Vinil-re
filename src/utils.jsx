@@ -281,33 +281,40 @@ async function IndexSongs(folders = null) {
         });
         let progress = document.getElementById("indexing-progress");
 
-        if (shortIndex.length === paths.length) {// No need to index
-            finishedIndexing = true;
-            return;
-        } else if (paths.length > shortIndex.length) {
-            let indexedPaths = shortIndex.map(x => { return x.filePath; });
-            let temp = 0;
-            for (let i = 0; i < paths.length; i++) {
-                if (canaledIndexing) break;
-                try {
-                    // console.log("INDEXING", paths[i]);
-                    if (!progress) progress = document.getElementById("indexing-progress");
-                    if (progress) progress.value = (i / paths.length) * 100;
-                    if (!indexedPaths.includes(paths[i])) {
-                        await getTag(paths[i], true).then((res) => {
-                            shortIndex.splice(i, 0, res);
-                            temp++;
-                        })
-                    }
-                    if (temp === 10) { await writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig, recursive: true }).then(() => { temp = 0; }); }
-                } catch (e) {
-                    console.log(e);
+
+        let indexedPaths = shortIndex.map(x => { return x.filePath; });
+        let temp = 0;
+        for (let i = 0; i < paths.length; i++) {
+            if (canaledIndexing) break;
+            try {
+                // console.log("INDEXING", paths[i]);
+                if (!progress) progress = document.getElementById("indexing-progress");
+                if (progress) progress.value = (i / paths.length) * 100;
+                if (!indexedPaths.includes(paths[i])) {
+                    await getTag(paths[i], true).then((res) => {
+                        shortIndex.splice(i, 0, res);
+                        temp++;
+                    })
                 }
+                if (temp === 10) { await writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig, recursive: true }).then(() => { temp = 0; }); }
+            } catch (e) {
+                console.log(e);
             }
-            if (progress) progress.style.display = "none";
-            finishedIndexing = true;
-            writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig, recursive: true });
         }
+        temp = 0;
+        if (progress) progress.value = 0;
+        for (let i = 0; i < shortIndex.length; i++) {
+            if (canaledIndexing) break;
+            if (progress) progress.value = (i / shortIndex.length) * 100;
+            if (!paths.includes(shortIndex[i].filePath)) {
+                shortIndex.splice(i, 1);
+                temp++;
+            }
+            if (temp === 10) { await writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig, recursive: true }).then(() => { temp = 0; }); }
+        }
+        if (progress) progress.style.display = "none";
+        finishedIndexing = true;
+        writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig, recursive: true });
     })
 
 };
