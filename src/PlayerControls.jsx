@@ -52,16 +52,14 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                         else
                             img.src = vinilImg;
                     }
-                    if ('mediaSession' in navigator) {
-                        navigator.mediaSession.metadata = new MediaMetadata({
-                            title: res.title,
-                            artist: res.artist,
-                            album: res.album,
-                            artwork: [
-                                { src: res.image, type: 'image/webp' },
-                            ]
-                        });
-                    }
+                    navigator.mediaSession.metadata = new MediaMetadata({
+                        title: res.title,
+                        artist: res.artist,
+                        album: res.album,
+                        artwork: [
+                            { src: res.image, type: 'image/webp' },
+                        ]
+                    });
                 })
                 if (addToHistory) {
                     setHistory([...history.filter((song) => song !== currentSong), currentSong]);
@@ -156,24 +154,20 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         }
 
 
-
-
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.setActionHandler('play', () => {
-                if (!player.paused) {
-                    player.pause(); document.getElementById("controlPlay").src = playImg;
-                } else { player.play(); document.getElementById("controlPlay").src = pauseImg; }
-            });
-            navigator.mediaSession.setActionHandler('pause', () => {
-                if (!player.paused) {
-                    player.pause(); document.getElementById("controlPlay").src = playImg;
-                } else { player.play(); document.getElementById("controlPlay").src = pauseImg; }
-            });
-            navigator.mediaSession.setActionHandler('seekbackward', () => { document.getElementById("controlPrevious").click(); });
-            navigator.mediaSession.setActionHandler('seekforward', () => { document.getElementById("controlNext").click(); });
-            navigator.mediaSession.setActionHandler('previoustrack', () => { document.getElementById("controlPrevious").click(); });
-            navigator.mediaSession.setActionHandler('nexttrack', () => { document.getElementById("controlNext").click(); });
-        }
+        navigator.mediaSession.setActionHandler('play', () => {
+            if (!player.paused) {
+                player.pause(); document.getElementById("controlPlay").src = playImg;
+            } else { player.play(); document.getElementById("controlPlay").src = pauseImg; }
+        });
+        navigator.mediaSession.setActionHandler('pause', () => {
+            if (!player.paused) {
+                player.pause(); document.getElementById("controlPlay").src = playImg;
+            } else { player.play(); document.getElementById("controlPlay").src = pauseImg; }
+        });
+        navigator.mediaSession.setActionHandler('seekbackward', () => { document.getElementById("controlPrevious").click(); });
+        navigator.mediaSession.setActionHandler('seekforward', () => { document.getElementById("controlNext").click(); });
+        navigator.mediaSession.setActionHandler('previoustrack', () => { document.getElementById("controlPrevious").click(); });
+        navigator.mediaSession.setActionHandler('nexttrack', () => { document.getElementById("controlNext").click(); });
 
 
         return () => {
