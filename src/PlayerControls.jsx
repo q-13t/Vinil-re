@@ -16,11 +16,11 @@ import vinilImg from "../public/Vinil.svg";
 let historyIndex = 0;
 let addToHistory = true;
 let paused = true;
+let shuffle = localStorage.getItem("shuffle") === "true";
 
 const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history, setHistory, forcePlay }) => {
 
     let [player, setPlayer] = useState(new Audio());
-    let shuffle = localStorage.getItem("shuffle") === "true";
     let [load, setLoad] = useState(false);
 
     useEffect(() => {
@@ -83,14 +83,19 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
     useEffect(() => {
         console.log("player", player);
         if (player === null) { setPlayer(new Audio()) }
-        if (localStorage.getItem("loop") === "true") { document.getElementById("controlRepeat").click(); };
-        if (localStorage.getItem("shuffle") === "true") { document.getElementById("controlShuffle").click() };
-        if (localStorage.getItem("shuffle") === "true") { document.getElementById("controlShuffle").click() };
+        if (localStorage.getItem("loop") === "true") {
+            player.loop = true;
+            document.getElementById("controlRepeat").classList.toggle("activeBorder");
+        };
+        if (shuffle) {
+            document.getElementById("controlShuffle").classList.toggle("activeBorder");
+        };
+
         if (localStorage.getItem("volume") !== null && document.getElementById("volumeSlider")) {
             document.getElementById("volumeSlider").value = localStorage.getItem("volume")
             player.volume = localStorage.getItem("volume") / 100;
         };
-        if (localStorage.getItem("muted") === "true") handleMute();
+        if (localStorage.getItem("muted")) handleMute();
         if (localStorage.getItem("currentTime") !== null) {
             document.getElementById("timeSlider").value = localStorage.getItem("currentTime")
             player.currentTime = localStorage.getItem("currentTime")
