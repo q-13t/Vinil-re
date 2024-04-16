@@ -8,7 +8,7 @@ import Settings from "./Settings";
 import NewPlayListDialog from "./NewPlaylistDialog";
 import { getTag, getPlaylists, IndexSongs } from "./utils";
 import Playlist from "./Playlist";
-import vinilImg from "../public/Vinil.svg";
+import vinilImg from "/Vinil.svg";
 
 
 

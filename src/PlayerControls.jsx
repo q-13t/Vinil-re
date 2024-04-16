@@ -11,7 +11,7 @@ import playImg from "./assets/Play.svg";
 import pauseImg from "./assets/Pause.svg";
 import soundImg from "./assets/Sound.svg";
 import noSoundImg from "./assets/No Sound.svg";
-import vinilImg from "../public/Vinil.svg";
+import vinilImg from "/Vinil.svg";
 
 let historyIndex = 0;
 let addToHistory = true;
