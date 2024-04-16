@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import burgerImg from "./assets/Burger.svg";
-import { getPlaylist, renamePlaylist, getPlaylists, getAverageRGB, savePlaylist } from "./utils";
+import { getPlaylist, renamePlaylist, getPlaylists, getAverageRGB, savePlaylist, validatePlaylistName, displayPlaylistNameWarning } from "./utils";
 import Songs_List from "./Songs-List";
 import { invoke } from "@tauri-apps/api";
 import playlistImg from "./assets/Playlist.svg";
@@ -21,19 +21,17 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
             // Read playlist from path
             getPlaylist(path).then(async (entries) => {//get songs
                 setSongs(entries);
+                let img = document.getElementById("PlayListImage");
                 if (entries.length != 0) {
                     await invoke("get_tag", { path: entries[0] }).then((res) => {//get first song image and set it as album cover
-                        if (res[3]) {
-                            let img = document.getElementById("PlayListImage");
-                            if (img) {
-                                img.src = "data:image/webp;base64," + res[3];
-                                const rgb = getAverageRGB(img);
-                                document.getElementById("PlayListTopMenu").style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
-                            }
-                        }
-                    })
+                        if (res[3]) img.src = "data:image/webp;base64," + res[3];
+                    });
                 } else {
-                    document.getElementById("PlayListImage").src = playlistImg;
+                    img.src = playlistImg;
+                }
+                if (img) {
+                    const rgb = getAverageRGB(img);
+                    document.getElementById("PlayListTopMenu").style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
                 }
             });
             setPlaylistName(queryParameters.get("name"));
@@ -45,12 +43,14 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
 
     let textAreaChange = (e) => {
         setChanged(true);
-        console.log(e.target.value);
         setPlaylistName(e.target.value);
     }
 
     let saveData = () => {
-        console.log(playlistName);
+        if (validatePlaylistName(playlistName) == false) {
+            displayPlaylistNameWarning();
+            return;
+        }
         if (changed) {
             renamePlaylist(path, playlistName).then(() => {
                 getPlaylists().then((playlists) => {

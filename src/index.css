@@ -874,6 +874,7 @@ select *:hover {
 
 #PlayListImage {
     max-width: 10%;
+    width: 10%;
 }
 
 .dropdown {

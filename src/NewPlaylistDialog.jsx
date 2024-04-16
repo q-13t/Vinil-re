@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getPlaylists, savePlaylist } from "./utils";
+import { getPlaylists, savePlaylist, validatePlaylistName } from "./utils";
 
 const NewPlayListDialog = ({ open, openDialog, selectedSongs, setSelectedSongs, setPlaylists }) => {
 
@@ -7,9 +7,9 @@ const NewPlayListDialog = ({ open, openDialog, selectedSongs, setSelectedSongs, 
 
     let save = (e) => {
         e.preventDefault();
-        if (playlistName === "") {
-            alert("Enter playlist name");
-            return;
+        if (validatePlaylistName(playlistName) == false) {
+            displayPlaylistNameWarning();
+            return
         }
         savePlaylist(playlistName, selectedSongs).then(() => {
             getPlaylists().then((playlists) => {
@@ -22,8 +22,10 @@ const NewPlayListDialog = ({ open, openDialog, selectedSongs, setSelectedSongs, 
         });
         openDialog(false);
     }
+
     let close = (e) => {
         e.preventDefault();
+        setPlaylistName("");
         openDialog(false);
     }
 

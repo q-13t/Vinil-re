@@ -387,5 +387,24 @@ async function searchAndSort(sortBy = "Time Created", search = "") {
     }
 }
 
+/**
+ * Displays playlist naming warning
+ */
+function displayPlaylistNameWarning() {
+    message('Playlist name may not be empty, contain special characters \n / \\ : * ? " < > | \n and cannot be longer than 255 characters!', { title: 'Vinil-re', type: 'warnont' });
+}
+/**
+ * Validates playlist name
+ *  
+ * @param {String} name name of the playlist
+ * @returns {Boolean} true if name is valid, false otherwise
+ */
+function validatePlaylistName(name) {
+    if (name.length === 0) return false;
+    if (/[\\/:*?"<>|]/.test(name)) return false;
+    if (name.length > 255) return false;
+    return true;
+}
 
-export { getAverageRGB, searchAndSort, clearSongsData, getTag, getFolders, getPlaylists, getPlaylist, savePlaylist, appendSong, deletePlaylist, renamePlaylist, IndexSongs };
+
+export { displayPlaylistNameWarning, validatePlaylistName, getAverageRGB, searchAndSort, clearSongsData, getTag, getFolders, getPlaylists, getPlaylist, savePlaylist, appendSong, deletePlaylist, renamePlaylist, IndexSongs };
