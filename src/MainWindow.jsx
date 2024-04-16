@@ -52,7 +52,7 @@ async function isIntersecting(entries) {
     intersect();
 }
 
-// document.addEventListener('contextmenu', event => event.preventDefault()); //Forbid RightClick actions on whole page
+document.addEventListener('contextmenu', event => event.preventDefault()); //Forbid RightClick actions on whole page
 
 
 const MainWindow = () => {
