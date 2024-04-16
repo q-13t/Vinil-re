@@ -26,10 +26,14 @@ const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
             }
         } else {
             getFolders().then((folders) => {
-                if (folders.length > 0)
-                    document.getElementById("My Music").click();
-                else
-                    document.getElementById("Setting").click();
+                if (folders.length > 0) {
+                    const my_mus = document.getElementById("My Music");
+                    if (my_mus) my_mus.click();
+                }
+                else {
+                    const setting = document.getElementById("Settings");
+                    if (setting) setting.click();
+                }
             })
         }
     }, [maximized]);
@@ -94,7 +98,7 @@ const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
                         </div>
                     </div>
 
-                    <div id="Setting" className="sideMenuButton" onClick={(e) => handleNavigate(e, "/settings")}>
+                    <div id="Settings" className="sideMenuButton" onClick={(e) => handleNavigate(e, "/settings")}>
                         <img src={gearImg} alt="" aria-hidden="true" tabIndex={-1}></img>
                         <p className="sideMenuText" aria-hidden="true" tabIndex={-1}>Settings</p>
                     </div>
@@ -117,7 +121,7 @@ const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
                             </div>
                         </div>
                     </div>
-                    <div id="Setting" >
+                    <div id="Settings" >
                         <img src={gearImg} alt={burgerImg} className="sideMenuButton small-img" onClick={(e) => handleNavigate(e, "/settings")}></img>
                     </div>
                 </div>

@@ -183,7 +183,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         }
     }
     let toggleBorder = (event) => {
-        event.target.classList.toggle("activeBorder");
+        if (event && event.target) event.target.classList.toggle("activeBorder");
     }
 
     let setTime = (event) => {
@@ -239,7 +239,8 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
 
     let handleMute = (event) => {
         toggleBorder(event);
-        player.muted = !player.muted, event.target.src = (player.muted ? noSoundImg : soundImg);
+        player.muted = !player.muted;
+        if (event && event.target) event.target.src = (player.muted ? noSoundImg : soundImg);
         localStorage.setItem("muted", player.muted);
     }
 
@@ -256,8 +257,10 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
     }
 
     let handleVolume = (event) => {
-        player.volume = event.target.value / 100;
-        localStorage.setItem("volume", event.target.value);
+        if (event && event.target) {
+            player.volume = event.target.value / 100;
+            localStorage.setItem("volume", event.target.value);
+        }
     }
 
 

@@ -71,7 +71,7 @@ const Songs_List = ({ path, odd, observer, checked, setChecked, handlePlayNext, 
                 <img src={checkImg} style={{ width: "inherit", visibility: checked.includes(path) ? "visible" : "hidden" }} />
             </div>
             <img id={`img-${path}`} className="song-el-album" src=""></img>
-            <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", flex: "0 0 20%", maxWidth: "20%", alignItems: "stretch" }}>
+            <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", flex: "0 0 25%", maxWidth: "25%", alignItems: "stretch" }}>
                 <p id={`title-${path}`} className="song-el-title" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
                 <img src={playImg} alt={burgerImg} className="song-el-play" onClick={() => { setPlay(path) }}></img>
                 <div className="dropdown">

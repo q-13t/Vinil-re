@@ -292,7 +292,7 @@ async function IndexSongs(folders = null) {
                 try {
                     // console.log("INDEXING", paths[i]);
                     if (!progress) progress = document.getElementById("indexing-progress");
-                    progress.value = (i / paths.length) * 100;
+                    if (progress) progress.value = (i / paths.length) * 100;
                     if (!indexedPaths.includes(paths[i])) {
                         await getTag(paths[i], true).then((res) => {
                             shortIndex.splice(i, 0, res);
@@ -303,10 +303,8 @@ async function IndexSongs(folders = null) {
                 } catch (e) {
                     console.log(e);
                 }
-
-
             }
-            progress.style.display = "none";
+            if (progress) progress.style.display = "none";
             finishedIndexing = true;
             writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig, recursive: true });
         }
