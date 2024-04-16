@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import burgerImg from "./assets/Burger.svg";
-import { getPlaylist, renamePlaylist, getPlaylists, getAverageRGB, savePlaylist, validatePlaylistName, displayPlaylistNameWarning } from "./utils";
+import { getPlaylist, renamePlaylist, getPlaylists, getAverageRGB, savePlaylist, validatePlaylistName, displayPlaylistNameWarning, deletePlaylist } from "./utils";
 import Songs_List from "./Songs-List";
 import { invoke } from "@tauri-apps/api";
 import playlistImg from "./assets/Playlist.svg";
@@ -113,7 +113,7 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
         setCurrentSong(path);
         localStorage.setItem("currentPlaylist", JSON.stringify(songs));
     }
-    let deletePlaylist = (path) => {
+    let handleDeletePlaylist = (path) => {
         deletePlaylist(path).then(() => {
             getPlaylists().then((playlists) => {
                 if (playlists.length > 0) {
@@ -145,7 +145,7 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
                 <div id="Delete-Playlist-Dialog-Container">
                     <p>Are you sure you want to delete this playlist?</p>
                     <div>
-                        <button onClick={() => { deletePlaylist(path) }}>Delete</button>
+                        <button onClick={() => { handleDeletePlaylist(path) }}>Delete</button>
                         <button onClick={() => { document.getElementById("Delete-Playlist-Dialog").style.display = "none" }}>Cancel</button>
                     </div>
                 </div>
