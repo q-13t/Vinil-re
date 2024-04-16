@@ -93,7 +93,9 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             document.getElementById("volumeSlider").value = localStorage.getItem("volume")
             player.volume = localStorage.getItem("volume") / 100;
         };
-        if (localStorage.getItem("muted")) handleMute();
+        if (localStorage.getItem("muted") === "true") {
+            document.getElementById("controlMute").click();
+        };
         if (localStorage.getItem("currentTime") !== null) {
             document.getElementById("timeSlider").value = localStorage.getItem("currentTime")
             player.currentTime = localStorage.getItem("currentTime")
