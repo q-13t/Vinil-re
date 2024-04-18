@@ -7,7 +7,7 @@ import playlistImg from "./assets/Playlist.svg";
 import { appendSong } from "./utils";
 import arrowImg from "./assets/Arrows.svg";
 
-const Songs_List = ({ path, odd, observer, checked, setChecked, handlePlayNext, setPlay, playlists, openDialog, currentSong, draggable = false, dragStart = null, dragOver = null, dragEnd = null }) => {
+const Songs_List = ({ id, path, odd, observer, checked, setChecked, handlePlayNext, setPlay, playlists, openDialog, currentSong, draggable = false, dragStart = null, dragOver = null, dragEnd = null }) => {
     const ref = useRef(null);
 
     let updateThisCheck = () => {//Setts the check and adds to checked array
@@ -58,7 +58,8 @@ const Songs_List = ({ path, odd, observer, checked, setChecked, handlePlayNext, 
 
     return (
         <div
-            id={path}
+            data-path={path}
+            id={id}
             ref={ref}
             className={`song-el-container-list ${odd ? "odd" : ""}`}
             draggable={draggable}
@@ -67,16 +68,16 @@ const Songs_List = ({ path, odd, observer, checked, setChecked, handlePlayNext, 
             onDrop={(e) => { handleDrop(e) }}
             style={currentSong === path ? { color: "var(--accent-color)" } : {}}
         >
-            <div id={`check-${path}`} className="song-el-check" onClick={() => { updateThisCheck() }}>
+            <div id={`check-${id}`} className="song-el-check" onClick={() => { updateThisCheck() }}>
                 <img src={checkImg} style={{ width: "inherit", visibility: checked.includes(path) ? "visible" : "hidden" }} />
             </div>
-            <img id={`img-${path}`} className="song-el-album" src=""></img>
+            <img id={`img-${id}`} className="song-el-album" src=""></img>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", flex: "0 0 25%", maxWidth: "25%", alignItems: "stretch" }}>
-                <p id={`title-${path}`} className="song-el-title" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
+                <p id={`title-${id}`} className="song-el-title" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
                 <img src={playImg} alt={burgerImg} className="song-el-play" onClick={() => { setPlay(path) }}></img>
                 <div className="dropdown">
                     <img src={plusImg} alt={burgerImg} className="song-el-add max-height" ></img>
-                    <div id={`song-el-add-control-${path}`} className="song-el-add-control">
+                    <div id={`song-el-add-control-${id}`} className="song-el-add-control">
                         <div className="dropdown-control "  >
                             <div className="dropdown-playlist dropdown-el" onClick={handleNewPlaylist} >
                                 <img src={plusImg} alt="" />
@@ -96,9 +97,9 @@ const Songs_List = ({ path, odd, observer, checked, setChecked, handlePlayNext, 
                     </div>
                 </div>
             </div >
-            <p id={`artist-${path}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
-            <p id={`album-${path}`} className="song-el-album" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
-            <p id={`duration-${path}`} className="song-el-time" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
+            <p id={`artist-${id}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
+            <p id={`album-${id}`} className="song-el-album" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
+            <p id={`duration-${id}`} className="song-el-time" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
         </div >
     );
 }

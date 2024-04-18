@@ -6,7 +6,7 @@ import playlistImg from "./assets/Playlist.svg";
 import { appendSong } from "./utils";
 import arrowImg from "./assets/Arrows.svg";
 
-const Songs_Grid = ({ path, observer, openDialog, playlists, handlePlayNext, setPlay, currentSong, setChecked }) => {
+const Songs_Grid = ({ path, id, observer, openDialog, playlists, handlePlayNext, setPlay, currentSong, setChecked }) => {
     const ref = useRef(null);
 
 
@@ -34,19 +34,19 @@ const Songs_Grid = ({ path, observer, openDialog, playlists, handlePlayNext, set
     }
 
     return (
-        <div id={path} ref={ref} className="song-el-container-grid" >
-            <img id={`img-${path}`} className="song-el-album" src=""></img>
-            <p id={`title-${path}`} className="song-el-title" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
+        <div data-path={path} id={id} ref={ref} className="song-el-container-grid" >
+            <img id={`img-${id}`} className="song-el-album" src=""></img>
+            <p id={`title-${id}`} className="song-el-title" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
             <div className="song-el-grid-sub">
-                <p id={`artist-${path}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
-                <p id={`duration-${path}`} className="song-el-time" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
+                <p id={`artist-${id}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
+                <p id={`duration-${id}`} className="song-el-time" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
             </div>
 
             <div className="song-el-buttons">
                 <img src={playImg} alt={burgerImg} className="song-el-play" onClick={() => { setPlay(path) }}></img>
                 <div className="dropdown">
                     <img src={plusImg} alt={burgerImg} className="song-el-add max-height" ></img>
-                    <div id={`song-el-add-control-${path}`} className="song-el-add-control">
+                    <div id={`song-el-add-control-${id}`} className="song-el-add-control">
                         <div className="dropdown-control "  >
                             <div className=" dropdown-playlist dropdown-el" onClick={handleNewPlaylist}>
                                 <img src={plusImg} alt="" />

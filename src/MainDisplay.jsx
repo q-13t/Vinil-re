@@ -6,7 +6,7 @@ import Songs_Grid from "./Songs-Grid";
 import { searchAndSort, getFolders, appendSong } from "./utils";
 import { invoke } from "@tauri-apps/api/tauri";
 import shuffleImg from "./assets/Shuffle.svg";
-
+let counter = 0;
 const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, setCurrentPlaylist, display, observer, history, setCurrentSong, currentSong, setForcePlay, forcePlay }) => {
     const [queryParameters] = useSearchParams();
     let [paths, setPaths] = useState([]);
@@ -20,6 +20,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
 
 
     useEffect(() => {
+        counter = 0;
         // console.log("Effect MD: ", display, display === "Current Play Queue");
         switch (display) {
             case "My Music": {
@@ -107,6 +108,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
     }
 
     let playlistChange = (path) => {
+        // console.log(paths);
         setForcePlay(!forcePlay)
         setCurrentPlaylist(paths);
         setCurrentSong(path);
@@ -169,8 +171,12 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
                 {Loading ? <p>Loading...</p> : null}
                 {paths && paths.length != 0 && as === "list" ?
                     paths.map((path) => {
-                        odd = !odd; return <Songs_List key={path} path={path} odd={odd} handlePlayNext={handlePlayNext} openDialog={openDialog} currentSong={currentSong} setPlay={playlistChange} playlists={playlists} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
-                    }) : paths.map((path) => (<Songs_Grid key={path} path={path} observer={observer} handlePlayNext={handlePlayNext} openDialog={openDialog} playlists={playlists} setPlay={playlistChange} currentSong={currentSong} setChecked={setSelectedSongs} />))}
+                        odd = !odd; counter++;
+                        return <Songs_List id={counter} path={path} odd={odd} handlePlayNext={handlePlayNext} openDialog={openDialog} currentSong={currentSong} setPlay={playlistChange} playlists={playlists} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
+                    }) : paths.map((path) => {
+                        counter++;
+                        return <Songs_Grid id={counter} path={path} observer={observer} handlePlayNext={handlePlayNext} openDialog={openDialog} playlists={playlists} setPlay={playlistChange} currentSong={currentSong} setChecked={setSelectedSongs} />
+                    })}
             </div>
         </div >
     );

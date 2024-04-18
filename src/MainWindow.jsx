@@ -16,6 +16,7 @@ async function isIntersecting(entries) {
     async function intersect() {
         entries.forEach((entry) => {
             let id = entry.target.id;
+            let path = entry.target.getAttribute("data-path");
             const title = document.getElementById(`title-${id}`);
             const img = document.getElementById(`img-${id}`);
             const album = document.getElementById(`album-${id}`);
@@ -23,7 +24,7 @@ async function isIntersecting(entries) {
             const duration = document.getElementById(`duration-${id}`);
             if (entry.isIntersecting) {
                 async function fetchData() {
-                    getTag(id, false).then((res) => {
+                    getTag(path, false).then((res) => {
                         if (title) title.innerHTML = res.title;
                         if (artist) artist.innerHTML = res.artist;
                         if (album) album.innerHTML = res.album;
