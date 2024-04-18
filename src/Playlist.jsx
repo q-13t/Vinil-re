@@ -6,6 +6,7 @@ import Songs_List from "./Songs-List";
 import { invoke } from "@tauri-apps/api";
 import playlistImg from "./assets/Playlist.svg";
 
+let counter = 0;
 
 const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, setCurrentPlaylist, setCurrentSong, currentSong, playlists, navigateTo, setForcePlay, forcePlay }) => {
     const [queryParameters] = useSearchParams();
@@ -17,6 +18,7 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
     let [draggedItemId, setDraggedItemId] = useState(null);
 
     useEffect(() => {
+        counter = 0;
         async function populate() {
             // Read playlist from path
             getPlaylist(path).then(async (entries) => {//get songs
@@ -107,10 +109,11 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
     }
 
 
-    let playlistChange = (path) => {
+    let handlePlay = (path) => {
         setForcePlay(!forcePlay);
         setCurrentPlaylist(songs);
         setCurrentSong(path);
+        sessionStorage.setItem("currentIndex", songs.indexOf(path));
         localStorage.setItem("currentPlaylist", JSON.stringify(songs));
     }
     let handleDeletePlaylist = (path) => {
@@ -133,10 +136,10 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
 
     let handlePlayNext = (path) => {
         let currentPlaylist = JSON.parse(localStorage.getItem("currentPlaylist"));
-        let currentIndexInPlaylist = currentPlaylist.indexOf(path);
-        let index = currentPlaylist.indexOf(currentSong) + 1;
-        let temp = [...currentPlaylist.slice(0, index), path, ...currentPlaylist.slice(index, currentIndexInPlaylist), ...currentPlaylist.slice(currentIndexInPlaylist + 1)];
-        localStorage.setItem("currentPlaylist", JSON.stringify(temp));
+        let currentIndexInPlaylist = currentPlaylist.indexOf(currentSong);
+        currentPlaylist.splice(currentIndexInPlaylist + 1, 0, path);
+        localStorage.setItem("currentPlaylist", JSON.stringify(currentPlaylist));
+        setCurrentPlaylist(currentPlaylist);
     }
 
     return (
@@ -168,8 +171,8 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
             </div>
             <div id="PlayListContent" >
                 {songs.length != 0 && songs.map((path) => {
-                    odd = !odd;
-                    return (<Songs_List key={path} path={path} handlePlayNext={handlePlayNext} odd={odd} observer={observer} setPlay={playlistChange} currentSong={currentSong} playlists={playlists} checked={selectedSongs} setChecked={setSelectedSongs} draggable={true} dragStart={dragStart} dragOver={dragOver} dragEnd={dragEnd} />);
+                    odd = !odd; counter++;
+                    return (<Songs_List id={counter} path={path} handlePlayNext={handlePlayNext} odd={odd} observer={observer} setPlay={handlePlay} currentSong={currentSong} playlists={playlists} checked={selectedSongs} setChecked={setSelectedSongs} draggable={true} dragStart={dragStart} dragOver={dragOver} dragEnd={dragEnd} />);
                 })}
             </div>
         </div >

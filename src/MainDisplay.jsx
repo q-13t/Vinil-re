@@ -68,6 +68,15 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
         }
     }, [display, queryParameters.get("search-for")]);
 
+    useEffect(() => {
+        if (display === "Current Play Queue") {
+            setPaths(JSON.parse(localStorage.getItem("currentPlaylist")));
+        } else if (display === "Recent Plays") {
+            setPaths(history.slice().reverse());
+        }
+
+    }, [localStorage.getItem("currentPlaylist"), history])
+
     useEffect(() => {// effect for checked songs
         let actions = document.getElementById("selectedActions");
         if (selectedSongs.length != 0) {
@@ -108,11 +117,12 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
         document.getElementById("main-existing-playlists").selectedIndex = -1;
     }
 
-    let playlistChange = (path) => {
+    let handlePlay = (path) => {
         // console.log(paths);
         setForcePlay(!forcePlay)
         setCurrentPlaylist(paths);
         setCurrentSong(path);
+        sessionStorage.setItem("currentIndex", paths.indexOf(path));
         localStorage.setItem("currentPlaylist", JSON.stringify(paths));
     }
 
@@ -127,10 +137,10 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
 
     let handlePlayNext = (path) => {
         let currentPlaylist = JSON.parse(localStorage.getItem("currentPlaylist"));
-        let currentIndexInPlaylist = currentPlaylist.indexOf(path);
-        let index = currentPlaylist.indexOf(currentSong) + 1;
-        let temp = [...currentPlaylist.slice(0, index), path, ...currentPlaylist.slice(index, currentIndexInPlaylist), ...currentPlaylist.slice(currentIndexInPlaylist + 1)];
-        localStorage.setItem("currentPlaylist", JSON.stringify(temp));
+        let currentIndexInPlaylist = currentPlaylist.indexOf(currentSong);
+        currentPlaylist.splice(currentIndexInPlaylist + 1, 0, path);
+        localStorage.setItem("currentPlaylist", JSON.stringify(currentPlaylist));
+        setCurrentPlaylist(currentPlaylist);
     }
 
 
@@ -173,10 +183,10 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
                 {paths && paths.length != 0 && as === "list" ?
                     paths.map((path) => {
                         odd = !odd; counter++;
-                        return <Songs_List id={counter} path={path} odd={odd} handlePlayNext={handlePlayNext} openDialog={openDialog} currentSong={currentSong} setPlay={playlistChange} playlists={playlists} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
+                        return <Songs_List id={counter} path={path} odd={odd} handlePlayNext={handlePlayNext} openDialog={openDialog} currentSong={currentSong} setPlay={handlePlay} playlists={playlists} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
                     }) : paths.map((path) => {
                         counter++;
-                        return <Songs_Grid id={counter} path={path} observer={observer} handlePlayNext={handlePlayNext} openDialog={openDialog} playlists={playlists} setPlay={playlistChange} currentSong={currentSong} setChecked={setSelectedSongs} />
+                        return <Songs_Grid id={counter} path={path} observer={observer} handlePlayNext={handlePlayNext} openDialog={openDialog} playlists={playlists} setPlay={handlePlay} currentSong={currentSong} setChecked={setSelectedSongs} />
                     })}
             </div>
         </div >
