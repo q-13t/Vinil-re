@@ -17,6 +17,8 @@ let historyIndex = 0;
 let addToHistory = true;
 let paused = true;
 let shuffle = localStorage.getItem("shuffle") === "true";
+let mediaMetadata = new window.MediaMetadata();
+
 
 const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history, setHistory, forcePlay }) => {
 
@@ -36,7 +38,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                     const progress = document.getElementById(`timeSlider`);
 
 
-                    console.log(load, !paused);
+                    // console.log(load, !paused);
                     if (load && !paused) { player.play(); }
 
 
@@ -52,14 +54,18 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                         else
                             img.src = vinilImg;
                     }
-                    navigator.mediaSession.metadata = new MediaMetadata({
-                        title: res.title,
-                        artist: res.artist,
-                        album: res.album,
-                        artwork: [
-                            { src: res.image, type: 'image/webp' },
-                        ]
-                    });
+                    // navigator.mediaSession.metadata = new MediaMetadata({
+                    //     title: res.title,
+                    //     artist: res.artist,
+                    //     album: res.album,
+                    //     artwork: [
+                    //         { src: res.image, type: 'image/webp' },
+                    //     ]
+                    // });
+                    mediaMetadata.title = res.title;
+                    mediaMetadata.artist = res.artist;
+                    mediaMetadata.album = res.album;
+                    mediaMetadata.artwork = [{ src: res.image, type: 'image/webp' },]
                 })
                 if (addToHistory) {
                     setHistory([...history.filter((song) => song !== currentSong), currentSong]);
@@ -144,6 +150,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         }
         draw();
 
+        //Timeline & time count updater
         player.ontimeupdate = function () {
             let minutes = Math.floor(player.currentTime / 60);
             let seconds = Math.floor(player.currentTime - minutes * 60);
@@ -155,25 +162,18 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             localStorage.setItem("currentTime", player.currentTime);
         }
 
-
-        navigator.mediaSession.setActionHandler('play', () => {
-            if (!player.paused) {
-                player.pause(); document.getElementById("controlPlay").src = playImg;
-            } else { player.play(); document.getElementById("controlPlay").src = pauseImg; }
-        });
-        navigator.mediaSession.setActionHandler('pause', () => {
-            if (!player.paused) {
-                player.pause(); document.getElementById("controlPlay").src = playImg;
-            } else { player.play(); document.getElementById("controlPlay").src = pauseImg; }
-        });
-        navigator.mediaSession.setActionHandler('seekbackward', () => { document.getElementById("controlPrevious").click(); });
-        navigator.mediaSession.setActionHandler('seekforward', () => { document.getElementById("controlNext").click(); });
-        navigator.mediaSession.setActionHandler('previoustrack', () => { document.getElementById("controlPrevious").click(); });
-        navigator.mediaSession.setActionHandler('nexttrack', () => { document.getElementById("controlNext").click(); });
-
-
-        return () => {
+        if (!load) {
+            // Media Session metadata
+            navigator.mediaSession.metadata = mediaMetadata;
+            // Media Session controls
+            navigator.mediaSession.setActionHandler('play', () => { document.getElementById("controlPlay").click(); });
+            navigator.mediaSession.setActionHandler('pause', () => { document.getElementById("controlPlay").click(); });
+            navigator.mediaSession.setActionHandler('seekbackward', () => { document.getElementById("controlPrevious").click(); });
+            navigator.mediaSession.setActionHandler('seekforward', () => { document.getElementById("controlNext").click(); });
+            navigator.mediaSession.setActionHandler('previoustrack', () => { document.getElementById("controlPrevious").click(); });
+            navigator.mediaSession.setActionHandler('nexttrack', () => { document.getElementById("controlNext").click(); });
         }
+
     }, [])
 
     let imgLoad = (event) => {
