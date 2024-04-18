@@ -14,8 +14,9 @@ import noSoundImg from "./assets/No Sound.svg";
 import vinilImg from "/Vinil.svg";
 
 let historyIndex = 0;
-let addToHistory = true;
+let playlistIndex = 0;
 let paused = true;
+let load = false;
 let shuffle = localStorage.getItem("shuffle") === "true";
 let mediaMetadata = new window.MediaMetadata();
 
@@ -23,29 +24,23 @@ let mediaMetadata = new window.MediaMetadata();
 const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history, setHistory, forcePlay }) => {
 
     let [player, setPlayer] = useState(new Audio());
-    let [load, setLoad] = useState(false);
 
     useEffect(() => {
         async function fetchData() {
             const duration = document.getElementById(`timeTotal`);
             if (duration && player) {
                 player.src = convertFileSrc(currentSong);
-
                 getTag(currentSong, false).then((res) => {
                     const title = document.getElementById(`PlayerControlsSongDataTitle`);
                     const artist = document.getElementById(`PlayerControlsSongDataArtist`);
                     const img = document.getElementById(`PlayerControlsSongDataAlbum`);
                     const progress = document.getElementById(`timeSlider`);
 
-
-                    // console.log(load, !paused);
                     if (load && !paused) { player.play(); }
-
-
-                    if (addToHistory) historyIndex = history.length;
+                    if (!load) addToHistory(currentSong);
                     if (progress) progress.value = 0;
                     if (duration) duration.innerHTML = res.duration;
-                    if (!load) setLoad(true);
+                    if (!load) load = true;
                     if (title) title.innerHTML = res.title;
                     if (artist) artist.innerHTML = res.artist;
                     if (img) {
@@ -54,38 +49,33 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                         else
                             img.src = vinilImg;
                     }
-                    // navigator.mediaSession.metadata = new MediaMetadata({
-                    //     title: res.title,
-                    //     artist: res.artist,
-                    //     album: res.album,
-                    //     artwork: [
-                    //         { src: res.image, type: 'image/webp' },
-                    //     ]
-                    // });
                     mediaMetadata.title = res.title;
                     mediaMetadata.artist = res.artist;
                     mediaMetadata.album = res.album;
                     mediaMetadata.artwork = [{ src: res.image, type: 'image/webp' },]
                 })
-                if (addToHistory) {
-                    setHistory([...history.filter((song) => song !== currentSong), currentSong]);
-                }
                 localStorage.setItem("currentSong", currentSong);
             }
         };
         if (currentSong !== "" && currentSong !== null && currentSong !== undefined) {
             fetchData();
         }
-
     }, [currentSong]);
 
     useEffect(() => {
-        if (load) player.play();
+        if (!load) { return; }
+
+        player.play();
         paused = false;
+        player.currentTime = 0;
+        playlistIndex = parseInt(sessionStorage.getItem("currentIndex"));
+        if (currentSong === currentPlaylist[playlistIndex]) {
+            addToHistory(currentSong);
+        }
+
     }, [forcePlay])
 
     useEffect(() => {
-        console.log("player", player);
         if (player === null) { setPlayer(new Audio()) }
         if (localStorage.getItem("loop") === "true") {
             player.loop = true;
@@ -176,6 +166,11 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
 
     }, [])
 
+    let addToHistory = (path) => {
+        setHistory([...history, path]);
+        historyIndex = history.length
+    }
+
     let imgLoad = (event) => {
         const container = document.getElementById(`PlayerControlsContainer`);
         if (container) {
@@ -193,34 +188,38 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
     }
 
     let handlePrevious = () => {
-        if (player.currentTime >= 10) {
-            player.currentTime = 0;
-        } else if (historyIndex > 0) {
-            addToHistory = false;
+        if (player.currentTime <= 10 && historyIndex > 0) {
             historyIndex = historyIndex - 1;
             setCurrentSong(history[historyIndex]);
         }
+        player.currentTime = 0;
     }
 
     let handleNext = () => {
         let currentPlaylist = JSON.parse(localStorage.getItem("currentPlaylist"));
+        console.log(historyIndex);
         if (historyIndex < history.length - 1) {
-            addToHistory = false;
             historyIndex = historyIndex + 1
             setCurrentSong(history[historyIndex]);
         } else if (shuffle) {
-            historyIndex = Math.floor(Math.random() * currentPlaylist.length);
-            addToHistory = true;
-            setCurrentSong(currentPlaylist[historyIndex]);
+            let rand = Math.floor(Math.random() * currentPlaylist.length);
+            playlistIndex = rand;
+            addToHistory(currentPlaylist[rand])
+            setCurrentSong(currentPlaylist[rand]);
         } else {
-            let currentIndexInPlaylist = currentPlaylist.indexOf(currentSong);
-            if (currentIndexInPlaylist < currentPlaylist.length - 1) {
-                addToHistory = true;
-                setCurrentSong(currentPlaylist[currentIndexInPlaylist + 1]);
+
+            if (playlistIndex + 1 < currentPlaylist.length - 1) {
+                playlistIndex = playlistIndex + 1;
+                addToHistory(currentPlaylist[playlistIndex])
+                setCurrentSong(currentPlaylist[playlistIndex]);
             } else {
-                addToHistory = true;
-                currentIndexInPlaylist = 0;
-                setCurrentSong(currentPlaylist[currentIndexInPlaylist]);
+                playlistIndex = 0;
+                addToHistory(currentPlaylist[playlistIndex])
+                setCurrentSong(currentPlaylist[playlistIndex]);
+            }
+            if (currentSong === currentPlaylist[playlistIndex]) {
+                addToHistory(currentSong)
+                player.currentTime = 0;
             }
         }
     }
