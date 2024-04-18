@@ -14,10 +14,9 @@ const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
     let [search, setSearch] = useState("");
     let [maximized, setMaximized] = useState(true);
     let [lastNav, setLastNav] = useState();
+
     useEffect(() => {
-        // console.log(lastNav);
-
-
+        console.log(lastNav);
         if (lastNav) {
             let el = document.getElementById(lastNav.id);
             if (!el.classList.contains("activeBorder-right")) {
@@ -38,6 +37,13 @@ const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
         }
     }, [maximized]);
 
+    /**
+     * Redirects page to path
+     * @example
+     * handleNavigate(e, "/?display=Recent Plays&as=list")}
+     * @param {Event} event event
+     * @param {String} path Path to navigate to
+     */
     let handleNavigate = (event, path) => {
         if (lastNav) lastNav.classList.toggle("activeBorder-right");//turn off border highlight
         setLastNav(event.target);
@@ -53,7 +59,7 @@ const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
     let handleChange = (event) => {
         setSearch(event.target.value);
     }
-    // handleNavigate(e, "/?display=Recent Plays&as=list")}
+
     return (
         <>
 
@@ -98,8 +104,8 @@ const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
                         </div>
                     </div>
 
-                    <div id="Settings" className="sideMenuButton" onClick={(e) => handleNavigate(e, "/settings")}>
-                        <img src={gearImg} alt="" aria-hidden="true" tabIndex={-1}></img>
+                    <div id="Settings-button" className="sideMenuButton" onClick={(e) => { handleNavigate(e, "/settings"); }}>
+                        <img src={gearImg} alt="" aria-hidden="true" tabIndex={-1} className="small-img"></img>
                         <p className="sideMenuText" aria-hidden="true" tabIndex={-1}>Settings</p>
                     </div>
                 </div >
@@ -121,9 +127,7 @@ const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
                             </div>
                         </div>
                     </div>
-                    <div id="Settings" >
-                        <img src={gearImg} alt={burgerImg} className="sideMenuButton small-img" onClick={(e) => handleNavigate(e, "/settings")}></img>
-                    </div>
+                    <img id="Settings-button" src={gearImg} alt={burgerImg} className="sideMenuButton small-img" onClick={(e) => { handleNavigate(e, "/settings"); }} ></img>
                 </div>
             }
         </>

@@ -50,6 +50,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
                 console.log("Search Results");
                 setLoading(true);
                 let search = queryParameters.get("search-for");
+                console.log(search);
                 if (!search) {
                     search = "";
                 } else {
@@ -65,7 +66,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
                 break;
             }
         }
-    }, [display]);
+    }, [display, queryParameters.get("search-for")]);
 
     useEffect(() => {// effect for checked songs
         let actions = document.getElementById("selectedActions");
