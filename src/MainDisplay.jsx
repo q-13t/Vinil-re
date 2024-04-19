@@ -7,7 +7,8 @@ import { searchAndSort, getFolders, appendSong } from "./utils";
 import { invoke } from "@tauri-apps/api/tauri";
 import shuffleImg from "./assets/Shuffle.svg";
 let counter = 0;
-const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, setCurrentPlaylist, display, observer, history, setCurrentSong, currentSong, setForcePlay, forcePlay }) => {
+
+const MainDisplay = ({ indexChanged, openDialog, playlists, selectedSongs, setSelectedSongs, setCurrentPlaylist, display, observer, history, setCurrentSong, currentSong, setForcePlay, forcePlay }) => {
     const [queryParameters] = useSearchParams();
     let [paths, setPaths] = useState([]);
     let [Loading, setLoading] = useState(false);
@@ -15,13 +16,13 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
     let odd = false;
     if (!display) { display = "My Music"; }
     if (!as) { as = "list"; }
+    counter = 0;
 
-    console.log(display, " : ", as);
+    // console.log(display, " : ", as);
 
 
     useEffect(() => {
-        counter = 0;
-        // console.log("Effect MD: ", display, display === "Current Play Queue");
+        // console.log("Effect MD [display, search]: ", display, queryParameters.get("search-for"));
         switch (display) {
             case "My Music": {
                 // console.log("My Music");
@@ -66,18 +67,10 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
                 break;
             }
         }
-    }, [display, queryParameters.get("search-for")]);
-
-    useEffect(() => {
-        if (display === "Current Play Queue") {
-            setPaths(JSON.parse(localStorage.getItem("currentPlaylist")));
-        } else if (display === "Recent Plays") {
-            setPaths(history.slice().reverse());
-        }
-
-    }, [localStorage.getItem("currentPlaylist"), history])
+    }, [display, queryParameters.get("search-for"), localStorage.getItem("currentPlaylist"), history, indexChanged]);
 
     useEffect(() => {// effect for checked songs
+        // console.log("Effect MD [selected] ");
         let actions = document.getElementById("selectedActions");
         if (selectedSongs.length != 0) {
             actions.style.display = "flex";

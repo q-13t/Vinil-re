@@ -258,11 +258,12 @@ async function getTag(filePath, indexing) {
  * 
  * 
  * @param {Array<String>} folders folders containing the songs
+ * @param {Function} setIndexChanged function to call when index changes
  */
-async function IndexSongs(folders = null) {
+async function IndexSongs(folders = null, setIndexChanged = null) {
     finishedIndexing = false;
     console.log("INDEXING");
-    if (folders == null || folders.length == 0) {
+    if (folders === null || folders.length === 0) {
         await getFolders().then((paths) => {
             if (paths.length == 0) {
                 return;
@@ -281,7 +282,7 @@ async function IndexSongs(folders = null) {
         });
         let progress = document.getElementById("indexing-progress");
 
-
+        let indexChanged = false;
         let indexedPaths = shortIndex.map(x => { return x.filePath; });
         let temp = 0;
         for (let i = 0; i < paths.length; i++) {
@@ -294,11 +295,14 @@ async function IndexSongs(folders = null) {
                     await getTag(paths[i], true).then((res) => {
                         shortIndex.splice(i, 0, res);
                         temp++;
+                        if (!indexChanged) indexChanged = true;
+
                     })
                 }
                 if (temp === 10) { await writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig, recursive: true }).then(() => { temp = 0; }); }
             } catch (e) {
-                console.log(e);
+                console.log(i, paths[i], e);
+                continue;
             }
         }
         temp = 0;
@@ -309,14 +313,16 @@ async function IndexSongs(folders = null) {
             if (!paths.includes(shortIndex[i].filePath)) {
                 shortIndex.splice(i, 1);
                 temp++;
+                if (!indexChanged) indexChanged = true;
+
             }
             if (temp === 10) { await writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig, recursive: true }).then(() => { temp = 0; }); }
         }
         if (progress) progress.style.display = "none";
+        if (indexChanged) setIndexChanged(true);
         finishedIndexing = true;
         writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig, recursive: true });
     })
-
 };
 
 /**
