@@ -208,7 +208,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             setCurrentSong(currentPlaylist[rand]);
         } else {
 
-            if (playlistIndex + 1 < currentPlaylist.length - 1) {
+            if (playlistIndex < currentPlaylist.length - 1) {
                 playlistIndex = playlistIndex + 1;
                 addToHistory(currentPlaylist[playlistIndex])
                 setCurrentSong(currentPlaylist[playlistIndex]);
