@@ -8,7 +8,7 @@ import { invoke } from "@tauri-apps/api/tauri";
 import shuffleImg from "./assets/Shuffle.svg";
 let counter = 0;
 
-const MainDisplay = ({ indexChanged, openDialog, playlists, selectedSongs, setSelectedSongs, setCurrentPlaylist, display, observer, history, setCurrentSong, currentSong, setForcePlay, forcePlay }) => {
+const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, setCurrentPlaylist, display, observer, history, setCurrentSong, currentSong, setForcePlay, forcePlay }) => {
     const [queryParameters] = useSearchParams();
     let [paths, setPaths] = useState([]);
     let [Loading, setLoading] = useState(false);
@@ -18,7 +18,8 @@ const MainDisplay = ({ indexChanged, openDialog, playlists, selectedSongs, setSe
     if (!as) { as = "list"; }
     counter = 0;
 
-    // console.log(display, " : ", as);
+    console.log(display, " : ", as);
+
 
 
     useEffect(() => {
@@ -67,7 +68,16 @@ const MainDisplay = ({ indexChanged, openDialog, playlists, selectedSongs, setSe
                 break;
             }
         }
-    }, [display, queryParameters.get("search-for"), localStorage.getItem("currentPlaylist"), history, indexChanged]);
+    }, [display, queryParameters.get("search-for")]);
+
+    useEffect(() => {
+        if (display === "Current Play Queue") {
+            setPaths(localStorage.getItem("currentPlaylist") ? JSON.parse(localStorage.getItem("currentPlaylist")) : []);
+        } else if (display === "Recent Plays") {
+            setPaths(history.reverse());
+        }
+
+    }, [localStorage.getItem("currentPlaylist"), history]);
 
     useEffect(() => {// effect for checked songs
         // console.log("Effect MD [selected] ");
@@ -135,7 +145,21 @@ const MainDisplay = ({ indexChanged, openDialog, playlists, selectedSongs, setSe
         localStorage.setItem("currentPlaylist", JSON.stringify(currentPlaylist));
         setCurrentPlaylist(currentPlaylist);
     }
-
+    let handleUpdateContainer = () => {
+        if (display === "My Music") {
+            searchAndSort().then((res) => {
+                if (res != undefined) {
+                    setPaths(res);
+                } else {
+                    getFolders().then((paths) => {
+                        invoke("get_paths", { folders: paths, sortBy: "Time Created", searchText: "" }).then((paths) => {
+                            setPaths(paths);
+                        }).catch((err) => { });
+                    })
+                }
+            });
+        }
+    }
 
     return (
         <div id="MainDisplay">
@@ -170,9 +194,9 @@ const MainDisplay = ({ indexChanged, openDialog, playlists, selectedSongs, setSe
                     </div>
                 </div>
             </div>
-
+            <span style={{ display: "none" }} id="songContainerUpdater" onClick={() => { handleUpdateContainer(); }}></span>
             <div id="MainSongContainer" {...(as === "grid" ? { className: "mainGrid" } : { className: "mainList" })}>
-                {Loading ? <p>Loading...</p> : null}
+                {Loading && Loading === true ? <p>Loading...</p> : null}
                 {paths && paths.length != 0 && as === "list" ?
                     paths.map((path) => {
                         odd = !odd; counter++;

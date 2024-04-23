@@ -2,9 +2,12 @@
 import { BaseDirectory, createDir, exists, readDir, readTextFile, removeFile, removeDir, renameFile, writeFile } from "@tauri-apps/api/fs";
 import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
 import { message } from "@tauri-apps/api/dialog"
+import { watch } from "tauri-plugin-fs-watch-api";
+import { path } from "@tauri-apps/api";
+
 let finishedIndexing = true;
 let canaledIndexing = false;
-
+let watchers = [];
 /**
  * A utility collection for common tasks.
  * 
@@ -41,6 +44,18 @@ async function getFolders() {
     });
 };
 
+/**
+ * Setts or removes file watchers over directories specified by user
+ */
+async function updateFileWatchers() {
+    console.log(watchers);
+    getFolders().then((paths) => {
+        let paths = JSON.parse(data);
+        // console.log("watchers: ", watchers);
+        for (let i = 0; i < paths.length; i++) if (watchers[i] === undefined || watchers[i][0] !== paths[i]) watchers[i] = [paths[i], watch(paths[i], (event) => { if (finishedIndexing) { IndexSongs(paths); } }, { recursive: false }).then((unobserve) => { return unobserve; })];
+        for (let i = 0; i < watchers.length; i++) if (watchers[i] !== undefined && !paths.includes[watchers[i][0]]) watchers[i][1].apply;
+    })
+}
 
 
 /**
@@ -200,13 +215,7 @@ async function getAudioDuration(filePath) {
  * @returns {Promise<{title: String, artist: String, album: String, image: String, created: String}>}
  */
 async function getAudioMetadata(filePath) {
-    const res = await invoke("get_tag", { path: filePath });
-    //console.log(res);
-    if (res) {
-        return res;
-    } else {
-        return [];
-    }
+    return await invoke("get_tag", { path: filePath }).then((res) => { if (res) return res; else return []; });
 };
 /**
  * Checks if a file containing data exists, if so returns the data from it, if not invokes `get_tag` from Rust.
@@ -220,7 +229,7 @@ async function getTag(filePath, indexing) {
         if (!exists) {
             await createDir('SongsData', { dir: BaseDirectory.AppConfig, recursive: true });
         }
-    })
+    });
     let filename = filePath.match(/([^/\\]*)\.[^/\\]+$/)[0];
     return await exists(`SongsData\\${filename}.json`, { dir: BaseDirectory.AppConfig }).then(async (exists) => {
         if (exists) {
@@ -247,6 +256,8 @@ async function getTag(filePath, indexing) {
                     return { title, artist, album, image, duration }; // Return an object with extracted metadata
                 else
                     return { filePath, title, artist, album, duration, created: created.secs_since_epoch };
+            }).catch((err) => {
+                console.log(err);
             });
         }
     })
@@ -258,9 +269,8 @@ async function getTag(filePath, indexing) {
  * 
  * 
  * @param {Array<String>} folders folders containing the songs
- * @param {Function} setIndexChanged function to call when index changes
  */
-async function IndexSongs(folders = null, setIndexChanged = null) {
+async function IndexSongs(folders = null) {
     finishedIndexing = false;
     console.log("INDEXING");
     if (folders === null || folders.length === 0) {
@@ -280,46 +290,54 @@ async function IndexSongs(folders = null, setIndexChanged = null) {
             console.log(err);
             return [];
         });
+
+        console.log(shortIndex.length, paths.length, shortIndex.length !== paths.length);
         let progress = document.getElementById("indexing-progress");
+        if (progress.style.display == "none") progress.style.display = "block";
 
-        let indexChanged = false;
-        let indexedPaths = shortIndex.map(x => { return x.filePath; });
-        let temp = 0;
-        for (let i = 0; i < paths.length; i++) {
-            if (canaledIndexing) break;
-            try {
-                // console.log("INDEXING", paths[i]);
-                if (!progress) progress = document.getElementById("indexing-progress");
-                if (progress) progress.value = (i / paths.length) * 100;
-                if (!indexedPaths.includes(paths[i])) {
-                    await getTag(paths[i], true).then((res) => {
-                        shortIndex.splice(i, 0, res);
-                        temp++;
-                        if (!indexChanged) indexChanged = true;
+        if (shortIndex.length !== paths.length) {
+            let indexChanged = false;
+            let indexedPaths = shortIndex.map(x => { return x.filePath; });
+            let temp = 0;
+            for (let i = 0; i < paths.length; i++) {
+                if (canaledIndexing) break;
+                try {
+                    if (!progress) progress = document.getElementById("indexing-progress");
+                    if (progress) progress.value = (i / paths.length) * 100;
+                    if (!indexedPaths.includes(paths[i])) {
+                        console.log("INDEXING", paths[i]);
+                        await getTag(paths[i], true).then((res) => {
+                            shortIndex.splice(i, 0, res);
+                            temp++;
+                            if (!indexChanged) indexChanged = true;
+                        });
+                    }
+                    if (temp === 10) { await writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig, recursive: true }).then(() => { temp = 0; }); }
+                } catch (e) {
+                    console.log(i, paths[i], e);
+                    continue;
+                }
+            }
+            temp = 0;
+            if (progress) progress.value = 0;
+            for (let i = 0; i < shortIndex.length; i++) {
+                if (canaledIndexing) break;
+                if (progress) progress.value = (i / shortIndex.length) * 100;
+                if (!paths.includes(shortIndex[i].filePath)) {
+                    shortIndex.splice(i, 1);
+                    temp++;
+                    if (!indexChanged) indexChanged = true;
 
-                    })
                 }
                 if (temp === 10) { await writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig, recursive: true }).then(() => { temp = 0; }); }
-            } catch (e) {
-                console.log(i, paths[i], e);
-                continue;
             }
-        }
-        temp = 0;
-        if (progress) progress.value = 0;
-        for (let i = 0; i < shortIndex.length; i++) {
-            if (canaledIndexing) break;
-            if (progress) progress.value = (i / shortIndex.length) * 100;
-            if (!paths.includes(shortIndex[i].filePath)) {
-                shortIndex.splice(i, 1);
-                temp++;
-                if (!indexChanged) indexChanged = true;
-
+            if (indexChanged) {
+                let updater = document.getElementById("songContainerUpdater");
+                if (updater) updater.click();
             }
-            if (temp === 10) { await writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig, recursive: true }).then(() => { temp = 0; }); }
         }
         if (progress) progress.style.display = "none";
-        if (indexChanged) setIndexChanged(true);
+
         finishedIndexing = true;
         writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig, recursive: true });
     })
@@ -330,20 +348,24 @@ async function IndexSongs(folders = null, setIndexChanged = null) {
  * Removes all songs data and short index.
  */
 async function clearSongsData() {
-    exists("SongsData", { dir: BaseDirectory.AppConfig }).then(async (exists) => {
-        if (exists) {
-            if (!finishedIndexing) {
-                canaledIndexing = true;
-            };
-            removeFile("ShortIndex.json", { dir: BaseDirectory.AppConfig });
-            removeDir("SongsData", { dir: BaseDirectory.AppConfig, recursive: true }).then(async () => {
-                await message('Cash Cleared!', { title: 'Vinil-re', type: 'info' });
-            }).catch((err) => {
-                console.log(err);
-            });
-        }
-    })
-};
+    // exists("SongsData", { dir: BaseDirectory.AppConfig }).then(async (exists) => {
+    //     if (exists) {
+    if (!finishedIndexing || !canaledIndexing) {
+        canaledIndexing = true;
+    };
+
+    sessionStorage.clear();
+    localStorage.clear();
+    await removeFile("ShortIndex.json", { dir: BaseDirectory.AppConfig });
+
+    removeDir("SongsData", { dir: BaseDirectory.AppConfig, recursive: true }).then(async () => {
+        await message('Cash Cleared!', { title: 'Vinil-re', type: 'info' });
+    }).catch((err) => {
+        console.log(err);
+    });
+}
+// })
+// };
 
 /**
  * Searches and sorts among already indexed songs
@@ -420,4 +442,4 @@ function validatePlaylistName(name) {
 }
 
 
-export { displayPlaylistNameWarning, validatePlaylistName, getAverageRGB, searchAndSort, clearSongsData, getTag, getFolders, getPlaylists, getPlaylist, savePlaylist, appendSong, deletePlaylist, renamePlaylist, IndexSongs };
+export { displayPlaylistNameWarning, validatePlaylistName, getAverageRGB, searchAndSort, clearSongsData, getTag, getFolders, getPlaylists, getPlaylist, savePlaylist, appendSong, deletePlaylist, renamePlaylist, IndexSongs, updateFileWatchers };

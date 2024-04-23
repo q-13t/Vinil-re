@@ -180,6 +180,7 @@ fn main() {
     tauri::Builder::default()
         .any_thread()
         .plugin(tauri_plugin_window_state::Builder::default().build())
+        .plugin(tauri_plugin_fs_watch::init())
         .invoke_handler(tauri::generate_handler![get_paths, get_tag])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

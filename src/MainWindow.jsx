@@ -6,7 +6,7 @@ import PlayerControls from "./PlayerControls";
 import MainDisplay from "./MainDisplay";
 import Settings from "./Settings";
 import NewPlayListDialog from "./NewPlaylistDialog";
-import { getTag, getPlaylists, IndexSongs } from "./utils";
+import { getTag, getPlaylists, IndexSongs, updateFileWatchers } from "./utils";
 import Playlist from "./Playlist";
 import vinilImg from "/Vinil.svg";
 
@@ -67,7 +67,6 @@ const MainWindow = () => {
     let navigateTo = useNavigate();
     let [forcePlay, setForcePlay] = useState(false);
     let [display, setDisplay] = useState("My Music");
-    let [indexChanged, setIndexChanged] = useState(false);
 
     useEffect(() => {
         getPlaylists().then((playlists) => {
@@ -75,7 +74,8 @@ const MainWindow = () => {
                 setPlaylists(playlists);
             }
         })
-        IndexSongs(null, setIndexChanged);
+        IndexSongs(null);
+        updateFileWatchers();
     }, []);
     return (
         <div id="AppContainer">
@@ -83,7 +83,7 @@ const MainWindow = () => {
             <div id="MainContainer">
                 <SideMenu openDialog={openDialog} playlists={playlists} navigateTo={navigateTo} setDisplay={setDisplay} />
                 <Routes>
-                    <Route path="/" element={<MainDisplay indexChanged={indexChanged} openDialog={openDialog} playlists={playlists} display={display} history={history} selectedSongs={selectedSongs} setCurrentPlaylist={setCurrentPlaylist} setSelectedSongs={setSelectedSongs} observer={observer} setCurrentSong={setCurrentSong} currentSong={currentSong} forcePlay={forcePlay} setForcePlay={setForcePlay} />} ></Route>
+                    <Route path="/" element={<MainDisplay openDialog={openDialog} playlists={playlists} display={display} history={history} selectedSongs={selectedSongs} setCurrentPlaylist={setCurrentPlaylist} setSelectedSongs={setSelectedSongs} observer={observer} setCurrentSong={setCurrentSong} currentSong={currentSong} forcePlay={forcePlay} setForcePlay={setForcePlay} />} ></Route>
                     <Route path="/settings" element={<Settings />} ></Route>
                     <Route path="/playlist" element={<Playlist setPlaylists={setPlaylists} selectedSongs={selectedSongs} setSelectedSongs={setSelectedSongs} setCurrentPlaylist={setCurrentPlaylist} observer={observer} setCurrentSong={setCurrentSong} currentSong={currentSong} playlists={playlists} navigateTo={navigateTo} forcePlay={forcePlay} setForcePlay={setForcePlay} />}></Route>
                 </Routes>
