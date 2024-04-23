@@ -20,6 +20,7 @@ const NewPlayListDialog = ({ open, openDialog, selectedSongs, setSelectedSongs, 
 
             setSelectedSongs([]);
         });
+        setPlaylistName("");
         openDialog(false);
     }
 
