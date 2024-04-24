@@ -16,26 +16,24 @@ const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
     let [lastNav, setLastNav] = useState();
 
     useEffect(() => {
-        console.log(lastNav);
-        if (lastNav) {
+        // console.log(lastNav);
+        // console.log(playlists);
+        if (lastNav && document.getElementById(lastNav.id)) {
             let el = document.getElementById(lastNav.id);
-            if (!el.classList.contains("activeBorder-right")) {
+            if (el && !el.classList.contains("activeBorder-right")) {
                 el.classList.add("activeBorder-right");
                 setLastNav(el);
             }
         } else {
             getFolders().then((folders) => {
                 if (folders.length > 0) {
-                    const my_mus = document.getElementById("My Music");
-                    if (my_mus) my_mus.click();
-                }
-                else {
-                    const setting = document.getElementById("Settings");
-                    if (setting) setting.click();
+                    document.getElementById("My Music").click();
+                } else {
+                    document.getElementById("Settings").click();
                 }
             })
         }
-    }, [maximized]);
+    }, [maximized, playlists]);
 
     /**
      * Redirects page to path

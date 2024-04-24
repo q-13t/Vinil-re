@@ -75,11 +75,10 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
     let handleDeletePlaylist = (path) => {
         deletePlaylist(path).then(() => {
             getPlaylists().then((playlists) => {
-                if (playlists.length > 0) {
+                if (playlists.length >= 0) {
                     setPlaylists(playlists);
                 }
                 document.getElementById("Delete-Playlist-Dialog").close();
-                navigateTo("/");
             })
         });
     }
