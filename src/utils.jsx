@@ -48,13 +48,32 @@ async function getFolders() {
  * Setts or removes file watchers over directories specified by user
  */
 async function updateFileWatchers() {
-    console.log(watchers);
-    getFolders().then((paths) => {
-        let paths = JSON.parse(data);
-        // console.log("watchers: ", watchers);
-        for (let i = 0; i < paths.length; i++) if (watchers[i] === undefined || watchers[i][0] !== paths[i]) watchers[i] = [paths[i], watch(paths[i], (event) => { if (finishedIndexing) { IndexSongs(paths); } }, { recursive: false }).then((unobserve) => { return unobserve; })];
-        for (let i = 0; i < watchers.length; i++) if (watchers[i] !== undefined && !paths.includes[watchers[i][0]]) watchers[i][1].apply;
-    })
+
+    await getFolders().then((paths) => {
+
+        for (let i = 0; i < paths.length; i++) {
+            if (watchers[i] === undefined || watchers[i][0] !== paths[i]) {
+                watchers[i] = [paths[i], watch(paths[i], (event) => {
+                    if (finishedIndexing) {
+                        IndexSongs(paths);
+                    }
+                }, { recursive: false }).then((unobserve) => {
+                    return unobserve;
+                })];
+            }
+        }
+
+        for (let i = 0; i < watchers.length; i++) {
+            if (watchers[i] !== undefined && !paths.includes(watchers[i][0])) {
+                watchers[i][1].then(unobserve => unobserve());
+                watchers.splice(i, 1);
+                i--;
+            }
+        }
+
+        // console.log(watchers);
+    });
+
 }
 
 

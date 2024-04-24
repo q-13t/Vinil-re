@@ -36,8 +36,7 @@ async function isIntersecting(entries) {
                         }
                         if (duration) duration.innerHTML = res.duration;
                         entry.target.classList.add("elem-fade-in-top");
-                    })
-
+                    });
                 };
                 fetchData();
             } else {

@@ -5,7 +5,7 @@ import burgerImg from "./assets/Burger.svg";
 import plusImg from "./assets/Plus.svg";
 import { open } from '@tauri-apps/api/dialog';
 import { BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
-import { getFolders, IndexSongs, clearSongsData } from "./utils";
+import { getFolders, IndexSongs, clearSongsData, updateFileWatchers } from "./utils";
 
 
 const Settings = () => {
@@ -16,6 +16,7 @@ const Settings = () => {
         getFolders().then((folders) => {
             setPaths(folders);
         })
+        updateFileWatchers();
     }, []);
 
 
@@ -29,6 +30,7 @@ const Settings = () => {
             setPaths(folders);
             writeTextFile('folders.json', JSON.stringify(folders), { dir: BaseDirectory.AppData, encoding: 'utf-8' });
             IndexSongs(folders);
+            updateFileWatchers();
         };
     }
 
@@ -36,6 +38,7 @@ const Settings = () => {
         let arr = paths.filter((p) => p !== path)
         writeTextFile('folders.json', JSON.stringify(arr), { dir: BaseDirectory.AppData, encoding: 'utf-8' });
         setPaths(arr);
+        updateFileWatchers();
     }
     let handleClearCash = () => {
         clearSongsData();
