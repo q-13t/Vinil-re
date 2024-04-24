@@ -1,32 +1,29 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import burgerImg from "./assets/Burger.svg";
-import { getPlaylist, renamePlaylist, getPlaylists, getAverageRGB, savePlaylist, validatePlaylistName, displayPlaylistNameWarning, deletePlaylist } from "./utils";
+import { getPlaylist, renamePlaylist, getPlaylists, getAverageRGB, savePlaylist, validatePlaylistName, displayPlaylistNameWarning, deletePlaylist, getTag } from "./utils";
 import Songs_List from "./Songs-List";
-import { invoke } from "@tauri-apps/api";
 import playlistImg from "./assets/Playlist.svg";
-
-let counter = 0;
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, setCurrentPlaylist, setCurrentSong, currentSong, playlists, navigateTo, setForcePlay, forcePlay }) => {
     const [queryParameters] = useSearchParams();
-    let odd = false;
     let path = queryParameters.get("path");
-    let [songs, setSongs] = useState([]);
+    let [paths, setPaths] = useState(null);
     let [changed, setChanged] = useState(false);
     let [playlistName, setPlaylistName] = useState("");
-    let [draggedItemId, setDraggedItemId] = useState(null);
+
+    console.log("playlist render");
 
     useEffect(() => {
-        counter = 0;
         async function populate() {
             // Read playlist from path
-            getPlaylist(path).then(async (entries) => {//get songs
-                setSongs(entries);
+            await getPlaylist(path).then(async (entries) => {//get songs
+                setPaths(entries);
                 let img = document.getElementById("PlayListImage");
                 if (entries.length != 0) {
-                    await invoke("get_tag", { path: entries[0] }).then((res) => {//get first song image and set it as album cover
-                        if (res[3]) img.src = "data:image/webp;base64," + res[3];
+                    await getTag(entries[0], false).then((res) => {
+                        if (img) if (res.image !== "") img.src = res.image; else img.src = playlistImg;
                     });
                 } else {
                     img.src = playlistImg;
@@ -65,57 +62,16 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
         setChanged(false);
     }
 
-    let dragStart = (e) => {
-        setDraggedItemId(e);
-    }
-
-    let dragOver = (id) => {
-        const draggedItem = document.getElementById(draggedItemId);
-        const dropTarget = document.getElementById(id);
-
-        if (draggedItem && dropTarget !== draggedItem) {
-            // Determine the index of the drop target relative to its siblings
-            const dropTargetIndex = Array.from(dropTarget.parentNode.children).indexOf(dropTarget);
-            const draggedItemIndex = Array.from(draggedItem.parentNode.children).indexOf(draggedItem);
-
-            // Rearrange the children
-            if (dropTargetIndex > draggedItemIndex) {
-                dropTarget.parentNode.insertBefore(draggedItem, dropTarget.nextSibling);
-            } else {
-                dropTarget.parentNode.insertBefore(draggedItem, dropTarget);
-            }
-        }
-    }
-
-    let dragEnd = (id) => {
-        const songIds = Array.from(document.getElementById("PlayListContent").children).map(item => item.id);
-        setSongs(songIds);
-        async function SavePlaylistOrder() {
-            savePlaylist(playlistName, songIds);
-        }
-        async function updateImg() {
-            await invoke("get_tag", { path: songIds[0] }).then((res) => {//get first song image and set it as album cover
-                if (res[3]) {
-                    let img = document.getElementById("PlayListImage");
-                    if (img) img.src = "data:image/webp;base64," + res[3];
-                    const rgb = getAverageRGB(img);
-                    document.getElementById("PlayListTopMenu").style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
-                }
-            });
-        }
-        updateImg();
-        setDraggedItemId(null);
-        SavePlaylistOrder();
-    }
-
 
     let handlePlay = (path) => {
         setForcePlay(!forcePlay);
-        setCurrentPlaylist(songs);
+        setCurrentPlaylist(paths);
         setCurrentSong(path);
-        sessionStorage.setItem("currentIndex", songs.indexOf(path));
-        localStorage.setItem("currentPlaylist", JSON.stringify(songs));
+        sessionStorage.setItem("currentIndex", paths.indexOf(path));
+        localStorage.setItem("currentPlaylist", JSON.stringify(paths));
     }
+
+    // FIX: side menu last playlist deleted display
     let handleDeletePlaylist = (path) => {
         deletePlaylist(path).then(() => {
             getPlaylists().then((playlists) => {
@@ -128,8 +84,8 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
         });
     }
     let handleDeleteFromPlaylist = () => {
-        let tmp = songs.filter((item) => !selectedSongs.includes(item));
-        setSongs(tmp);
+        let tmp = paths.filter((item) => !selectedSongs.includes(item));
+        setPaths(tmp);
         savePlaylist(playlistName, tmp);
         setSelectedSongs([]);
     }
@@ -142,6 +98,29 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
         setCurrentPlaylist(currentPlaylist);
     }
 
+    function handleDragEnd(result) {
+        if (!result.destination || result.destination.index === result.source.index) {
+            return;
+        }
+        const songPaths = Array.from(paths);
+        const reordered = songPaths.splice(result.source.index, 1);
+        songPaths.splice(result.destination.index, 0, reordered[0]);
+        setPaths(songPaths);
+        async function commitChanges() {
+            await getTag(songPaths[0], false).then((res) => {
+                let img = document.getElementById("PlayListImage");
+                if (res.image !== "")
+                    img.src = res.image;
+                else
+                    img.src = playlistImg;
+                const rgb = getAverageRGB(img);
+                document.getElementById("PlayListTopMenu").style.backgroundColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+            });
+
+            savePlaylist(playlistName, songPaths);
+        }
+        commitChanges();
+    }
     return (
         <div id="Playlist">
             <dialog id="Delete-Playlist-Dialog" style={{ display: "none" }}>
@@ -169,12 +148,24 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
                 </div>
 
             </div>
-            <div id="PlayListContent" >
-                {songs.length != 0 && songs.map((path) => {
-                    odd = !odd; counter++;
-                    return (<Songs_List id={counter} path={path} handlePlayNext={handlePlayNext} odd={odd} observer={observer} setPlay={handlePlay} currentSong={currentSong} playlists={playlists} checked={selectedSongs} setChecked={setSelectedSongs} draggable={true} dragStart={dragStart} dragOver={dragOver} dragEnd={dragEnd} />);
-                })}
-            </div>
+            {/* Holy fuck! This shit ate my will to live more than the whole project */}
+            <DragDropContext onDragEnd={handleDragEnd}>
+                <Droppable droppableId="songs">
+                    {(provided) => (
+                        <div id="PlayListContent" ref={provided.innerRef} {...provided.droppableProps}  >
+                            {paths && paths.length != 0 && paths.map((path, index) => (
+                                <Draggable key={index} draggableId={index + ""} index={index}>
+                                    {(provided, snapshot) => (
+                                        <Songs_List providedRef={provided.innerRef} providedDraggableProps={provided.draggableProps} providedDragHandleProps={provided.dragHandleProps} id={index} path={path} handlePlayNext={handlePlayNext} odd={index % 2 == 0} observer={observer} setPlay={handlePlay} currentSong={currentSong} playlists={playlists} checked={selectedSongs} setChecked={setSelectedSongs} />
+                                    )}
+                                </Draggable>
+
+                            ))}
+                            {provided.placeholder}
+                        </div>
+                    )}
+                </Droppable>
+            </DragDropContext>
         </div >
     );
 }

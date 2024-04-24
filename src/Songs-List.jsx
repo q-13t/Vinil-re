@@ -7,7 +7,7 @@ import playlistImg from "./assets/Playlist.svg";
 import { appendSong } from "./utils";
 import arrowImg from "./assets/Arrows.svg";
 
-const Songs_List = ({ id, path, odd, observer, checked, setChecked, handlePlayNext, setPlay, playlists, openDialog, currentSong, draggable = false, dragStart = null, dragOver = null, dragEnd = null }) => {
+const Songs_List = ({ providedRef = null, providedDraggableProps = {}, providedDragHandleProps = {}, id, path, odd, observer, checked, setChecked, handlePlayNext, setPlay, playlists, openDialog, currentSong, draggable = false, dragStart = null, dragOver = null, dragEnd = null }) => {
     const ref = useRef(null);
 
     let updateThisCheck = () => {//Setts the check and adds to checked array
@@ -18,31 +18,22 @@ const Songs_List = ({ id, path, odd, observer, checked, setChecked, handlePlayNe
         }
     }
 
+
     useEffect(() => {// Intersection Observer
+        let target;
         if (ref.current) {
-            observer.observe(ref.current);
+            target = ref.current;
+        } else if (providedRef !== null) {
+            target = document.getElementById(id);
         }
-        return () => {
-            if (ref.current) {
-                observer.unobserve(ref.current);
-            }
+        // console.log(target);
+        if (target) {
+            observer.observe(target);
+            return () => observer.unobserve(target);
         }
-    }, [path]);
+    }, [providedRef, path]);
 
 
-    const handleDragStart = (e) => {
-        dragStart(path);
-    };
-
-    const handleDragOver = (e) => {
-        e.preventDefault();
-        dragOver(path);
-    };
-
-    const handleDrop = (e) => {
-        e.preventDefault();
-        dragEnd(path);
-    };
 
     let handleNewPlaylist = () => {
         setChecked([path]);
@@ -60,13 +51,11 @@ const Songs_List = ({ id, path, odd, observer, checked, setChecked, handlePlayNe
         <div
             data-path={path}
             id={id}
-            ref={ref}
+            ref={providedRef !== null ? providedRef : ref}
+            {...providedDraggableProps}
+            {...providedDragHandleProps}
+
             className={`song-el-container-list ${odd ? "odd" : ""}`}
-            draggable={draggable}
-            onDragStart={(e) => { handleDragStart(e) }}
-            onDragOver={(e) => { handleDragOver(e) }}
-            onDrop={(e) => { handleDrop(e) }}
-            style={currentSong === path ? { color: "var(--accent-color)" } : {}}
         >
             <div id={`check-${id}`} className="song-el-check" onClick={() => { updateThisCheck() }}>
                 <img src={checkImg} style={{ width: "inherit", visibility: checked.includes(path) ? "visible" : "hidden" }} />

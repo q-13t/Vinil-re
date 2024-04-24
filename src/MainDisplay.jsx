@@ -6,19 +6,18 @@ import Songs_Grid from "./Songs-Grid";
 import { searchAndSort, getFolders, appendSong } from "./utils";
 import { invoke } from "@tauri-apps/api/tauri";
 import shuffleImg from "./assets/Shuffle.svg";
-let counter = 0;
+
 
 const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, setCurrentPlaylist, display, observer, history, setCurrentSong, currentSong, setForcePlay, forcePlay }) => {
     const [queryParameters] = useSearchParams();
     let [paths, setPaths] = useState([]);
     let [Loading, setLoading] = useState(false);
     let [as, setAs] = useState(queryParameters.get("as"));
-    let odd = false;
     if (!display) { display = "My Music"; }
     if (!as) { as = "list"; }
-    counter = 0;
 
-    console.log(display, " : ", as);
+
+    // console.log(display, " : ", as);
 
 
 
@@ -198,12 +197,10 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
             <div id="MainSongContainer" {...(as === "grid" ? { className: "mainGrid" } : { className: "mainList" })}>
                 {Loading && Loading === true ? <p>Loading...</p> : null}
                 {paths && paths.length != 0 && as === "list" ?
-                    paths.map((path) => {
-                        odd = !odd; counter++;
-                        return <Songs_List id={counter} path={path} odd={odd} handlePlayNext={handlePlayNext} openDialog={openDialog} currentSong={currentSong} setPlay={handlePlay} playlists={playlists} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
-                    }) : paths.map((path) => {
-                        counter++;
-                        return <Songs_Grid id={counter} path={path} observer={observer} handlePlayNext={handlePlayNext} openDialog={openDialog} playlists={playlists} setPlay={handlePlay} currentSong={currentSong} setChecked={setSelectedSongs} />
+                    paths.map((path, index) => {
+                        return <Songs_List id={index} key={index} path={path} odd={index % 2 == 0} handlePlayNext={handlePlayNext} openDialog={openDialog} currentSong={currentSong} setPlay={handlePlay} playlists={playlists} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
+                    }) : paths.map((path, index) => {
+                        return <Songs_Grid id={index} key={index} path={path} observer={observer} handlePlayNext={handlePlayNext} openDialog={openDialog} playlists={playlists} setPlay={handlePlay} currentSong={currentSong} setChecked={setSelectedSongs} />
                     })}
             </div>
         </div >
