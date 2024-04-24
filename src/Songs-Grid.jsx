@@ -6,7 +6,7 @@ import playImg from "/Play.svg";
 import plusImg from "/Plus.svg";
 import playlistImg from "/Playlist.svg";
 import arrowImg from "/Arrows.svg";
-
+import transparentImg from "/Transparent.svg";
 
 const Songs_Grid = ({ path, id, observer, openDialog, playlists, handlePlayNext, setPlay, currentSong, setChecked }) => {
     const ref = useRef(null);
@@ -37,7 +37,7 @@ const Songs_Grid = ({ path, id, observer, openDialog, playlists, handlePlayNext,
 
     return (
         <div data-path={path} id={id} ref={ref} className="song-el-container-grid" >
-            <img id={`img-${id}`} className="song-el-album" ></img>
+            <img id={`img-${id}`} className="song-el-album" src={transparentImg} ></img>
             <p id={`title-${id}`} className="song-el-title" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
             <div className="song-el-grid-sub">
                 <p id={`artist-${id}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>

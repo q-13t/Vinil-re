@@ -9,7 +9,7 @@ import NewPlayListDialog from "./NewPlaylistDialog";
 import { getTag, getPlaylists, IndexSongs, updateFileWatchers } from "./utils";
 import Playlist from "./Playlist";
 import vinilImg from "/Vinil.svg";
-
+import transparentImg from "/Transparent.svg";
 
 
 async function isIntersecting(entries) {
@@ -25,15 +25,15 @@ async function isIntersecting(entries) {
             if (entry.isIntersecting) {
                 async function fetchData() {
                     getTag(path, false).then((res) => {
-                        if (title) title.innerHTML = res.title;
-                        if (artist) artist.innerHTML = res.artist;
-                        if (album) album.innerHTML = res.album;
                         if (img) {
                             if (res.image !== "")
                                 img.src = res.image;
                             else
                                 img.src = vinilImg;
                         }
+                        if (title) title.innerHTML = res.title;
+                        if (artist) artist.innerHTML = res.artist;
+                        if (album) album.innerHTML = res.album;
                         if (duration) duration.innerHTML = res.duration;
                         entry.target.classList.add("elem-fade-in-top");
                     });
@@ -43,7 +43,7 @@ async function isIntersecting(entries) {
                 if (title) title.innerHTML = "";
                 if (artist) artist.innerHTML = "";
                 if (album) album.innerHTML = "";
-                if (img) img.src = "";
+                if (img) img.src = transparentImg;
                 if (duration) duration.innerHTML = "";
                 entry.target.classList.remove("elem-fade-in-top");
             }

@@ -7,7 +7,7 @@ import playImg from "/Play.svg";
 import plusImg from "/Plus.svg";
 import playlistImg from "/Playlist.svg";
 import arrowImg from "/Arrows.svg";
-
+import transparentImg from "/Transparent.svg";
 
 const Songs_List = ({ providedRef = null, providedDraggableProps = {}, providedDragHandleProps = {}, id, path, odd, observer, checked, setChecked, handlePlayNext, setPlay, playlists, openDialog, currentSong, draggable = false, dragStart = null, dragOver = null, dragEnd = null }) => {
     const ref = useRef(null);
@@ -62,7 +62,7 @@ const Songs_List = ({ providedRef = null, providedDraggableProps = {}, providedD
             <div id={`check-${id}`} className="song-el-check" onClick={() => { updateThisCheck() }}>
                 <img src={checkImg} style={{ width: "inherit", visibility: checked.includes(path) ? "visible" : "hidden" }} />
             </div>
-            <img id={`img-${id}`} className="song-el-album" ></img>
+            <img id={`img-${id}`} className="song-el-album" src={transparentImg} ></img>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", flex: "0 0 25%", maxWidth: "25%", alignItems: "stretch" }}>
                 <p id={`title-${id}`} className="song-el-title" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
                 <img src={playImg} alt={burgerImg} className="song-el-play" onClick={() => { setPlay(path) }}></img>
