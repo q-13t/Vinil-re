@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import burgerImg from "./assets/Burger.svg";
+import burgerImg from "/Burger.svg";
 import { getPlaylist, renamePlaylist, getPlaylists, getAverageRGB, savePlaylist, validatePlaylistName, displayPlaylistNameWarning, deletePlaylist, getTag } from "./utils";
 import Songs_List from "./Songs-List";
-import playlistImg from "./assets/Playlist.svg";
+import playlistImg from "/Playlist.svg";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, setCurrentPlaylist, setCurrentSong, currentSong, playlists, navigateTo, setForcePlay, forcePlay }) => {

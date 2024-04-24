@@ -396,16 +396,14 @@ async function clearSongsData() {
  * const paths = await searchAndSort("Title", "s");
  */
 async function searchAndSort(sortBy = "Time Created", search = "") {
-    console.log(sortBy, search);
+    console.log(sortBy, search, "finishedIndexing: ", finishedIndexing);
     if (finishedIndexing) {// if indexing is finished and all files are created
-        let fileData = [];
-        if (fileData == null || fileData.length == 0)
-            fileData = await readTextFile(`ShortIndex.json`, { dir: BaseDirectory.AppConfig }).then((data) => {
-                return JSON.parse(data);
-            }).catch((err) => {
-                console.log(err);
-                return [];
-            });
+        let fileData = await readTextFile(`ShortIndex.json`, { dir: BaseDirectory.AppConfig }).then((data) => {
+            return JSON.parse(data);
+        }).catch((err) => {
+            console.log(err);
+            return [];
+        });
         if (search !== "") {
             fileData = fileData.filter((el) => { return el.title.toLowerCase().includes(search) || el.artist.toLowerCase().includes(search) || el.album.toLowerCase().includes(search); })
         }

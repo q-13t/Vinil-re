@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import FolderEl from "./FolderEl";
-import burgerImg from "./assets/Burger.svg";
+import burgerImg from "/Burger.svg";
 
-import plusImg from "./assets/Plus.svg";
+import plusImg from "/Plus.svg";
 import { open } from '@tauri-apps/api/dialog';
 import { BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
 import { getFolders, IndexSongs, clearSongsData, updateFileWatchers } from "./utils";

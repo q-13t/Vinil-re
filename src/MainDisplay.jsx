@@ -1,11 +1,11 @@
 import { useSearchParams } from "react-router-dom";
-import burgerImg from "./assets/Burger.svg";
+import burgerImg from "/Burger.svg";
 import { useEffect, useState } from "react";
 import Songs_List from "./Songs-List";
 import Songs_Grid from "./Songs-Grid";
 import { searchAndSort, getFolders, appendSong } from "./utils";
 import { invoke } from "@tauri-apps/api/tauri";
-import shuffleImg from "./assets/Shuffle.svg";
+import shuffleImg from "/Shuffle.svg";
 
 
 const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, setCurrentPlaylist, display, observer, history, setCurrentSong, currentSong, setForcePlay, forcePlay }) => {

@@ -1,13 +1,13 @@
-import burgerImg from "./assets/Burger.svg";
+import burgerImg from "/Burger.svg";
 import PlaylistPreview from "./PlaylistPreview";
-import gearImg from "./assets/Gear.svg";
-import plusImg from "./assets/Plus.svg";
-import clockImg from "./assets/Clock.svg";
-import arrowsImg from "./assets/Arrows.svg";
-import XImg from "./assets/X.svg";
-import searchImg from "./assets/Search.svg";
+import gearImg from "/Gear.svg";
+import plusImg from "/Plus.svg";
+import clockImg from "/Clock.svg";
+import arrowsImg from "/Arrows.svg";
+import XImg from "/X.svg";
+import searchImg from "/Search.svg";
 import { useEffect, useState } from "react";
-import barsImg from "./assets/Bars.svg";
+import barsImg from "/Bars.svg";
 import { getFolders } from "./utils";
 
 const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {

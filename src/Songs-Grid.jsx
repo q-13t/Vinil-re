@@ -1,10 +1,12 @@
-import burgerImg from "./assets/Burger.svg";
 import { useEffect, useRef } from "react";
-import playImg from "./assets/Play.svg";
-import plusImg from "./assets/Plus.svg";
-import playlistImg from "./assets/Playlist.svg";
 import { appendSong } from "./utils";
-import arrowImg from "./assets/Arrows.svg";
+
+import burgerImg from "/Burger.svg";
+import playImg from "/Play.svg";
+import plusImg from "/Plus.svg";
+import playlistImg from "/Playlist.svg";
+import arrowImg from "/Arrows.svg";
+
 
 const Songs_Grid = ({ path, id, observer, openDialog, playlists, handlePlayNext, setPlay, currentSong, setChecked }) => {
     const ref = useRef(null);
@@ -35,7 +37,7 @@ const Songs_Grid = ({ path, id, observer, openDialog, playlists, handlePlayNext,
 
     return (
         <div data-path={path} id={id} ref={ref} className="song-el-container-grid" >
-            <img id={`img-${id}`} className="song-el-album" src=""></img>
+            <img id={`img-${id}`} className="song-el-album" ></img>
             <p id={`title-${id}`} className="song-el-title" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
             <div className="song-el-grid-sub">
                 <p id={`artist-${id}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>

@@ -1,5 +1,5 @@
 
-import playlistImg from "./assets/Playlist.svg";
+import playlistImg from "/Playlist.svg";
 
 const PlaylistPreview = ({ playlist, navigateTo, small = false }) => {
 

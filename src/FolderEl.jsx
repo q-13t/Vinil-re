@@ -1,5 +1,6 @@
-import burgerImg from "./assets/Burger.svg";
-import trashImg from "./assets/TrashCan.svg";
+import burgerImg from "/Burger.svg";
+import trashImg from "/TrashCan.svg";
+
 const FolderEl = ({ path, removePath }) => {
     return (
         <div className="Folder" id={`${path}`}>

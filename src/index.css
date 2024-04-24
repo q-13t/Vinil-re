@@ -45,6 +45,7 @@ img {
 
 #SideMenu {
     flex: 0 0 15%;
+    max-width: 300px;
     background-color: var(--background-el);
     display: flex;
     flex-direction: column;
@@ -311,8 +312,9 @@ div {
     align-items: center;
     justify-content: flex-start;
     flex-direction: row;
-    flex-wrap: wrap;
-    align-content: center;
+    width: 25%;
+    overflow: hidden;
+    min-width: 25%;
 }
 
 #PlayerControlsSongDataAlbum {
@@ -523,6 +525,7 @@ select *:hover {
 
 .song-el-container-list img {
     max-width: 45px;
+    width: 45px;
 }
 
 .song-el-container-list .song-el-play,
@@ -541,14 +544,14 @@ select *:hover {
 .song-el-container-list .song-el-artist,
 .song-el-container-list .song-el-album {
     flex: 1 0 10%;
-    text-overflow: clip;
+    /* text-overflow: clip; */
     word-break: keep-all;
 }
 
 .song-el-container-list .song-el-title {
     margin-left: 1vw;
     overflow: hidden;
-    text-overflow: clip;
+    /* text-overflow: ellipsis; */
     word-break: break-all;
 }
 

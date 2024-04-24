@@ -7,7 +7,7 @@
     },
     "package": {
         "productName": "Vinil-re",
-        "version": "1.0.0"
+               "version": "1.0.0"
     },
     "tauri": {
         "allowlist": {
@@ -32,10 +32,12 @@
         "windows": [
             {
                 "title": "Vinil-re",
-                "width": 800,
-                "height": 600,
+                "width": 1000,
+                "height": 800,
                 "transparent": true,
-                "fileDropEnabled": false
+                "fileDropEnabled": false,
+                "minWidth": 900,
+                "minHeight": 100
             }
         ],
         "security": {

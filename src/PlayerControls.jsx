@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import burgerImg from "./assets/Burger.svg";
+import burgerImg from "/Burger.svg";
 import { convertFileSrc } from "@tauri-apps/api/tauri";
 
 import { getTag, getAverageRGB } from "./utils";
-import repeatImg from "./assets/Repeat.svg";
-import shuffleImg from "./assets/Shuffle.svg";
-import previousImg from "./assets/Previous.svg";
-import nextImg from "./assets/Next.svg";
-import playImg from "./assets/Play.svg";
-import pauseImg from "./assets/Pause.svg";
-import soundImg from "./assets/Sound.svg";
-import noSoundImg from "./assets/No Sound.svg";
+import repeatImg from "/Repeat.svg";
+import shuffleImg from "/Shuffle.svg";
+import previousImg from "/Previous.svg";
+import nextImg from "/Next.svg";
+import playImg from "/Play.svg";
+import pauseImg from "/Pause.svg";
+import soundImg from "/Sound.svg";
+import noSoundImg from "/No Sound.svg";
 import vinilImg from "/Vinil.svg";
 
 let historyIndex = 0;
