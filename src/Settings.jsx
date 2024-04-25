@@ -39,6 +39,7 @@ const Settings = () => {
         writeTextFile('folders.json', JSON.stringify(arr), { dir: BaseDirectory.AppData, encoding: 'utf-8' });
         setPaths(arr);
         updateFileWatchers();
+        IndexSongs(arr);
     }
     let handleClearCash = () => {
         clearSongsData();

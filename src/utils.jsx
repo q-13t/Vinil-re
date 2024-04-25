@@ -294,12 +294,11 @@ async function IndexSongs(folders = null) {
     console.log("INDEXING");
     if (folders === null || folders.length === 0) {
         await getFolders().then((paths) => {
-            if (paths.length == 0) {
-                return;
-            }
             folders = paths;
-        })
+        });
+        // if (folders === null || folders.length === 0) return;
     }
+
     await invoke("get_paths", { folders: folders, sortBy: "Time Created", searchText: "" }).then(async (paths) => {
         let shortIndex = [];
 
@@ -322,7 +321,7 @@ async function IndexSongs(folders = null) {
                 if (canaledIndexing) break;
                 try {
                     if (!progress) progress = document.getElementById("indexing-progress");
-                    if (progress) progress.value = (i / paths.length) * 100;
+                    if (progress) progress.value = Math.round((i / paths.length) * 100);
                     if (!indexedPaths.includes(paths[i])) {
                         console.log("INDEXING", paths[i]);
                         await getTag(paths[i], true).then((res) => {
@@ -331,7 +330,7 @@ async function IndexSongs(folders = null) {
                             if (!indexChanged) indexChanged = true;
                         });
                     }
-                    if (temp === 10) { await writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig, recursive: true }).then(() => { temp = 0; }); }
+                    if (temp === 10) { await writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig }).then(() => { temp = 0; }); }
                 } catch (e) {
                     console.log(i, paths[i], e);
                     continue;
@@ -341,14 +340,14 @@ async function IndexSongs(folders = null) {
             if (progress) progress.value = 0;
             for (let i = 0; i < shortIndex.length; i++) {
                 if (canaledIndexing) break;
-                if (progress) progress.value = (i / shortIndex.length) * 100;
+                if (progress) progress.value = Math.round((i / shortIndex.length) * 100);
                 if (!paths.includes(shortIndex[i].filePath)) {
                     shortIndex.splice(i, 1);
                     temp++;
                     if (!indexChanged) indexChanged = true;
 
                 }
-                if (temp === 10) { await writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig, recursive: true }).then(() => { temp = 0; }); }
+                if (temp === 10) { await writeFile("ShortIndex.json", JSON.stringify(shortIndex), { dir: BaseDirectory.AppConfig }).then(() => { temp = 0; }); }
             }
             if (indexChanged) {
                 let updater = document.getElementById("songContainerUpdater");
