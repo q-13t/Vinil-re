@@ -773,6 +773,17 @@ select *:hover {
     align-items: center;
     padding: 0%;
     margin: 0%;
+    animation: fade-in-center 0.3s ease-in-out 0s 1 normal;
+}
+
+@keyframes fade-in-center {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 
 #dialog-container,
