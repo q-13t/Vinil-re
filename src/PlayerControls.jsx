@@ -204,10 +204,10 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         } else if (shuffle) {
             let rand = Math.floor(Math.random() * currentPlaylist.length);
             playlistIndex = rand;
+            sessionStorage.setItem("currentIndex", playlistIndex);
             addToHistory(currentPlaylist[rand])
             setCurrentSong(currentPlaylist[rand]);
         } else {
-
             if (playlistIndex < currentPlaylist.length - 1) {
                 playlistIndex = playlistIndex + 1;
                 addToHistory(currentPlaylist[playlistIndex])
@@ -221,6 +221,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                 addToHistory(currentSong)
                 player.currentTime = 0;
             }
+            sessionStorage.setItem("currentIndex", playlistIndex);
         }
     }
 

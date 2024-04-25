@@ -139,11 +139,11 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
 
     let handlePlayNext = (path) => {
         let currentPlaylist = JSON.parse(localStorage.getItem("currentPlaylist"));
-        let currentIndexInPlaylist = currentPlaylist.indexOf(currentSong);
-        currentPlaylist.splice(currentIndexInPlaylist + 1, 0, path);
+        currentPlaylist.splice(parseInt(sessionStorage.getItem("currentIndex", currentPlaylist.indexOf(currentSong) + "")) + 1, 0, path);
         localStorage.setItem("currentPlaylist", JSON.stringify(currentPlaylist));
         setCurrentPlaylist(currentPlaylist);
     }
+
     let handleUpdateContainer = () => {
         if (display === "My Music") {
             searchAndSort().then((res) => {
