@@ -21,29 +21,31 @@ const NewPlayListDialog = ({ open, openDialog, selectedSongs, setSelectedSongs, 
             setSelectedSongs([]);
         });
         setPlaylistName("");
+        document.getElementById("playlist-name-text").innerHTML = "";
         openDialog(false);
     }
 
     let close = (e) => {
         e.preventDefault();
         setPlaylistName("");
+        document.getElementById("playlist-name-text").innerHTML = "";
         openDialog(false);
     }
 
     useEffect(() => {
         if (open) {
             document.getElementById("new-playlist-dialog").style.display = "flex";
-        }
-        else {
+        } else {
             document.getElementById("new-playlist-dialog").style.display = "none";
-            setPlaylistName("");
         }
+        setPlaylistName("");
+        document.getElementById("playlist-name-text").innerHTML = "";
     }, [open])
 
     return (
         <dialog id="new-playlist-dialog"  >
             <div id="dialog-container">
-                <input type="text" placeholder="Enter Playlist name" onChange={(e) => setPlaylistName(e.target.value)} />
+                <input id="playlist-name-text" type="text" placeholder="Enter Playlist name" onChange={(e) => setPlaylistName(e.target.value)} value={playlistName} />
                 <div>
                     <button onClick={close}>Cancel</button>
                     <button onClick={save}>Save</button>
