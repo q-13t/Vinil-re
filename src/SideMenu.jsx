@@ -29,7 +29,7 @@ const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
                 if (folders.length > 0) {
                     document.getElementById("My Music").click();
                 } else {
-                    document.getElementById("Settings").click();
+                    document.getElementById("Settings-button").click();
                 }
             })
         }
