@@ -21,8 +21,9 @@ https://github.com/q-13t/Vinil-re/assets/105020553/4ac7e0d0-b0f5-492f-996b-650bf
 
 ___
 ### Two layouts
->As List
->
+
+As List
+
 https://github.com/q-13t/Vinil-re/assets/105020553/718dade2-4b45-4685-9591-1b14fe788142
 
 As Grid
