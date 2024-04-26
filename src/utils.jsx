@@ -323,7 +323,7 @@ async function IndexSongs(folders = null) {
                     if (!progress) progress = document.getElementById("indexing-progress");
                     if (progress) progress.value = Math.round((i / paths.length) * 100);
                     if (!indexedPaths.includes(paths[i])) {
-                        console.log("INDEXING", paths[i]);
+                        // console.log("INDEXING", paths[i]);
                         await getTag(paths[i], true).then((res) => {
                             shortIndex.splice(i, 0, res);
                             temp++;
