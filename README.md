@@ -11,7 +11,9 @@ Is a recreation of [Groove Music](https://en.wikipedia.org/wiki/Groove_Music) wi
 
 ## Overview
 ### Audio Visualizator
-<video controls   src="https://youtu.be/oeWEJs2I5DE" style="width: 100%; height: 100px" autoplay ></video>
+
+https://github.com/q-13t/Vinil-re/assets/105020553/4ac7e0d0-b0f5-492f-996b-650bfc0ef7a9
+
 
 * The music used for demonstration is  [Xplosn - Undercover](https://soundcloud.com/xplosn/undercover-free-dl?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing). All rights reserved.
 
@@ -19,31 +21,27 @@ Is a recreation of [Groove Music](https://en.wikipedia.org/wiki/Groove_Music) wi
 
 ___
 ### Two layouts
-<div style="display: flex; flex-direction: row; gap: 10px;">
-<div style="width:50%; max-width: 50%;">
-    <span style="font-size: 20px;">As List</span>
-    <video controls   src="https://youtu.be/LVJJR_IH5Mo"  autoplay></video>
-</div>
-<div style="width:50%; max-width: 50%;">
-    <span style="font-size: 20px;">As Grid</span>
-    <video controls   src="https://youtu.be/P0gcTncj8Js" autoplay></video>
-</div>
-</div>
+>As List
+https://github.com/q-13t/Vinil-re/assets/105020553/718dade2-4b45-4685-9591-1b14fe788142
+
+As Grid
+https://github.com/q-13t/Vinil-re/assets/105020553/0afb4704-cd9e-4572-bbdb-cfc5ee7708cb
 
 ### Fast searching and sorting
 
-<video controls src="https://youtu.be/7ziwlt2l1EU" style="width: 100%; height: 100%" autoplay ></video>
+https://github.com/q-13t/Vinil-re/assets/105020553/dd27464a-7d8b-4438-823a-9b912b3fb4b3
+
 
 ### History and Play queue
 
-<video controls src="https://youtu.be/lSgcjzFJuUo" style="width: 100%; height: 100%" autoplay ></video>
-
+https://github.com/q-13t/Vinil-re/assets/105020553/d93e1456-a910-4475-a3d1-abe4fe94e548
 
 - Dynamic creation of history and current play queue
 - Click on song to play it next
 
 ### Playlists
-<video controls src="https://youtu.be/BnFEm3ccPfE" style="width: 100%; height: 100%" autoplay ></video>
+
+https://github.com/q-13t/Vinil-re/assets/105020553/f2bba983-6428-4ed2-92b9-7e6642bcd4d6
 
 - Ease of creation / alteration
 - Drag and drop support for song rearrangement 
@@ -52,12 +50,14 @@ ___
 
 ### File System
 #### Adding Folders
-<video controls src="https://youtu.be/R2xJ3877Cg0" style="width: 100%; height: 100%" autoplay ></video>
+
+https://github.com/q-13t/Vinil-re/assets/105020553/7a27711b-44a6-460b-a827-fdfe16e81858
 
 - Adding and removing folders is super easy
 
 #### Active file watcher
-<video controls src="https://youtu.be/QAowrfH--F0" style="width: 100%; height: 100%" autoplay ></video>
+
+https://github.com/q-13t/Vinil-re/assets/105020553/bf01ef32-1ef3-4119-afa0-ec403bc950ff
 
 - Automatic detection of changes in musical files.
 - Songs will be automatically added or removed from general playlist
