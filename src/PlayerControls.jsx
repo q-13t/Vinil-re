@@ -121,9 +121,10 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
 
         let barHeight;
         let barPosition;
-
+        let break_draw = false;
 
         const draw = async () => { // audio visualization draw loop
+            console.log(break_draw);
             barPosition = 0;
             context.clearRect(0, 0, canvas.width, canvas.height);
             analyzer.getByteFrequencyData(dataArray);
@@ -136,8 +137,17 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                 barPosition += barWidth;
             }
 
-            requestAnimationFrame(draw);
+            if (!break_draw) {
+                requestAnimationFrame(draw);
+            } else {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                break_draw = false;
+            }
         }
+
+        window.addEventListener('focus', (event) => { break_draw = false; draw(); });
+        window.addEventListener('blur', (event) => { break_draw = true; });
+
         draw();
 
         //Timeline & time count updater
