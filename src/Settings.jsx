@@ -17,6 +17,11 @@ const Settings = () => {
             setPaths(folders);
         })
         updateFileWatchers();
+        let visualizer_select = document.getElementById(`visualizer-select`);
+        let visualizer = localStorage.getItem("visualizer");
+        if (visualizer && visualizer_select) {
+            visualizer_select.value = visualizer;
+        }
     }, []);
 
 
@@ -45,6 +50,11 @@ const Settings = () => {
         clearSongsData();
         document.getElementById("ClearCashDialog").style.display = "none";
     }
+
+    let handleVisualizerOptionChange = (e) => {
+        console.log("[handleVisualizerOptionChange] value:", e.target.value);
+        localStorage.setItem("visualizer", e.target.value);
+    }
     return (
         <div id="Settings">
             <dialog id="ClearCashDialog">
@@ -57,13 +67,25 @@ const Settings = () => {
                 </div>
             </dialog>
             <h3>Settings</h3>
-            <div id="AddFolderContainer" onClick={() => { handleInputChange() }}>
-                <img src={plusImg} alt={burgerImg} />
-                <p>Where to look for?</p>
-            </div>
-            <p id="ClearCash" onClick={() => { document.getElementById("ClearCashDialog").style.display = "flex" }}>Clear Cash</p>
-            <div id="FoldersContainer">
-                {paths && paths.map((path) => <FolderEl key={path} path={path} removePath={removePath} />)}
+            <div className="settings-container">
+                <div className="misc-container">
+                    <p>Visualizer Visibility</p>
+                    <select id="visualizer-select" name="visualizer-select" defaultValue={"Always On"} onChange={(e) => { handleVisualizerOptionChange(e) }}>
+                        <option value="Always Off">Always Off</option>
+                        <option value="On Window Focus">On Window Focus</option>
+                        <option value="Always On">Always On</option>
+                    </select>
+                </div>
+                <div className="folder-container">
+                    <div id="AddFolderContainer" onClick={() => { handleInputChange() }}>
+                        <img src={plusImg} alt={burgerImg} />
+                        <p>Where to look for?</p>
+                    </div>
+                    <p id="ClearCash" onClick={() => { document.getElementById("ClearCashDialog").style.display = "flex" }}>Clear Cash</p>
+                    <div id="FoldersContainer">
+                        {paths && paths.map((path) => <FolderEl key={path} path={path} removePath={removePath} />)}
+                    </div>
+                </div>
             </div>
 
         </div >

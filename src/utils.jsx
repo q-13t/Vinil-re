@@ -457,5 +457,27 @@ function validatePlaylistName(name) {
     return true;
 }
 
+const origSetItem = window.localStorage.setItem;
 
+window.localStorage.setItem = function setItem(key, value) {
+    // Retrieve old value before we store the new one
+    let oldValue = window.localStorage.getItem(key);
+    // Store in LocalStorage
+    const result = origSetItem.apply(this, arguments);
+
+    // Dispatch StorageEvent if key is 'visualizer'
+    if (key === "visualizer") {
+        const e = new StorageEvent('storage', {
+            storageArea: window.localStorage,
+            key,
+            oldValue,
+            newValue: value,
+            url: window.location.href,
+        });
+        console.log("[SetItem] e:", e);
+        window.dispatchEvent(e);
+    }
+
+    return result;
+}
 export { displayPlaylistNameWarning, validatePlaylistName, getAverageRGB, searchAndSort, clearSongsData, getTag, getFolders, getPlaylists, getPlaylist, savePlaylist, appendSong, deletePlaylist, renamePlaylist, IndexSongs, updateFileWatchers };

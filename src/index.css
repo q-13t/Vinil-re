@@ -9,15 +9,18 @@
     --accent-color: #cfcfcf00;
 }
 
-.max-height {
-    height: 100%;
-}
 
 body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
     background-color: #000000;
+}
+
+
+
+.max-height {
+    height: 100%;
 }
 
 #root {
@@ -971,4 +974,22 @@ input[type="range"]::-ms-thumb {
     -webkit-appearance: none;
     color: transparent;
     border: 1px solid var(--border-color);
+}
+
+.settings-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.misc-container,
+.folder-container {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#visualizer-select {
+    width: fit-content;
 }
