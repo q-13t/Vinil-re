@@ -100,7 +100,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         player.crossOrigin = "anonymous";
         player.onended = function () {
             document.getElementById("controlNext").click();
-        }
+        };
 
         //  Audio Visualizer
 
@@ -174,11 +174,11 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             navigator.mediaSession.setActionHandler('nexttrack', () => { document.getElementById("controlNext").click(); });
         }
 
-    }, [])
+    }, []);
 
     let addToHistory = (path) => {
-        setHistory([...history, path]);
-        historyIndex = history.length
+        setHistory([path, ...history]);
+        historyIndex = 0;
     }
 
     let imgLoad = (event) => {
@@ -198,46 +198,36 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
     }
 
     let handlePrevious = () => {
-        if (player.currentTime <= 10 && historyIndex > 0) {
-            historyIndex = historyIndex - 1;
-            setCurrentSong(history[historyIndex]);
+        if (player.currentTime <= 10 && historyIndex >= 0) {
+            historyIndex = historyIndex + 1 >= history.length ? -1 : historyIndex;
+            setCurrentSong(history[++historyIndex]);
         }
         player.currentTime = 0;
     }
 
     let handleNext = () => {
         let currentPlaylist = JSON.parse(localStorage.getItem("currentPlaylist"));
-        console.log(historyIndex);
-        if (historyIndex < history.length - 1) {
-            historyIndex = historyIndex + 1
-            setCurrentSong(history[historyIndex]);
-        } else if (shuffle) {
+        console.log("[HandleNext] historyIndex: ", historyIndex);
+        if (historyIndex > 0) {// if user is in history
+            setCurrentSong(history[--historyIndex]);
+        } else if (shuffle) {// if shuffle is on
             let rand = Math.floor(Math.random() * currentPlaylist.length);
             playlistIndex = rand;
             sessionStorage.setItem("currentIndex", playlistIndex);
             addToHistory(currentPlaylist[rand])
             setCurrentSong(currentPlaylist[rand]);
-        } else {
-            if (playlistIndex < currentPlaylist.length - 1) {
-                playlistIndex = playlistIndex + 1;
-                addToHistory(currentPlaylist[playlistIndex])
-                setCurrentSong(currentPlaylist[playlistIndex]);
-            } else {
-                playlistIndex = 0;
-                addToHistory(currentPlaylist[playlistIndex])
-                setCurrentSong(currentPlaylist[playlistIndex]);
-            }
-            if (currentSong === currentPlaylist[playlistIndex]) {
-                addToHistory(currentSong)
-                player.currentTime = 0;
-            }
+        } else {// If it is simply play next
+            //Increment playlist index by 1 or reset to 0
+            playlistIndex = playlistIndex < currentPlaylist.length - 1 ? playlistIndex += 1 : 0;
+            addToHistory(currentPlaylist[playlistIndex])
+            setCurrentSong(currentPlaylist[playlistIndex]);
             sessionStorage.setItem("currentIndex", playlistIndex);
         }
     }
 
 
     let handlePause = (event) => {
-        console.log("HandlePause", player.paused);
+        console.log("[HandlePause] player.paused:", player.paused);
         if (player.paused) {
             player.play();
             paused = false;

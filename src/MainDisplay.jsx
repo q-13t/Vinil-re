@@ -40,7 +40,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
                 break;
             }
             case "Recent Plays": {
-                setPaths(history.slice().reverse());
+                setPaths(history);
                 break;
             }
             case "Current Play Queue": {
@@ -73,9 +73,8 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
         if (display === "Current Play Queue") {
             setPaths(localStorage.getItem("currentPlaylist") ? JSON.parse(localStorage.getItem("currentPlaylist")) : []);
         } else if (display === "Recent Plays") {
-            setPaths(history.reverse());
+            setPaths(history);
         }
-
     }, [localStorage.getItem("currentPlaylist"), history]);
 
     useEffect(() => {// effect for checked songs
