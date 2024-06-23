@@ -63,11 +63,15 @@ const Songs_List = ({ providedRef = null, providedDraggableProps = {}, providedD
                 <img src={checkImg} style={{ width: "inherit", visibility: checked.includes(path) ? "visible" : "hidden" }} />
             </div>
             <img id={`img-${id}`} className="song-el-album" src={transparentImg} ></img>
-            <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", flex: "0 0 25%", maxWidth: "25%", alignItems: "stretch" }}>
+            <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", flex: "0 0 25%", maxWidth: "25%", alignItems: "center" }}>
                 <p id={`title-${id}`} className="song-el-title" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
-                <img src={playImg} alt={burgerImg} className="song-el-play" onClick={() => { setPlay(path) }}></img>
+                <div className="song-button max-height" >
+                    <img src={playImg} alt={burgerImg} className="song-el-play" onClick={() => { setPlay(path) }}></img>
+                </div>
                 <div className="dropdown">
-                    <img src={plusImg} alt={burgerImg} className="song-el-add max-height" ></img>
+                    <div className="song-button max-height" >
+                        <img src={plusImg} alt={burgerImg} className="song-el-add " ></img>
+                    </div>
                     <div id={`song-el-add-control-${id}`} className="song-el-add-control">
                         <div className="dropdown-control "  >
                             <div className="dropdown-playlist dropdown-el" onClick={handleNewPlaylist} >

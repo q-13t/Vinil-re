@@ -66,7 +66,10 @@ const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
                 <div id="SideMenu">
                     <progress style={{ width: "100%", }} id="indexing-progress" type="range" min="0" max="100" />
                     < div >
-                        <img id="sideMenuBurger" src={burgerImg} alt="" onClick={() => { setMaximized(false); }} />
+                        <div className="burger-container sideMenuBurger" onClick={() => { setMaximized(false); }}>
+                            <img src={burgerImg} alt="" />
+                        </div>
+
                         <div id="SearchBar">
                             <input id="search-Input" type="text" placeholder="Search" value={search} onKeyDown={(e) => { handleKeyDown(e); }} onChange={(e) => { handleChange(e); }} />
                             <img id="search-Search" style={{ display: search === "" ? "none" : "block" }} src={searchImg} alt={burgerImg} onClick={(e) => { setDisplay("Search Results"); navigateTo(`/?as=list&search-for=${search}`) }}></img>
@@ -93,7 +96,9 @@ const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
                                     <img src={burgerImg} alt="" aria-hidden="true" tabIndex={-1} className="small-img"></img>
                                     <p className="sideMenuText" aria-hidden="true" tabIndex={-1}>Playlists</p>
                                 </div>
-                                <img id="AddPlayList" src={plusImg} alt="" onClick={openDialog} className="small-img"></img>
+                                <div className="AddPlaylistButton" onClick={openDialog}>
+                                    <   img src={plusImg} alt="" className="small-img"></img>
+                                </div>
                             </div>
 
                             <div id="PlaylistsList">
@@ -110,14 +115,24 @@ const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
                 :
                 <div id="SideMenu-small">
                     <progress style={{ width: "100%", }} id="indexing-progress" type="range" min="0" max="100" />
-                    <img id="sideMenuBurger" src={burgerImg} alt="" onClick={() => { setMaximized(true); }} />
+                    <span className="burger-container sideMenuBurger" onClick={() => { setMaximized(true); }}>
+                        <img id="" src={burgerImg} alt="" />
+                    </span>
                     <div id="MainScrollable">
-                        <img id="My Music" title="My Music" src={barsImg} alt={burgerImg} className="sideMenuButton small-img" onClick={(e) => { setDisplay("My Music"); handleNavigate(e, "/") }} ></img>
-                        <img id="RecentList" title="Recent Plays" src={clockImg} alt={burgerImg} className="sideMenuButton small-img" onClick={(e) => { setDisplay("Recent Plays"); handleNavigate(e, "/") }}></img>
-                        <img id="CurrentList" title="Current Play Queue" src={arrowsImg} alt={burgerImg} className="sideMenuButton small-img" onClick={(e) => { setDisplay("Current Play Queue"); handleNavigate(e, "/") }} ></img>
+                        <div id="My Music" title="My Music" className="sideMenuButton " onClick={(e) => { setDisplay("My Music"); handleNavigate(e, "/") }} >
+                            <img className="small-img" src={barsImg} alt={burgerImg} ></img>
+                        </div>
+                        <div id="RecentList" title="Recent Plays" className="sideMenuButton " onClick={(e) => { setDisplay("Recent Plays"); handleNavigate(e, "/") }}>
+                            <img className="small-img" src={clockImg} alt={burgerImg} ></img>
+                        </div>
+                        <div id="CurrentList" title="Current Play Queue" className="sideMenuButton " onClick={(e) => { setDisplay("Current Play Queue"); handleNavigate(e, "/") }} >
+                            <img className="small-img" src={arrowsImg} alt={burgerImg} ></img>
+                        </div>
                         <div id="PlaylistsContainer">
                             <div id="Playlists" style={{ justifyContent: "center" }}>
-                                <img id="AddPlayList" src={plusImg} alt="" onClick={openDialog}></img>
+                                <div className="AddPlaylistButton" onClick={openDialog}>
+                                    <img id="AddPlayList" src={plusImg} alt="" onClick={openDialog}></img>
+                                </div>
                             </div>
 
                             <div id="PlaylistsList">

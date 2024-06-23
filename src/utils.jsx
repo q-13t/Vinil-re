@@ -207,6 +207,17 @@ function getAverageRGB(imgEl) {
     rgb.r = ~~(rgb.r / count);
     rgb.g = ~~(rgb.g / count);
     rgb.b = ~~(rgb.b / count);
+
+    // increase  or decrease intensity to become visible
+    // if (rgb.r + rgb.g + rgb.b < 100) {
+    //     rgb.r = rgb.r * 1.25;
+    //     rgb.g = rgb.g * 1.25;
+    //     rgb.b = rgb.b * 1.25;
+    // } else if (rgb.r + rgb.g + rgb.b > 600) {
+    //     rgb.r = rgb.r * 0.75;
+    //     rgb.g = rgb.g * 0.75;
+    //     rgb.b = rgb.b * 0.75;
+    // }
     return rgb;
 };
 /**
@@ -480,4 +491,46 @@ window.localStorage.setItem = function setItem(key, value) {
 
     return result;
 }
-export { displayPlaylistNameWarning, validatePlaylistName, getAverageRGB, searchAndSort, clearSongsData, getTag, getFolders, getPlaylists, getPlaylist, savePlaylist, appendSong, deletePlaylist, renamePlaylist, IndexSongs, updateFileWatchers };
+function UIListener() {
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.remove("light");
+    } else {
+        document.documentElement.classList.add("light");
+    }
+}
+/**
+ * Setts apps UI mode.
+ * There are 3 modes: 
+ *  - `Light`
+ *  - `Dark`
+ *  - `As System`
+ * 
+ * @param {String} mode to be used
+ */
+function setUIMode(mode) {
+    switch (mode) {
+        case "Light": {
+            document.documentElement.classList.add("light");
+            window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', UIListener, true)
+            break;
+        }
+        case "Dark": {
+            document.documentElement.classList.remove("light");
+            window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', UIListener, true)
+            break;
+        }
+
+        case "As System":
+        default: {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', UIListener, true);
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.remove("light");
+            } else {
+                document.documentElement.classList.add("light");
+            }
+            break;
+        }
+    }
+}
+
+export { displayPlaylistNameWarning, setUIMode, validatePlaylistName, getAverageRGB, searchAndSort, clearSongsData, getTag, getFolders, getPlaylists, getPlaylist, savePlaylist, appendSong, deletePlaylist, renamePlaylist, IndexSongs, updateFileWatchers };

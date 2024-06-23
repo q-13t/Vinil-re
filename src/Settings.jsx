@@ -5,7 +5,8 @@ import burgerImg from "/Burger.svg";
 import plusImg from "/Plus.svg";
 import { open } from '@tauri-apps/api/dialog';
 import { BaseDirectory, writeTextFile } from "@tauri-apps/api/fs";
-import { getFolders, IndexSongs, clearSongsData, updateFileWatchers } from "./utils";
+import { getFolders, IndexSongs, clearSongsData, updateFileWatchers, setUIMode } from "./utils";
+
 
 
 const Settings = () => {
@@ -24,11 +25,12 @@ const Settings = () => {
             visualizer_select.value = visualizer;
         }
 
-        let UI_select = document.getElementById(`UI-select`);
+        let UI_select = document.getElementById(`UIMode`);
         let UI = localStorage.getItem("UI Mode");
         if (UI && UI_select) {
             UI_select.value = UI;
         }
+        console.log("[Settings] UI:", UI);
 
     }, []);
 
@@ -67,6 +69,7 @@ const Settings = () => {
     let handleUIModeChange = (e) => {
         console.log("[handleUIModeChange] value:", e.target.value);
         localStorage.setItem("UI Mode", e.target.value);
+        setUIMode(e.target.value);
     }
     return (
         <div id="Settings">
@@ -92,9 +95,10 @@ const Settings = () => {
                     </div>
                     <div className="setting">
                         <p>UI Mode</p>
-                        <select id="UIMode" name="UIMode" defaultValue={"Dark Mode"} onChange={(e) => { handleUIModeChange(e) }}>
-                            <option value="Light Mode">Light Mode</option>
-                            <option value="Dark Mode">Dark Mode</option>
+                        <select id="UIMode" name="UIMode" onChange={(e) => { handleUIModeChange(e) }}>
+                            <option value="Light">Light</option>
+                            <option value="Dark">Dark</option>
+                            <option value="As System">As System</option>
                         </select>
                     </div>
                 </div>

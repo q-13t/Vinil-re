@@ -140,7 +140,11 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         const container = document.getElementById(`PlayerControlsContainer`);
         if (container) {
             const rgb = getAverageRGB(event.target);
-            container.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`;
+            if (document.documentElement.classList.contains("light")) {
+                container.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`;
+            } else {
+                container.style.backgroundColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.55)`;
+            }
             document.body.style.cssText = `--accent-color: rgb(${rgb.r}, ${rgb.g}, ${rgb.b});`;
         }
     }
@@ -233,11 +237,21 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             </div>
             <div id="PlayerControls">
                 <div id="PlayerControlsButtons">
-                    <img id="controlShuffle" className="inactiveBorder" src={shuffleImg} alt="" onClick={handleShuffle} />
-                    <img id="controlPrevious" className="inactiveBorder" src={previousImg} alt="" onClick={handlePrevious} />
-                    <img id="controlPlay" className="inactiveBorder" style={{ border: "1px solid var(--border-color)" }} src={playImg} alt="" onClick={handlePause} />
-                    <img id="controlNext" className="inactiveBorder" src={nextImg} alt="" onClick={handleNext} />
-                    <img id="controlRepeat" className="inactiveBorder" src={repeatImg} alt="" onClick={handleLoop} />
+                    <div className="control-button">
+                        <img id="controlShuffle" className="inactiveBorder" src={shuffleImg} alt="" onClick={handleShuffle} />
+                    </div>
+                    <div className="control-button">
+                        <img id="controlPrevious" className="inactiveBorder" src={previousImg} alt="" onClick={handlePrevious} />
+                    </div>
+                    <div className="control-button">
+                        <img id="controlPlay" className="inactiveBorder" style={{ border: "1px solid var(--border-color)" }} src={playImg} alt="" onClick={handlePause} />
+                    </div>
+                    <div className="control-button">
+                        <img id="controlNext" className="inactiveBorder" src={nextImg} alt="" onClick={handleNext} />
+                    </div>
+                    <div className="control-button">
+                        <img id="controlRepeat" className="inactiveBorder" src={repeatImg} alt="" onClick={handleLoop} />
+                    </div>
                 </div>
                 <div id="PlayerControlsTime">
                     <p id="timeCurrent">0:00</p>
@@ -246,7 +260,9 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                 </div>
             </div>
             <div id="PlayerControlsMisc">
-                <img src={soundImg} alt="" id="controlMute" onClick={handleMute} />
+                <div className="control-button">
+                    <img src={soundImg} alt="" id="controlMute" onClick={handleMute} />
+                </div>
                 <input type="range" id="volumeSlider" defaultValue={100} onInput={(e) => { handleVolume(e); }} />
             </div>
         </div>

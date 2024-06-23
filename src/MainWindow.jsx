@@ -6,7 +6,7 @@ import PlayerControls from "./PlayerControls";
 import MainDisplay from "./MainDisplay";
 import Settings from "./Settings";
 import NewPlayListDialog from "./NewPlaylistDialog";
-import { getTag, getPlaylists, IndexSongs, updateFileWatchers } from "./utils";
+import { getTag, getPlaylists, IndexSongs, updateFileWatchers, setUIMode } from "./utils";
 import Playlist from "./Playlist";
 import vinilImg from "/Vinil.svg";
 import transparentImg from "/Transparent.svg";
@@ -75,6 +75,8 @@ const MainWindow = () => {
         })
         IndexSongs(null);
         updateFileWatchers();
+        setUIMode(localStorage.getItem("UI Mode") ?? "Dark");
+
     }, []);
     return (
         <div id="AppContainer">

@@ -9,16 +9,42 @@
     --accent-color: #cfcfcf00;
 }
 
+.light {
+    --border-color: #999999;
+    --background-base: #fff;
+    --background-el: #e6e6e6;
+    --font-color: #202020;
+    --hover-color: #d4d4d4;
+    --focus-color: #cacaca;
+    --accent-color: #cfcfcf00;
+}
 
+.light #sideMenuBurger,
+.light .sideMenuButton img,
+.light #MainScrollable img,
+.light .song-el-add,
+.light .song-el-play,
+.light .dropdown-el img,
+.light #shuffleButton img,
+.light .song-el-check img,
+.light .control-button img,
+.light #AddFolderContainer img,
+.light .song-button img,
+.ling .AddPlaylistButton img,
+.light .burger-container img {
+    filter: invert(100%);
+}
+
+.invert {
+    filter: invert(100%);
+}
 
 body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
-    background-color: #000000;
+    background-color: var(--background-base);
 }
-
-
 
 .max-height {
     height: 100%;
@@ -100,44 +126,51 @@ img {
     display: block;
 }
 
-#sideMenuBurger:hover,
+.control-button {
+    max-height: 40px;
+    max-width: 40px;
+}
+
+.accent-background {
+    background-color: var(--accent-color);
+}
+
+.control-button img {
+    max-height: inherit;
+    max-width: inherit;
+}
+
+.burger-container {
+    width: fit-content;
+}
+
+.burger-container:hover,
 .sideMenuButton:hover,
-#AddPlayList:hover,
+.AddPlaylistButton:hover,
 #shuffleButton:hover,
-/* #displaySort  */
 select:hover,
 #AddFolderContainer:hover,
 #topSubNav *:hover,
 #dialog-container div button:hover,
 #PlayListControls *:hover,
 #PlayListData p:hover,
-#controlShuffle:hover,
-#controlPrevious:hover,
-#controlPlay:hover,
-#controlNext:hover,
-#controlRepeat:hover,
-#controlMute:hover,
 #Delete-Playlist-Dialog-Container div button:hover,
 #ClearCashDialogContainer div button:hover,
 .dropdown-el:hover,
 #search-Search:hover,
-#search-Clear:hover {
+#search-Clear:hover,
+.control-button:hover {
     background-color: var(--hover-color);
 }
 
-#sideMenuBurger:active,
+.burger-container:active,
 .sideMenuButton:active,
-#AddPlayList:active,
+.AddPlaylistButton:active,
 #shuffleButton:active,
 #dialog-container div button:active,
 #PlayListControls *:active,
 #PlayListData p:active,
-#controlShuffle:active,
-#controlPrevious:active,
-#controlPlay:active,
-#controlNext:active,
-#controlRepeat:active,
-#controlMute:active,
+.control-button:active,
 #Delete-Playlist-Dialog-Container div button:active,
 #ClearCashDialogContainer div button:active,
 .dropdown-el:active,
@@ -352,7 +385,7 @@ div {
 input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
-    background: rgba(255, 255, 255, 0.6);
+    background: var(--focus-color);
     height: 2px;
 }
 
@@ -503,7 +536,7 @@ select *:hover {
 
 .song-el-container-list:hover {
     background-color: var(--hover-color);
-    --display: block;
+    --display: flex;
 }
 
 .song-el-container-list:hover .song-el-check {
@@ -532,13 +565,14 @@ select *:hover {
     width: 45px;
 }
 
-.song-el-container-list .song-el-play,
-.song-el-container-list .song-el-add {
+.song-button {
     display: var(--display);
+    align-items: center;
 }
 
-.song-el-container-list .song-el-play:hover,
-.song-el-container-list .song-el-add:hover {
+
+.song-button:hover {
+    /* background-color: var(--focus-color); */
     background-color: var(--focus-color);
     cursor: pointer;
 }
@@ -597,6 +631,14 @@ select *:hover {
     --display: none;
 }
 
+.mainGrid .song-el-container-grid:not(:hover) span {
+    animation: blur_out 0.3s ease-out 0s 1 normal forwards;
+}
+
+.mainGrid .song-el-container-grid:hover span {
+    animation: blur_in 0.3s ease-out 0s 1 normal forwards;
+}
+
 .song-el-grid-sub {
     width: 100%;
     display: flex;
@@ -627,6 +669,30 @@ select *:hover {
     --display: flex;
 }
 
+
+
+@keyframes blur_in {
+    0% {
+        filter: blur(0px);
+    }
+
+    100% {
+        filter: blur(4px);
+    }
+}
+
+@keyframes blur_out {
+    0% {
+        filter: blur(4px);
+    }
+
+    100% {
+
+        filter: blur(0px);
+    }
+
+}
+
 .mainGrid .song-el-container-grid .song-el-title {
     font-size: 20px;
 }
@@ -646,9 +712,7 @@ select *:hover {
     border: 1px solid var(--border-color);
 }
 
-.mainGrid .song-el-container-grid .song-el-buttons img:hover {
-    background-color: var(--hover-color);
-}
+
 
 .mainGrid .song-el-container-grid .song-el-buttons {
     position: absolute;
@@ -707,7 +771,7 @@ select *:hover {
     border-left: 1px solid var(--focus-color);
 }
 
-.Folder img:hover,
+.delete:hover,
 #ClearCash:hover {
     cursor: pointer;
     background-color: #c13c3c;

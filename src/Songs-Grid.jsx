@@ -37,7 +37,9 @@ const Songs_Grid = ({ path, id, observer, openDialog, playlists, handlePlayNext,
 
     return (
         <div data-path={path} id={id} ref={ref} className="song-el-container-grid" >
-            <img id={`img-${id}`} className="song-el-album" src={transparentImg} ></img>
+            <span>
+                <img id={`img-${id}`} className="song-el-album" src={transparentImg} ></img>
+            </span>
             <p id={`title-${id}`} className="song-el-title" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
             <div className="song-el-grid-sub">
                 <p id={`artist-${id}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
@@ -45,13 +47,19 @@ const Songs_Grid = ({ path, id, observer, openDialog, playlists, handlePlayNext,
             </div>
 
             <div className="song-el-buttons">
-                <img src={playImg} alt={burgerImg} className="song-el-play" onClick={() => { setPlay(path) }}></img>
+                <div className="song-button ">
+                    <img src={playImg} alt={burgerImg} className="song-el-play" onClick={() => { setPlay(path) }}></img>
+                </div>
                 <div className="dropdown">
-                    <img src={plusImg} alt={burgerImg} className="song-el-add max-height" ></img>
+                    <div className="song-button ">
+                        <img src={plusImg} alt={burgerImg} className="song-el-add max-height" ></img>
+                    </div>
                     <div id={`song-el-add-control-${id}`} className="song-el-add-control">
                         <div className="dropdown-control "  >
                             <div className=" dropdown-playlist dropdown-el" onClick={handleNewPlaylist}>
-                                <img src={plusImg} alt="" />
+                                <div className="song-button">
+                                    <img src={plusImg} alt="" />
+                                </div>
                                 <p>Create New Playlist</p>
                             </div>
                             <div className="dropdown-playlist dropdown-el" onClick={() => { handlePlayNext(path) }}>
@@ -61,7 +69,10 @@ const Songs_Grid = ({ path, id, observer, openDialog, playlists, handlePlayNext,
                         </div>
                         {playlists && playlists.map((playlist) => (
                             <div className="dropdown-playlist dropdown-el" key={playlist.name} onClick={() => { handleAddToPlaylist(playlist.path) }}>
-                                <img src={playlistImg} ></img>
+                                <div className="song-button">
+                                    <img src={playlistImg} ></img>
+                                </div>
+
                                 <p>{playlist.name}</p>
                             </div>
                         ))}
