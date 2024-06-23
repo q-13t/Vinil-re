@@ -5,6 +5,7 @@
         "previoustrack",
         "seekbackward",
         "seekforward",
-        "tauri"
+        "tauri",
+        "unlisten"
     ]
 }

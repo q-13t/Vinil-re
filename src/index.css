@@ -10,6 +10,7 @@
 }
 
 
+
 body {
     margin: 0;
     padding: 0;
@@ -992,4 +993,20 @@ input[type="range"]::-ms-thumb {
 
 #visualizer-select {
     width: fit-content;
+}
+
+.setting {
+    display: flex;
+    flex-direction: row;
+    border-bottom: var(--border-color) 1px solid;
+    align-items: center;
+    width: 95%;
+}
+
+.setting p {
+    flex-grow: 1;
+}
+
+.setting * {
+    margin: 1%;
 }

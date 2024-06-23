@@ -17,11 +17,19 @@ const Settings = () => {
             setPaths(folders);
         })
         updateFileWatchers();
+
         let visualizer_select = document.getElementById(`visualizer-select`);
         let visualizer = localStorage.getItem("visualizer");
         if (visualizer && visualizer_select) {
             visualizer_select.value = visualizer;
         }
+
+        let UI_select = document.getElementById(`UI-select`);
+        let UI = localStorage.getItem("UI Mode");
+        if (UI && UI_select) {
+            UI_select.value = UI;
+        }
+
     }, []);
 
 
@@ -55,6 +63,11 @@ const Settings = () => {
         console.log("[handleVisualizerOptionChange] value:", e.target.value);
         localStorage.setItem("visualizer", e.target.value);
     }
+
+    let handleUIModeChange = (e) => {
+        console.log("[handleUIModeChange] value:", e.target.value);
+        localStorage.setItem("UI Mode", e.target.value);
+    }
     return (
         <div id="Settings">
             <dialog id="ClearCashDialog">
@@ -69,12 +82,21 @@ const Settings = () => {
             <h3>Settings</h3>
             <div className="settings-container">
                 <div className="misc-container">
-                    <p>Visualizer Visibility</p>
-                    <select id="visualizer-select" name="visualizer-select" defaultValue={"Always On"} onChange={(e) => { handleVisualizerOptionChange(e) }}>
-                        <option value="Always Off">Always Off</option>
-                        <option value="On Window Focus">On Window Focus</option>
-                        <option value="Always On">Always On</option>
-                    </select>
+                    <div className="setting">
+                        <p>Visualizer Visibility</p>
+                        <select id="visualizer-select" name="visualizer-select" defaultValue={"Always On"} onChange={(e) => { handleVisualizerOptionChange(e) }}>
+                            <option value="Always Off">Always Off</option>
+                            <option value="On Window Focus">On Window Focus</option>
+                            <option value="Always On">Always On</option>
+                        </select>
+                    </div>
+                    <div className="setting">
+                        <p>UI Mode</p>
+                        <select id="UIMode" name="UIMode" defaultValue={"Dark Mode"} onChange={(e) => { handleUIModeChange(e) }}>
+                            <option value="Light Mode">Light Mode</option>
+                            <option value="Dark Mode">Dark Mode</option>
+                        </select>
+                    </div>
                 </div>
                 <div className="folder-container">
                     <div id="AddFolderContainer" onClick={() => { handleInputChange() }}>
