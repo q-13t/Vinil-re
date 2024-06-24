@@ -1,11 +1,9 @@
 import { useEffect, useRef } from "react";
-import { appendSong } from "./utils";
+
 
 import burgerImg from "/Burger.svg";
 import playImg from "/Play.svg";
-import plusImg from "/Plus.svg";
-import playlistImg from "/Playlist.svg";
-import arrowImg from "/Arrows.svg";
+
 import transparentImg from "/Transparent.svg";
 import DropDownMenu from "./DropDownMenu";
 
@@ -24,17 +22,6 @@ const Songs_Grid = ({ path, id, observer, openDialog, playlists, handlePlayNext,
         }
     }, [path]);
 
-    let handleNewPlaylist = () => {
-        setChecked([path]);
-        openDialog(true);
-    }
-
-    let handleAddToPlaylist = (p_path) => {
-        setChecked([path]);
-        appendSong(p_path, [path]).then(() => {
-            setChecked([]);
-        });
-    }
 
     return (
         <div data-path={path} id={id} ref={ref} className="song-el-container-grid" >
@@ -51,7 +38,7 @@ const Songs_Grid = ({ path, id, observer, openDialog, playlists, handlePlayNext,
                 <div className="song-button ">
                     <img src={playImg} alt={burgerImg} className="song-el-play" onClick={() => { setPlay(path) }}></img>
                 </div>
-                <DropDownMenu id={id} path={path} playlists={playlists} handleNewPlaylist={handleNewPlaylist} handleAddToPlaylist={handleAddToPlaylist} />
+                <DropDownMenu id={id} path={path} playlists={playlists} openDialog={openDialog} setChecked={setChecked} handlePlayNext={handlePlayNext} />
             </div >
         </div >
     );
