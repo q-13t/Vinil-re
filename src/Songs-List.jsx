@@ -8,6 +8,7 @@ import plusImg from "/Plus.svg";
 import playlistImg from "/Playlist.svg";
 import arrowImg from "/Arrows.svg";
 import transparentImg from "/Transparent.svg";
+import DropDownMenu from "./DropDownMenu";
 
 const Songs_List = ({ providedRef = null, providedDraggableProps = {}, providedDragHandleProps = {}, id, path, odd, observer, checked, setChecked, handlePlayNext, setPlay, playlists, openDialog, currentSong, draggable = false, dragStart = null, dragOver = null, dragEnd = null }) => {
     const ref = useRef(null);
@@ -68,29 +69,7 @@ const Songs_List = ({ providedRef = null, providedDraggableProps = {}, providedD
                 <div className="song-button max-height" >
                     <img src={playImg} alt={burgerImg} className="song-el-play" onClick={() => { setPlay(path) }}></img>
                 </div>
-                <div className="dropdown">
-                    <div className="song-button max-height" >
-                        <img src={plusImg} alt={burgerImg} className="song-el-add " ></img>
-                    </div>
-                    <div id={`song-el-add-control-${id}`} className="song-el-add-control">
-                        <div className="dropdown-control "  >
-                            <div className="dropdown-playlist dropdown-el" onClick={handleNewPlaylist} >
-                                <img src={plusImg} alt="" />
-                                <p>Create New Playlist</p>
-                            </div>
-                            <div className="dropdown-playlist dropdown-el" onClick={() => { handlePlayNext(path) }}>
-                                <img src={arrowImg} alt="" />
-                                <p>Play Next</p>
-                            </div>
-                        </div>
-                        {playlists && playlists.map((playlist) => (
-                            <div className="dropdown-playlist dropdown-el" key={playlist.name} onClick={() => { handleAddToPlaylist(playlist.path) }}>
-                                <img src={playlistImg} ></img>
-                                <p>{playlist.name}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                <DropDownMenu id={id} path={path} playlists={playlists} handleNewPlaylist={handleNewPlaylist} handleAddToPlaylist={handleAddToPlaylist} />
             </div >
             <p id={`artist-${id}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
             <p id={`album-${id}`} className="song-el-album" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
