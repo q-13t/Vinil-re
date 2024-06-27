@@ -69,7 +69,7 @@ const MainWindow = () => {
 
     let setCurrentSong = (path) => {
         updateCurrentSong(path);
-        if (path = currentSong) {
+        if (path === currentSong) {
             setForcePlay(!forcePlay);
         }
     }
