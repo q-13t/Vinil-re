@@ -44,7 +44,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
 
                     if (load && !paused) { player.play(); }
                     if (!load) { addToHistory(currentSong) };
-                    if (progress) { progress.value = 0 };
+                    if (progress) { progress.value = 0; };
                     if (duration) { duration.innerHTML = res.duration };
                     if (!load) { load = true };
                     if (title) { title.innerHTML = res.title };
@@ -106,19 +106,29 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             handleNext();
         };
 
+        player.onloadedmetadata = function () {
+            document.getElementById("timeSlider").setAttribute("max", Math.floor(player.duration));
+        }
 
 
         //Timeline & time count updater
-        player.ontimeupdate = function () {
-            let minutes = Math.floor(player.currentTime / 60);
-            let seconds = Math.floor(player.currentTime - minutes * 60);
-            let timeCurrent = document.getElementById(`timeCurrent`);
-            if (timeCurrent) timeCurrent.innerHTML = minutes + ":" + (seconds > 9 ? seconds : "0" + seconds);
-            let timeSlider = document.getElementById(`timeSlider`);
-            if (timeSlider) timeSlider.value = Math.floor((player.currentTime / player.duration) * 100);
-            if (!player.paused) document.getElementById("controlPlay").src = pauseImg;
-            localStorage.setItem("currentTime", player.currentTime);
-        }
+        const timeCurrent = document.getElementById(`timeCurrent`);
+        const timeSlider = document.getElementById(`timeSlider`);
+        player.ontimeupdate = () => {
+            const minutes = Math.floor(player.currentTime / 60);
+            const seconds = Math.floor(player.currentTime % 60);
+            const timeCurrentFormatted = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            if (timeCurrent) {
+                timeCurrent.textContent = timeCurrentFormatted;
+            }
+            if (timeSlider) {
+                timeSlider.value = Math.floor(player.currentTime);
+            }
+            if (!player.paused) {
+                document.getElementById("controlPlay").src = pauseImg;
+            }
+            localStorage.setItem("currentTime", Math.floor(player.currentTime));
+        };
 
         if (!load) {
             // Media Session metadata
@@ -156,7 +166,8 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
     }
 
     let setTime = (event) => {
-        player.currentTime = (player.duration * event.target.value) / 100;
+        player.currentTime = event.target.value;
+        // (player.duration * event.target.value) / 100;
     }
 
     let handlePrevious = () => {
