@@ -6,7 +6,7 @@ import Songs_List from "./Songs-List";
 import playlistImg from "/Playlist.svg";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
-const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, setCurrentPlaylist, setCurrentSong, currentSong, playlists, navigateTo, setForcePlay, forcePlay }) => {
+const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, openDialog, observer, setCurrentPlaylist, setCurrentSong, currentSong, playlists, navigateTo, setForcePlay, forcePlay }) => {
     const [queryParameters] = useSearchParams();
     let path = queryParameters.get("path");
     let [paths, setPaths] = useState(null);
@@ -153,7 +153,7 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, observer, set
                             {paths && paths.length != 0 && paths.map((path, index) => (
                                 <Draggable key={index} draggableId={index + ""} index={index}>
                                     {(provided, snapshot) => (
-                                        <Songs_List providedRef={provided.innerRef} providedDraggableProps={provided.draggableProps} providedDragHandleProps={provided.dragHandleProps} id={index} path={path} handlePlayNext={handlePlayNext} odd={index % 2 == 0} observer={observer} setPlay={handlePlay} currentSong={currentSong} playlists={playlists} checked={selectedSongs} setChecked={setSelectedSongs} />
+                                        <Songs_List providedRef={provided.innerRef} providedDraggableProps={provided.draggableProps} providedDragHandleProps={provided.dragHandleProps} id={index} path={path} handlePlayNext={handlePlayNext} odd={index % 2 == 0} observer={observer} setPlay={handlePlay} currentSong={currentSong} openDialog={openDialog} playlists={playlists} checked={selectedSongs} setChecked={setSelectedSongs} />
                                     )}
                                 </Draggable>
 
