@@ -242,7 +242,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         <div id="PlayerControlsContainer">
             <AudioVisualizer player={player} />
             <div id="PlayerControlsSongData">
-                <img id="PlayerControlsSongDataAlbum" src={vinilImg} alt={burgerImg} onLoad={imgLoad} />
+                <img id="PlayerControlsSongDataAlbum" draggable="false" src={vinilImg} alt={burgerImg} onLoad={imgLoad} />
                 <div id="PlayerControlsSongConfiner">
                     <p id="PlayerControlsSongDataTitle">Title</p>
                     <p id="PlayerControlsSongDataArtist">Artist</p>
@@ -251,19 +251,19 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             <div id="PlayerControls">
                 <div id="PlayerControlsButtons">
                     <div className="control-button">
-                        <img id="controlShuffle" className="inactiveBorder" src={shuffleImg} alt="" onClick={handleShuffle} />
+                        <img id="controlShuffle" draggable="false" className="inactiveBorder" src={shuffleImg} alt="" onClick={handleShuffle} />
                     </div>
                     <div className="control-button">
-                        <img id="controlPrevious" className="inactiveBorder" src={previousImg} alt="" onClick={handlePrevious} />
+                        <img id="controlPrevious" draggable="false" className="inactiveBorder" src={previousImg} alt="" onClick={handlePrevious} />
                     </div>
                     <div className="control-button">
-                        <img id="controlPlay" className="inactiveBorder" style={{ border: "1px solid var(--border-color)" }} src={playImg} alt="" onClick={handlePause} />
+                        <img id="controlPlay" draggable="false" className="inactiveBorder" style={{ border: "1px solid var(--border-color)" }} src={playImg} alt="" onClick={handlePause} />
                     </div>
                     <div className="control-button">
-                        <img id="controlNext" className="inactiveBorder" src={nextImg} alt="" onClick={handleNext} />
+                        <img id="controlNext" draggable="false" className="inactiveBorder" src={nextImg} alt="" onClick={handleNext} />
                     </div>
                     <div className="control-button">
-                        <img id="controlRepeat" className="inactiveBorder" src={repeatImg} alt="" onClick={handleLoop} />
+                        <img id="controlRepeat" draggable="false" className="inactiveBorder" src={repeatImg} alt="" onClick={handleLoop} />
                     </div>
                 </div>
                 <div id="PlayerControlsTime">
@@ -274,7 +274,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             </div>
             <div id="PlayerControlsMisc">
                 <div className="control-button">
-                    <img src={soundImg} alt="" id="controlMute" onClick={handleMute} />
+                    <img src={soundImg} alt="" draggable="false" id="controlMute" onClick={handleMute} />
                 </div>
                 <input type="range" id="volumeSlider" defaultValue={100} onInput={(e) => { handleVolume(e); }} />
             </div>

@@ -67,7 +67,7 @@ const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
                     <progress style={{ width: "100%", }} id="indexing-progress" type="range" min="0" max="100" />
                     < div >
                         <div className="burger-container sideMenuBurger" onClick={() => { setMaximized(false); }}>
-                            <img src={burgerImg} alt="" />
+                            <img src={burgerImg} draggable="false" alt="" />
                         </div>
 
                         <div id="SearchBar">
@@ -116,7 +116,7 @@ const SideMenu = ({ openDialog, playlists, navigateTo, setDisplay }) => {
                 <div id="SideMenu-small">
                     <progress style={{ width: "100%", }} id="indexing-progress" type="range" min="0" max="100" />
                     <span className="burger-container sideMenuBurger" onClick={() => { setMaximized(true); }}>
-                        <img id="" src={burgerImg} alt="" />
+                        <img id="" draggable="false" src={burgerImg} alt="" />
                     </span>
                     <div id="MainScrollable">
                         <div id="My Music" title="My Music" className="sideMenuButton " onClick={(e) => { setDisplay("My Music"); handleNavigate(e, "/") }} >

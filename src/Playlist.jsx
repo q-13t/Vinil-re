@@ -131,7 +131,7 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, openDialog, o
             </dialog>
             <div id="PlayListTopMenu">
                 <div id="PlayListData" className="elem-fade-in-top">
-                    <img id="PlayListImage" src={burgerImg} alt="" />
+                    <img id="PlayListImage" draggable="false" src={burgerImg} alt="" />
                     <div style={{ flex: 1 }}>
                         <div style={{ display: "flex", justifyContent: "space-between" }}>
                             <input type="text" onChange={(e) => textAreaChange(e)} value={playlistName} id="playlistName" />
