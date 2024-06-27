@@ -62,10 +62,17 @@ const MainWindow = () => {
     let [playlists, setPlaylists] = useState([]);
     let [currentPlaylist, setCurrentPlaylist] = useState(JSON.parse(localStorage.getItem("currentPlaylist")));
     let [history, setHistory] = useState([]);
-    let [currentSong, setCurrentSong] = useState(localStorage.getItem("currentSong"));
+    let [currentSong, updateCurrentSong] = useState(localStorage.getItem("currentSong"));
     let navigateTo = useNavigate();
     let [forcePlay, setForcePlay] = useState(false);
     let [display, setDisplay] = useState("My Music");
+
+    let setCurrentSong = (path) => {
+        updateCurrentSong(path);
+        if (path = currentSong) {
+            setForcePlay(!forcePlay);
+        }
+    }
 
     useEffect(() => {
         getPlaylists().then((playlists) => {
@@ -86,7 +93,7 @@ const MainWindow = () => {
                 <Routes>
                     <Route path="/" element={<MainDisplay openDialog={openDialog} playlists={playlists} display={display} history={history} selectedSongs={selectedSongs} setCurrentPlaylist={setCurrentPlaylist} setSelectedSongs={setSelectedSongs} observer={observer} setCurrentSong={setCurrentSong} currentSong={currentSong} forcePlay={forcePlay} setForcePlay={setForcePlay} />} ></Route>
                     <Route path="/settings" element={<Settings />} ></Route>
-                    <Route path="/playlist" element={<Playlist setPlaylists={setPlaylists} selectedSongs={selectedSongs} setSelectedSongs={setSelectedSongs} setCurrentPlaylist={setCurrentPlaylist} observer={observer} setCurrentSong={setCurrentSong} currentSong={currentSong} playlists={playlists} navigateTo={navigateTo} forcePlay={forcePlay} setForcePlay={setForcePlay} />}></Route>
+                    <Route path="/playlist" element={<Playlist openDialog={openDialog} setPlaylists={setPlaylists} selectedSongs={selectedSongs} setSelectedSongs={setSelectedSongs} setCurrentPlaylist={setCurrentPlaylist} observer={observer} setCurrentSong={setCurrentSong} currentSong={currentSong} playlists={playlists} navigateTo={navigateTo} forcePlay={forcePlay} setForcePlay={setForcePlay} />}></Route>
                 </Routes>
             </div>
             <PlayerControls currentSong={currentSong} setCurrentSong={setCurrentSong} history={history} setHistory={setHistory} forcePlay={forcePlay} currentPlaylist={currentPlaylist} />

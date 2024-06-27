@@ -30,7 +30,12 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         async function fetchData() {
             const duration = document.getElementById(`timeTotal`);
             if (duration && player) {
-                player.src = convertFileSrc(currentSong);
+                try {
+                    player.src = convertFileSrc(currentSong);
+                } catch (error) {
+                    console.error(`[fetchData] error: ${error}`);
+                    handleNext();
+                }
                 getTag(currentSong, false).then((res) => {
                     const title = document.getElementById(`PlayerControlsSongDataTitle`);
                     const artist = document.getElementById(`PlayerControlsSongDataArtist`);
@@ -38,23 +43,21 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                     const progress = document.getElementById(`timeSlider`);
 
                     if (load && !paused) { player.play(); }
-                    if (!load) addToHistory(currentSong);
-                    if (progress) progress.value = 0;
-                    if (duration) duration.innerHTML = res.duration;
-                    if (!load) load = true;
-                    if (title) title.innerHTML = res.title;
-                    if (artist) artist.innerHTML = res.artist;
+                    if (!load) { addToHistory(currentSong) };
+                    if (progress) { progress.value = 0 };
+                    if (duration) { duration.innerHTML = res.duration };
+                    if (!load) { load = true };
+                    if (title) { title.innerHTML = res.title };
+                    if (artist) { artist.innerHTML = res.artist };
                     if (img) {
-                        if (res.image !== "")
-                            img.src = res.image;
-                        else
-                            img.src = vinilImg;
+                        if (res.image !== "") { img.src = res.image; }
+                        else { img.src = vinilImg; }
                     }
                     mediaMetadata.title = res.title;
                     mediaMetadata.artist = res.artist;
                     mediaMetadata.album = res.album;
                     mediaMetadata.artwork = [{ src: res.image, type: 'image/webp' },]
-                })
+                });
                 localStorage.setItem("currentSong", currentSong);
             }
         };
@@ -100,7 +103,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
 
         player.crossOrigin = "anonymous";
         player.onended = function () {
-            document.getElementById("controlNext").click();
+            handleNext();
         };
 
 
@@ -166,18 +169,17 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
 
     let handleNext = () => {
         let currentPlaylist = JSON.parse(localStorage.getItem("currentPlaylist"));
-        console.log("[HandleNext] historyIndex: ", historyIndex);
         if (historyIndex > 0) {// if user is in history
             setCurrentSong(history[--historyIndex]);
         } else if (shuffle) {// if shuffle is on
-            let rand = Math.floor(Math.random() * currentPlaylist.length);
+            let rand = Math.floor(Math.random() * (currentPlaylist.length - 1));
             playlistIndex = rand;
             sessionStorage.setItem("currentIndex", playlistIndex);
             addToHistory(currentPlaylist[rand])
             setCurrentSong(currentPlaylist[rand]);
         } else {// If it is simply play next
             //Increment playlist index by 1 or reset to 0
-            playlistIndex = playlistIndex < currentPlaylist.length - 1 ? playlistIndex += 1 : 0;
+            playlistIndex = playlistIndex <= currentPlaylist.length - 1 ? playlistIndex += 1 : 0;
             addToHistory(currentPlaylist[playlistIndex])
             setCurrentSong(currentPlaylist[playlistIndex]);
             sessionStorage.setItem("currentIndex", playlistIndex);
