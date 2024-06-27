@@ -30,6 +30,7 @@ async fn get_paths(folders: Vec<String>, sort_by: String, search_text: String) -
     for folder in folders {
         let mut list: Vec<String> = fs::read_dir(folder)
             .unwrap()
+            .filter(|x| x.as_ref().unwrap().metadata().unwrap().len() != 0)
             .map(|x| x.unwrap().path())
             .filter(|x| match x.extension() {
                 Some(x) => x == "mp3",
