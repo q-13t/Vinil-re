@@ -23,7 +23,7 @@ const DropDownMenu = ({ id, path, playlists, openDialog, setChecked, handlePlayN
         let drop = document.getElementById(`song-el-add-control-${id}`);
         if (!drop) return;
         let combined = drop.clientHeight + e.target.getBoundingClientRect().y;
-        drop.style = main < combined ? `top: ${(main - combined) + 'px'}` : `top: 0px`;
+        drop.style = main < combined ? `top: ${(main - combined - 5) + 'px'}` : `top: 0px`;
     }
 
     return (
