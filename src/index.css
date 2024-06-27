@@ -131,6 +131,8 @@ img {
     max-width: 40px;
 }
 
+
+
 .accent-background {
     background-color: var(--accent-color);
 }
@@ -220,7 +222,10 @@ label {
 }
 
 
-.sideMenuButton * {
+.sideMenuButton *,
+.control-button *,
+#PlayListImage,
+.sideMenuBurger * {
     pointer-events: none;
 }
 
