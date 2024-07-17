@@ -77,7 +77,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
             addToHistory(currentSong);
         }
 
-    }, [forcePlay])
+    }, [forcePlay]);
 
     useEffect(() => {
         if (player === null) { setPlayer(new Audio()) }
@@ -104,6 +104,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         player.crossOrigin = "anonymous";
         player.onended = function () {
             handleNext();
+            if (load && (!paused || currentPlaylist.length == 1)) { player.play(); } // WTF: I hate this
         };
 
         player.onloadedmetadata = function () {
@@ -145,7 +146,8 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
     }, []);
 
     let addToHistory = (path) => {
-        setHistory([path, ...history]);
+        history.unshift(path);
+        setHistory(history);
         historyIndex = 0;
     }
 
@@ -183,14 +185,14 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
         if (historyIndex > 0) {// if user is in history
             setCurrentSong(history[--historyIndex]);
         } else if (shuffle) {// if shuffle is on
-            let rand = Math.floor(Math.random() * (currentPlaylist.length - 1));
+            let rand = Math.floor(Math.random() * currentPlaylist.length);
             playlistIndex = rand;
             sessionStorage.setItem("currentIndex", playlistIndex);
             addToHistory(currentPlaylist[rand])
             setCurrentSong(currentPlaylist[rand]);
         } else {// If it is simply play next
             //Increment playlist index by 1 or reset to 0
-            playlistIndex = playlistIndex <= currentPlaylist.length - 1 ? playlistIndex += 1 : 0;
+            playlistIndex = playlistIndex < currentPlaylist.length - 1 ? playlistIndex += 1 : 0;
             addToHistory(currentPlaylist[playlistIndex])
             setCurrentSong(currentPlaylist[playlistIndex]);
             sessionStorage.setItem("currentIndex", playlistIndex);

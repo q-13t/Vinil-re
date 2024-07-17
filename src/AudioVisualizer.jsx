@@ -15,31 +15,76 @@ const AudioVisualizer = ({ player }) => {
         const audioContext = new AudioContext();
         audioContext.resume();
         const context = canvas.getContext('2d');
+
         let audioSource = audioContext.createMediaElementSource(player);
-        let analyzer = audioContext.createAnalyser();
-        audioSource.connect(analyzer);
-        analyzer.connect(audioContext.destination);
+        const merger = audioContext.createChannelMerger(2);
+        const splitter = audioContext.createChannelSplitter(2);
+        let analyzer_left = audioContext.createAnalyser();
+        let analyzer_right = audioContext.createAnalyser();
 
-        analyzer.fftSize = 1024;
-        const bufferLength = analyzer.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
-        const barWidth = ((canvas.width / 1.65) / (bufferLength));
+        audioSource.connect(splitter);
+        splitter.connect(analyzer_left, 0);
+        splitter.connect(analyzer_right, 1);
+        analyzer_left.connect(merger, 0, 0);
+        analyzer_right.connect(merger, 0, 1);
+        merger.connect(audioContext.destination);
 
+        analyzer_left.fftSize = 1024;
+        analyzer_right.fftSize = 1024;
+        const bufferLength = analyzer_right.frequencyBinCount;
+        const dataArray_left = new Uint8Array(bufferLength);
+        const dataArray_right = new Uint8Array(bufferLength);
+
+        // const barWidth = ((canvas.width / 1.65) / (bufferLength));
+        const linePos = canvas.width / 1.65;
         let barHeight;
         let barPosition;
 
+
+
         async function draw() { // audio visualization draw loop
             barPosition = 0;
+
             context.clearRect(0, 0, canvas.width, canvas.height);
-            analyzer.getByteFrequencyData(dataArray);
+            analyzer_left.getByteFrequencyData(dataArray_left);
+            analyzer_right.getByteFrequencyData(dataArray_right);
             let color = getComputedStyle(document.body).getPropertyValue("--accent-color");
+
+            context.beginPath();
+            context.moveTo(0, canvas.height);
+
             for (let i = 0; i < bufferLength; i++) {
-                barHeight = dataArray[i] / 2;
-                context.fillStyle = color;
-                context.fillRect(barPosition, canvas.height - barHeight, barWidth, barHeight);
-                context.fillRect(canvas.width - barPosition, canvas.height - barHeight, barWidth, barHeight);
-                barPosition += barWidth;
+                barHeight = dataArray_left[i] / 2;
+                let x = (i / bufferLength) * linePos;
+                let y = canvas.height - barHeight;
+                context.lineTo(x, y);
             }
+            context.moveTo(canvas.width, canvas.height);
+            for (let i = bufferLength - 1; i >= 0; i--) {
+                barHeight = dataArray_right[i] / 2;
+                let x = (i / bufferLength) * linePos;
+                let y = canvas.height - barHeight;
+                context.lineTo(canvas.width - x, y);
+            }
+
+            // context.lineTo(canvas.width, canvas.height);
+            context.fillStyle = color;
+            context.fill();
+
+            // barPosition = 0;
+
+            // context.clearRect(0, 0, canvas.width, canvas.height);
+            // analyzer_left.getByteFrequencyData(dataArray_left);
+            // analyzer_right.getByteFrequencyData(dataArray_right);
+            // let color = getComputedStyle(document.body).getPropertyValue("--accent-color");
+            // for (let i = 0; i < bufferLength; i++) {
+            //     barHeight = dataArray_left[i] / 2;
+            //     context.fillStyle = color;
+            //     context.fillRect(barPosition, canvas.height - barHeight, barWidth, barHeight);
+            //     barHeight = dataArray_right[i] / 2;
+            //     context.fillRect(canvas.width - barPosition, canvas.height - barHeight, barWidth, barHeight);
+            //     barPosition += barWidth;
+            // }
             if (!draw_break) {
                 requestAnimationFrame(draw);
             } else {
