@@ -37,58 +37,42 @@ const AudioVisualizer = ({ player }) => {
 
         // const barWidth = ((canvas.width / 1.65) / (bufferLength));
         const linePos = canvas.width / 1.65;
-        let barHeight;
-        let barPosition;
+        const canvasWidth = canvas.width;
+        const canvasMid = canvas.width / 2;
+        const canvasHeight = canvas.height;
+        let barHeight = 0, x = 0, y = 0, i = 0;
 
 
 
         async function draw() { // audio visualization draw loop
-            barPosition = 0;
-
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.clearRect(0, 0, canvasWidth, canvasHeight);
             analyzer_left.getByteFrequencyData(dataArray_left);
             analyzer_right.getByteFrequencyData(dataArray_right);
-            let color = getComputedStyle(document.body).getPropertyValue("--accent-color");
-
+            // draw lines left -> mid
             context.beginPath();
-            context.moveTo(0, canvas.height);
-
-            for (let i = 0; i < bufferLength; i++) {
+            context.lineTo(0, canvasHeight);
+            barHeight = 0, x = 0, y = 0, i = 0;
+            for (; i < bufferLength && x < canvasMid; i++) {
                 barHeight = dataArray_left[i] / 2;
-                let x = (i / bufferLength) * linePos;
-                let y = canvas.height - barHeight;
+                x = (i / bufferLength) * linePos;
+                y = canvasHeight - barHeight;
                 context.lineTo(x, y);
             }
-            context.moveTo(canvas.width, canvas.height);
-            for (let i = bufferLength - 1; i >= 0; i--) {
-                barHeight = dataArray_right[i] / 2;
-                let x = (i / bufferLength) * linePos;
-                let y = canvas.height - barHeight;
-                context.lineTo(canvas.width - x, y);
+            // draw lines mid -> right
+            context.lineTo(canvasMid, canvasHeight);
+            for (let v = bufferLength - i, j = 0; v < bufferLength; v++, j++) {
+                barHeight = dataArray_right[bufferLength - v] / 2;
+                x = (j / bufferLength) * linePos + canvasMid;
+                y = canvasHeight - barHeight;
+                context.lineTo(x, y);
             }
-
-            // context.lineTo(canvas.width, canvas.height);
-            context.fillStyle = color;
+            context.lineTo(canvasWidth, canvasHeight);
+            context.fillStyle = getComputedStyle(document.body).getPropertyValue("--accent-color");
             context.fill();
-
-            // barPosition = 0;
-
-            // context.clearRect(0, 0, canvas.width, canvas.height);
-            // analyzer_left.getByteFrequencyData(dataArray_left);
-            // analyzer_right.getByteFrequencyData(dataArray_right);
-            // let color = getComputedStyle(document.body).getPropertyValue("--accent-color");
-            // for (let i = 0; i < bufferLength; i++) {
-            //     barHeight = dataArray_left[i] / 2;
-            //     context.fillStyle = color;
-            //     context.fillRect(barPosition, canvas.height - barHeight, barWidth, barHeight);
-            //     barHeight = dataArray_right[i] / 2;
-            //     context.fillRect(canvas.width - barPosition, canvas.height - barHeight, barWidth, barHeight);
-            //     barPosition += barWidth;
-            // }
             if (!draw_break) {
                 requestAnimationFrame(draw);
             } else {
-                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.clearRect(0, 0, canvasWidth, canvasHeight);
             }
         }
 
