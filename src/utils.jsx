@@ -278,7 +278,7 @@ async function getTag(filePath, indexing) {
             return await Promise.all(promises).then(async (values) => {
                 let [[title, artist, album, image, created], { minutes, seconds }] = values;
                 if (image !== "")
-                    image = "data:image/webp;base64," + image;
+                    image = "data:image/jpeg;base64," + image;
                 if (title === "") title = filename;
                 writeFile(`SongsData\\${filename}.json`, JSON.stringify({ path: filePath, created: created.secs_since_epoch, title, artist, album, duration: `${minutes}:${seconds}`, image, }), { dir: BaseDirectory.AppConfig, recursive: true });
                 let duration = `${minutes}:${seconds}`;
