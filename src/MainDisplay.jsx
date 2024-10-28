@@ -7,14 +7,17 @@ import { searchAndSort, getFolders, appendSong } from "./utils";
 import { invoke } from "@tauri-apps/api/tauri";
 import shuffleImg from "/Shuffle.svg";
 
+let preserved_as = "list";
 
 const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, setCurrentPlaylist, display, observer, history, setCurrentSong, currentSong, setForcePlay, forcePlay }) => {
     const [queryParameters] = useSearchParams();
     let [paths, setPaths] = useState([]);
     let [Loading, setLoading] = useState(false);
-    let [as, setAs] = useState(queryParameters.get("as"));
+    let [as, setAs] = useState(preserved_as);
     if (!display) { display = "My Music"; }
     if (!as) { as = "list"; }
+
+
 
 
     // console.log(display, " : ", as);
@@ -164,8 +167,8 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
             <div id="topNav">
                 <h3>{display}</h3>
                 <div id="topSubNav" className="elem-fade-in-top">
-                    <p onClick={() => setAs("list")}>List</p>
-                    <p onClick={() => setAs("grid")}>Grid</p>
+                    <p onClick={() => { setAs("list"); preserved_as = "list" }}>List</p>
+                    <p onClick={() => { setAs("grid"); preserved_as = "grid" }}>Grid</p>
                 </div>
                 <div id="displaySort" >
                     <div id="shuffleButton" onClick={handleShuffle}>
