@@ -3,11 +3,11 @@ import { useEffect, useRef } from "react";
 
 import burgerImg from "/Burger.svg";
 import playImg from "/Play.svg";
-
 import transparentImg from "/Transparent.svg";
-import DropDownMenu from "./DropDownMenu";
+import plusImg from "/Plus.svg";
 
-const Songs_Grid = ({ path, id, observer, openDialog, playlists, handlePlayNext, setPlay, currentSong, setChecked }) => {
+
+const Songs_Grid = ({ path, id, observer, setPlay, currentSong, checkBoundaries }) => {
     const ref = useRef(null);
 
 
@@ -33,12 +33,9 @@ const Songs_Grid = ({ path, id, observer, openDialog, playlists, handlePlayNext,
                 <p id={`artist-${id}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
                 <p id={`duration-${id}`} className="song-el-time" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
             </div>
-
             <div className="song-el-buttons">
-                <div className="song-button ">
-                    <img src={playImg} alt={burgerImg} className="song-el-play" onClick={() => { setPlay(path) }}></img>
-                </div>
-                <DropDownMenu id={id} path={path} playlists={playlists} openDialog={openDialog} setChecked={setChecked} handlePlayNext={handlePlayNext} />
+                <img src={playImg} alt={burgerImg} className="song-button song-el-play" onClick={() => { setPlay(path) }}></img>
+                <img src={plusImg} alt={burgerImg} className="song-button song-el-add dropdown" onMouseEnter={(e) => { checkBoundaries(e, path); }} ></img>
             </div >
         </div >
     );
