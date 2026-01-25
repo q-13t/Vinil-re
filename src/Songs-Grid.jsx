@@ -7,20 +7,23 @@ import transparentImg from "/Transparent.svg";
 import plusImg from "/Plus.svg";
 
 
-const Songs_Grid = ({ path, id, observer, setPlay, currentSong, checkBoundaries }) => {
+const Songs_Grid = ({ providedRef = null, path, id, observer, setPlay, currentSong, checkBoundaries }) => {
     const ref = useRef(null);
 
 
-    useEffect(() => {
+    useEffect(() => {// Intersection Observer
+        let target;
         if (ref.current) {
-            observer.observe(ref.current);
+            target = ref.current;
+        } else if (providedRef !== null) {
+            target = document.getElementById(id);
         }
-        return () => {
-            if (ref.current) {
-                observer.unobserve(ref.current);
-            }
+        // console.log(target);
+        if (target) {
+            observer.observe(target);
+            return () => observer.unobserve(target);
         }
-    }, [path]);
+    }, [providedRef, path]);
 
 
     return (
