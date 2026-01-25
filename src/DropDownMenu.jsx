@@ -3,7 +3,6 @@ import playlistImg from "/Playlist.svg";
 import arrowImg from "/Arrows.svg";
 import { appendSong } from "./utils";
 
-
 const DropDownMenu = ({ hovered_song, playlists, openDialog, setChecked, handlePlayNext, checkBoundaries }) => {
     let handleNewPlaylist = () => {
         setChecked([hovered_song]);

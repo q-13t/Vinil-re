@@ -18,7 +18,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
     if (!as) { as = "list"; }
 
 
-    // console.log(display, " : ", as);
+    console.log(display, " : ", as);
 
 
 
