@@ -25,9 +25,7 @@ const Songs_Grid = ({ path, id, observer, setPlay, currentSong, checkBoundaries 
 
     return (
         <div data-path={path} id={id} ref={ref} className="song-el-container-grid" >
-            <span>
-                <img id={`img-${id}`} className="song-el-album" src={transparentImg} ></img>
-            </span>
+            <img id={`img-${id}`} className="song-el-album" src={transparentImg} ></img>
             <p id={`title-${id}`} className="song-el-title" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
             <div className="song-el-grid-sub">
                 <p id={`artist-${id}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
