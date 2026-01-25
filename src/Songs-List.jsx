@@ -7,7 +7,7 @@ import playImg from "/Play.svg";
 import transparentImg from "/Transparent.svg";
 import DropDownMenu from "./DropDownMenu";
 
-const Songs_List = ({ providedRef = null, providedDraggableProps = {}, providedDragHandleProps = {}, id, path, odd, observer, checked, setChecked, handlePlayNext, setPlay, playlists, openDialog, currentSong, draggable = false, dragStart = null, dragOver = null, dragEnd = null }) => {
+const Songs_List = ({ providedRef = null, providedDraggableProps = {}, providedDragHandleProps = {}, id, path, odd, observer, checked, setChecked, handlePlayNext, setPlay, playlists, openDialog, currentSong }) => {
     const ref = useRef(null);
 
     let updateThisCheck = () => {//Setts the check and adds to checked array
@@ -36,15 +36,7 @@ const Songs_List = ({ providedRef = null, providedDraggableProps = {}, providedD
 
 
     return (
-        <div
-            data-path={path}
-            id={id}
-            ref={providedRef !== null ? providedRef : ref}
-            {...providedDraggableProps}
-            {...providedDragHandleProps}
-
-            className={`song-el-container-list ${odd ? "odd" : ""}`}
-        >
+        <div data-path={path} id={id} ref={providedRef !== null ? providedRef : ref} {...providedDraggableProps} {...providedDragHandleProps} className={`song-el-container-list ${odd ? "odd" : ""}`}>
             <div id={`check-${id}`} className="song-el-check" onClick={() => { updateThisCheck() }}>
                 <img src={checkImg} style={{ width: "inherit", visibility: checked.includes(path) ? "visible" : "hidden" }} />
             </div>
