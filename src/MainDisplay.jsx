@@ -6,18 +6,19 @@ import Songs_Grid from "./Songs-Grid";
 import { searchAndSort, getFolders, appendSong } from "./utils";
 import { invoke } from "@tauri-apps/api/tauri";
 import shuffleImg from "/Shuffle.svg";
-
+import DropDownMenu from "./DropDownMenu";
 
 const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, setCurrentPlaylist, display, observer, history, setCurrentSong, currentSong, setForcePlay, forcePlay }) => {
     const [queryParameters] = useSearchParams();
     let [paths, setPaths] = useState([]);
     let [Loading, setLoading] = useState(false);
     let [as, setAs] = useState(queryParameters.get("as"));
+    let [hovered_song, setHoveredSong] = useState(null);
     if (!display) { display = "My Music"; }
     if (!as) { as = "list"; }
 
 
-    // console.log(display, " : ", as);
+    console.log(display, " : ", as);
 
 
 
@@ -159,6 +160,36 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
         }
     }
 
+
+    /**
+     * 
+     * @param {HTMLEvent} e hover event
+     * @param {String} s_path path of the song that has been hovered
+     * @returns none
+     */
+    let checkBoundaries = (e, s_path) => {
+        let target_rect = e.target.getBoundingClientRect();
+        let drop = document.getElementById(`song-el-add-control`);
+        if (!drop) {
+            return;
+        } else if (s_path && e) {
+            let top = target_rect.top;
+            let left = target_rect.left + (target_rect.width / 2) - (drop.getBoundingClientRect().width / 2);
+            if (top + drop.getBoundingClientRect().height > window.innerHeight) {
+                top = window.innerHeight - drop.getBoundingClientRect().height - 10;
+            }
+
+            drop.style = `top: ${top}px; left: ${left}px`;
+
+            setHoveredSong(s_path);
+            drop.classList.add('song-el-add-control-hover');
+        } else {
+            setHoveredSong(null);
+            drop.classList.remove('song-el-add-control-hover');
+        }
+    }
+
+
     return (
         <div id="MainDisplay">
             <div id="topNav">
@@ -192,14 +223,15 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
                     </div>
                 </div>
             </div>
-            <span style={{ display: "none" }} id="songContainerUpdater" onClick={() => { handleUpdateContainer(); }}></span>
+            <span style={{ display: "none" }} id="songContainerUpdater" onClick={() => { handleUpdateContainer(); }}></span> {/* Hidden span that is used to trigger the update on click from another component */}
             <div id="MainSongContainer" {...(as === "grid" ? { className: "mainGrid" } : { className: "mainList" })}>
+                <DropDownMenu hovered_song={hovered_song} playlists={playlists} openDialog={openDialog} setChecked={setSelectedSongs} handlePlayNext={handlePlayNext} checkBoundaries={checkBoundaries} />
                 {Loading && Loading === true ? <p>Loading...</p> : null}
                 {paths && paths.length != 0 && as === "list" ?
                     paths.map((path, index) => {
-                        return <Songs_List id={index} key={index} path={path} odd={index % 2 == 0} handlePlayNext={handlePlayNext} openDialog={openDialog} currentSong={currentSong} setPlay={handlePlay} playlists={playlists} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} />;
+                        return <Songs_List id={index} key={index} path={path} odd={index % 2 == 0} handlePlayNext={handlePlayNext} openDialog={openDialog} currentSong={currentSong} setPlay={handlePlay} playlists={playlists} observer={observer} checked={selectedSongs} setChecked={setSelectedSongs} checkBoundaries={checkBoundaries} setHoveredSong={setHoveredSong} />;
                     }) : paths.map((path, index) => {
-                        return <Songs_Grid id={index} key={index} path={path} observer={observer} handlePlayNext={handlePlayNext} openDialog={openDialog} playlists={playlists} setPlay={handlePlay} currentSong={currentSong} setChecked={setSelectedSongs} />
+                        return <Songs_Grid id={index} key={index} path={path} observer={observer} handlePlayNext={handlePlayNext} openDialog={openDialog} playlists={playlists} setPlay={handlePlay} currentSong={currentSong} setChecked={setSelectedSongs} checkBoundaries={checkBoundaries} setHoveredSong={setHoveredSong} />
                     })}
             </div>
         </div >
