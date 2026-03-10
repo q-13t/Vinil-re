@@ -5,6 +5,7 @@ import { getPlaylist, renamePlaylist, getPlaylists, getAverageRGB, savePlaylist,
 import Songs_List from "./Songs-List";
 import playlistImg from "/Playlist.svg";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import DropDownMenu from "./DropDownMenu";
 
 const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, openDialog, observer, setCurrentPlaylist, setCurrentSong, currentSong, playlists, navigateTo, setForcePlay, forcePlay }) => {
     const [queryParameters] = useSearchParams();
@@ -12,8 +13,9 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, openDialog, o
     let [paths, setPaths] = useState(null);
     let [changed, setChanged] = useState(false);
     let [playlistName, setPlaylistName] = useState("");
+    let [hovered_song, setHoveredSong] = useState(null);
 
-    console.log("playlist render");
+    // console.log("playlist render");
 
     useEffect(() => {
         async function populate() {
@@ -118,6 +120,36 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, openDialog, o
         }
         commitChanges();
     }
+
+
+    /**
+ * 
+ * @param {HTMLEvent} e hover event
+ * @param {String} s_path path of the song that has been hovered
+ * @returns none
+ */
+    let checkBoundaries = (e, s_path) => {
+        let target_rect = e.target.getBoundingClientRect();
+        let drop = document.getElementById(`song-el-add-control`);
+        if (!drop) {
+            return;
+        } else if (s_path && e) {
+            let top = target_rect.top;
+            let left = target_rect.left + (target_rect.width / 2) - (drop.getBoundingClientRect().width / 2);
+            if (top + drop.getBoundingClientRect().height > window.innerHeight) {
+                top = window.innerHeight - drop.getBoundingClientRect().height - 10;
+            }
+
+            drop.style = `top: ${top}px; left: ${left}px`;
+
+            setHoveredSong(s_path);
+            drop.classList.add('song-el-add-control-hover');
+        } else {
+            setHoveredSong(null);
+            drop.classList.remove('song-el-add-control-hover');
+        }
+    }
+
     return (
         <div id="Playlist">
             <dialog id="Delete-Playlist-Dialog" style={{ display: "none" }}>
@@ -150,10 +182,11 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, openDialog, o
                 <Droppable droppableId="songs">
                     {(provided) => (
                         <div id="PlayListContent" ref={provided.innerRef} {...provided.droppableProps}  >
+                            <DropDownMenu hovered_song={hovered_song} playlists={playlists} openDialog={openDialog} setChecked={setSelectedSongs} handlePlayNext={handlePlayNext} checkBoundaries={checkBoundaries} />
                             {paths && paths.length != 0 && paths.map((path, index) => (
                                 <Draggable key={index} draggableId={index + ""} index={index}>
                                     {(provided, snapshot) => (
-                                        <Songs_List providedRef={provided.innerRef} providedDraggableProps={provided.draggableProps} providedDragHandleProps={provided.dragHandleProps} id={index} path={path} handlePlayNext={handlePlayNext} odd={index % 2 == 0} observer={observer} setPlay={handlePlay} currentSong={currentSong} openDialog={openDialog} playlists={playlists} checked={selectedSongs} setChecked={setSelectedSongs} />
+                                        <Songs_List providedRef={provided.innerRef} providedDraggableProps={provided.draggableProps} providedDragHandleProps={provided.dragHandleProps} id={index} path={path} handlePlayNext={handlePlayNext} odd={index % 2 == 0} observer={observer} setPlay={handlePlay} currentSong={currentSong} openDialog={openDialog} playlists={playlists} checked={selectedSongs} setChecked={setSelectedSongs} checkBoundaries={checkBoundaries} setHoveredSong={setHoveredSong} />
                                     )}
                                 </Draggable>
 
