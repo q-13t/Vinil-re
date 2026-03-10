@@ -172,11 +172,11 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
      * @returns none
      */
     let checkBoundaries = (e, s_path) => {
-        let target_rect = e.target.getBoundingClientRect();
         let drop = document.getElementById(`song-el-add-control`);
         if (!drop) {
             return;
         } else if (s_path && e) {
+            let target_rect = e.target.getBoundingClientRect();
             let top = target_rect.top;
             let left = target_rect.left + (target_rect.width / 2) - (drop.getBoundingClientRect().width / 2);
             if (top + drop.getBoundingClientRect().height > window.innerHeight) {
@@ -228,7 +228,7 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
                 </div>
             </div>
             <span style={{ display: "none" }} id="songContainerUpdater" onClick={() => { handleUpdateContainer(); }}></span> {/* Hidden span that is used to trigger the update on click from another component */}
-            <div id="MainSongContainer" {...(as === "grid" ? { className: "mainGrid" } : { className: "mainList" })}>
+            <div id="MainSongContainer" {...(as === "grid" ? { className: "mainGrid" } : { className: "mainList" })} onMouseLeave={() => { checkBoundaries(null, null); }}>
                 <DropDownMenu hovered_song={hovered_song} playlists={playlists} openDialog={openDialog} setChecked={setSelectedSongs} handlePlayNext={handlePlayNext} checkBoundaries={checkBoundaries} />
                 {Loading && Loading === true ? <p>Loading...</p> : null}
                 {paths && paths.length != 0 && as === "list" ?

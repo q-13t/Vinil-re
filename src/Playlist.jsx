@@ -129,11 +129,11 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, openDialog, o
  * @returns none
  */
     let checkBoundaries = (e, s_path) => {
-        let target_rect = e.target.getBoundingClientRect();
         let drop = document.getElementById(`song-el-add-control`);
         if (!drop) {
             return;
         } else if (s_path && e) {
+            let target_rect = e.target.getBoundingClientRect();
             let top = target_rect.top;
             let left = target_rect.left + (target_rect.width / 2) - (drop.getBoundingClientRect().width / 2);
             if (top + drop.getBoundingClientRect().height > window.innerHeight) {
@@ -175,13 +175,12 @@ const Playlist = ({ setPlaylists, selectedSongs, setSelectedSongs, openDialog, o
                         </div>
                     </div>
                 </div>
-
             </div>
             {/* Holy fuck! This shit ate my will to live more than the whole project */}
             <DragDropContext onDragEnd={handleDragEnd}>
                 <Droppable droppableId="songs">
                     {(provided) => (
-                        <div id="PlayListContent" ref={provided.innerRef} {...provided.droppableProps}  >
+                        <div id="PlayListContent" ref={provided.innerRef} {...provided.droppableProps} onMouseLeave={() => { checkBoundaries(null, null); }}>
                             <DropDownMenu hovered_song={hovered_song} playlists={playlists} openDialog={openDialog} setChecked={setSelectedSongs} handlePlayNext={handlePlayNext} checkBoundaries={checkBoundaries} />
                             {paths && paths.length != 0 && paths.map((path, index) => (
                                 <Draggable key={index} draggableId={index + ""} index={index}>
