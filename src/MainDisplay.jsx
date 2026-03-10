@@ -14,9 +14,8 @@ const MainDisplay = ({ openDialog, playlists, selectedSongs, setSelectedSongs, s
     const [queryParameters] = useSearchParams();
     let [paths, setPaths] = useState([]);
     let [Loading, setLoading] = useState(false);
-    let [as, setAs] = useState(queryParameters.get("as"));
     let [hovered_song, setHoveredSong] = useState(null);
-    let [as, setAs] = useState(preserved_as);
+    let [as, setAs] = useState(queryParameters.get("as") ?? preserved_as);
     if (!display) { display = "My Music"; }
     if (!as) { as = "list"; }
 
