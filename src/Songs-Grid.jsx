@@ -34,8 +34,12 @@ const Songs_Grid = ({ path, id, observer, setPlay, currentSong, checkBoundaries 
                 <p id={`duration-${id}`} className="song-el-time" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
             </div>
             <div className="song-el-buttons">
-                <img src={playImg} alt={burgerImg} className="song-button song-el-play" onClick={() => { setPlay(path) }}></img>
-                <img src={plusImg} alt={burgerImg} className="song-button song-el-add dropdown" onMouseEnter={(e) => { checkBoundaries(e, path); }} ></img>
+                <div className="song-button ">
+                    <img src={playImg} alt={burgerImg} className="song-el-play" onClick={() => { setPlay(path) }}></img>
+                </div>
+                <div className="song-button ">
+                    <img src={plusImg} alt={burgerImg} className="song-el-add dropdown" onMouseEnter={(e) => { checkBoundaries(e, path); }} ></img>
+                </div>
             </div >
         </div >
     );

@@ -43,8 +43,12 @@ const Songs_List = ({ providedRef = null, providedDraggableProps = {}, providedD
             <img id={`img-${id}`} className="song-el-album" src={transparentImg} ></img>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start", flex: "0 0 25%", maxWidth: "25%", alignItems: "center" }}>
                 <p id={`title-${id}`} className="song-el-title" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
-                <img src={playImg} alt={burgerImg} className="song-button max-height song-el-play" onClick={() => { setPlay(path) }}></img>
-                <img src={plusImg} alt={burgerImg} className="song-button song-el-add max-height" onMouseEnter={(e) => { checkBoundaries(e, path); }} ></img>
+                <span className="song-button ">
+                    <img src={playImg} alt={burgerImg} className="max-height song-el-play" onClick={() => { setPlay(path) }}></img>
+                </span>
+                <span className="song-button ">
+                    <img src={plusImg} alt={burgerImg} className=" max-height song-el-add" onMouseEnter={(e) => { checkBoundaries(e, path); }} ></img>
+                </span>
             </div >
             <p id={`artist-${id}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
             <p id={`album-${id}`} className="song-el-album" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>
