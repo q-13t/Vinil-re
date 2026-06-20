@@ -47,7 +47,7 @@ const Songs_List = ({ providedRef = null, providedDraggableProps = {}, providedD
                     <img src={playImg} alt={burgerImg} className="max-height song-el-play" onClick={() => { setPlay(path) }}></img>
                 </span>
                 <span className="song-button ">
-                    <img src={plusImg} alt={burgerImg} className=" max-height song-el-add" onMouseEnter={(e) => { checkBoundaries(e, path); }} ></img>
+                    <img src={plusImg} alt={burgerImg} className=" max-height song-el-add" onClick={(e) => { checkBoundaries(e, path); }} ></img>
                 </span>
             </div >
             <p id={`artist-${id}`} className="song-el-artist" style={{ color: currentSong === path ? "var(--accent-color)" : "" }}></p>

@@ -22,8 +22,6 @@
 .light #sideMenuBurger,
 .light .sideMenuButton img,
 .light #MainScrollable img,
-.light .song-el-add,
-.light .song-el-play,
 .light .dropdown-el img,
 .light #shuffleButton img,
 .light .song-el-check img,
@@ -159,27 +157,9 @@ select:hover,
 .dropdown-el:hover,
 #search-Search:hover,
 #search-Clear:hover,
-.control-button:hover {
+.control-button:hover,
+.song-button:hover {
     background-color: var(--hover-color);
-}
-
-.burger-container:active,
-.sideMenuButton:active,
-.AddPlaylistButton:active,
-#shuffleButton:active,
-#dialog-container div button:active,
-#PlayListControls *:active,
-#PlayListData p:active,
-.control-button:active,
-#Delete-Playlist-Dialog-Container div button:active,
-#ClearCashDialogContainer div button:active,
-.dropdown-el:active,
-#search-Search:active,
-#search-Clear:active,
-.song-el-container-list .song-el-play:active,
-.song-el-container-list .song-el-add:active,
-#ClearCash:active {
-    animation: el-selection 0.05s linear forwards;
 }
 
 @keyframes el-selection {
@@ -198,6 +178,28 @@ select:hover,
     }
 
 }
+
+.burger-container:active,
+.sideMenuButton:active,
+.AddPlaylistButton:active,
+#shuffleButton:active,
+#dialog-container div button:active,
+#PlayListControls *:active,
+#PlayListData p:active,
+.control-button:active,
+#Delete-Playlist-Dialog-Container div button:active,
+#ClearCashDialogContainer div button:active,
+.dropdown-el:active,
+#search-Search:active,
+#search-Clear:active,
+.song-el-container-list .song-button:active,
+.mainGrid .song-el-container-grid .song-button:active,
+#ClearCash:active,
+#topSubNav *:active {
+    animation: el-selection 0.05s linear forwards;
+}
+
+
 
 p,
 h1,
@@ -535,7 +537,7 @@ select *:hover {
 }
 
 .song-el-container-list:hover {
-    background-color: var(--hover-color);
+    background-color: var(--focus-color);
     --display: flex;
 }
 
@@ -572,8 +574,7 @@ select *:hover {
 
 
 .song-button:hover {
-    /* background-color: var(--focus-color); */
-    background-color: var(--focus-color);
+    background-color: var(--hover-color);
     cursor: pointer;
 }
 
