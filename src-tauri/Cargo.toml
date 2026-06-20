@@ -1,7 +1,7 @@
 [package]
-name = "tauri-learn"
+name = "Vinil-re"
 version = "1.0.0"
-description = "A Tauri App"
+description = "Vinil-re"
 authors = ["Volodymyr Davybida"]
 edition = "2021"
 

@@ -3,6 +3,22 @@
 version = 3
 
 [[package]]
+name = "Vinil-re"
+version = "1.0.0"
+dependencies = [
+ "base64 0.22.0",
+ "id3",
+ "image 0.25.1",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-fs-watch",
+ "tauri-plugin-window-state",
+ "tokio",
+]
+
+[[package]]
 name = "addr2line"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3311,22 +3327,6 @@ dependencies = [
  "time",
  "uuid",
  "walkdir",
-]
-
-[[package]]
-name = "tauri-learn"
-version = "1.0.0"
-dependencies = [
- "base64 0.22.0",
- "id3",
- "image 0.25.1",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-fs-watch",
- "tauri-plugin-window-state",
- "tokio",
 ]
 
 [[package]]
