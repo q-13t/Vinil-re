@@ -20,11 +20,12 @@ let paused = true;
 let load = false;
 let shuffle = localStorage.getItem("shuffle") === "true";
 let mediaMetadata = new window.MediaMetadata();
-
+let audio = new Audio();
+let nextMetadataCache = {};
 
 const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history, setHistory, forcePlay }) => {
 
-    let [player, setPlayer] = useState(new Audio());
+    let [player, setPlayer] = useState(audio);
 
     useEffect(() => {
         async function fetchData() {
@@ -42,7 +43,17 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                     const img = document.getElementById(`PlayerControlsSongDataAlbum`);
                     const progress = document.getElementById(`timeSlider`);
 
-                    if (load && !paused) { player.play(); }
+                    if (load && !paused) {
+                        player.play();
+
+                    }
+                    if (load && paused) {
+                        player.play().then(() => {
+                            player.pause();
+                        }).catch(err => {
+                            player.pause();
+                        });
+                    }
                     if (!load) { addToHistory(currentSong) };
                     if (progress) { progress.value = 0; };
                     if (duration) { duration.innerHTML = res.duration };
@@ -57,6 +68,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
                     mediaMetadata.artist = res.artist;
                     mediaMetadata.album = res.album;
                     mediaMetadata.artwork = [{ src: res.image, type: 'image/webp' },]
+                    navigator.mediaSession.metadata = mediaMetadata;
                 });
                 localStorage.setItem("currentSong", currentSong);
             }
@@ -201,7 +213,7 @@ const PlayerControls = ({ currentSong, setCurrentSong, currentPlaylist, history,
 
 
     let handlePause = (event) => {
-        console.log("[HandlePause] player.paused:", player.paused);
+
         if (player.paused) {
             player.play();
             paused = false;
